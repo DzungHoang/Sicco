@@ -2,6 +2,7 @@
 <resources>
 
     <string name="app_name">Sicco</string>
+    <string name="trang_chu">Trang chủ</string>
     <string name="canh_bao">Cảnh báo</string>
     <string name="cong_van">Công văn</string>
     <string name="cong_viec">Công việc</string>

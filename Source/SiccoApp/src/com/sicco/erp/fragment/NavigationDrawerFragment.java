@@ -119,7 +119,7 @@ public class NavigationDrawerFragment extends Fragment {
 		TextView nameTxt = (TextView)mDrawerListView.findViewById(R.id.nameTxt);
 		nameTxt.setText(SessionManager.getInstance(getActivity()).getUserDetails().get(SessionManager.KEY_NAME));
 		mList = new ArrayList<Object>();
-		mList.add(Constant.DASHBOARD_POSITION, new CategoryMenu("Dashboard"));
+		mList.add(Constant.DASHBOARD_POSITION, new CategoryMenu(getString(R.string.trang_chu)));
 		mList.add(Constant.CANHBAO_POSITION, new ItemMenu(R.drawable.ic_warning_selector,
 				getString(R.string.canh_bao)));
 		mList.add(Constant.CONGVAN_POSITION, new ItemMenu(R.drawable.ic_cong_van_selector,
@@ -130,7 +130,7 @@ public class NavigationDrawerFragment extends Fragment {
 				getString(R.string.lich_bieu)));
 		mList.add(Constant.DANHBA_POSITION, new ItemMenu(R.drawable.ic_danh_ba_selector,
 				getString(R.string.danh_ba)));
-		mList.add(Constant.TAIKHOAN_POSITION, new CategoryMenu("Tài khoản"));
+		mList.add(Constant.TAIKHOAN_POSITION, new CategoryMenu(getString(R.string.tai_khoan)));
 		mList.add(Constant.DANGXUAT_POSITION, new ItemMenu(R.drawable.ic_dang_xuat_selector,
 				getString(R.string.dang_xuat)));
 		mListView = (ListView) mDrawerListView.findViewById(R.id.list_menu);

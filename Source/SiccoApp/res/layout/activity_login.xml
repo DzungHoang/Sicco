@@ -1,0 +1,91 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="10dip"
+    android:layout_gravity="center_vertical"
+    android:gravity="center_horizontal">
+    <ScrollView
+        android:id="@+id/scrollView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center_horizontal" >
+
+            <ImageView
+                android:id="@+id/imageView1"
+                android:layout_width="wrap_content"
+                android:layout_height="70dp"
+                android:layout_marginBottom="40dp"
+                android:src="@drawable/logo" />
+
+            <EditText
+                android:id="@+id/txtUsername"
+                android:layout_width="300dp"
+                android:layout_height="35dp"
+                android:layout_marginBottom="10dip"
+                android:background="@drawable/bg_login_user"
+                android:ems="10"
+                android:hint="@string/tai_khoan"
+                android:imeOptions="actionNext"
+                android:paddingLeft="22dip"
+                android:singleLine="true"
+                android:textSize="18sp"
+                android:textColorHint="#9c9999" 
+                android:textColor="#5f5a5f"/>
+
+            <EditText
+                android:id="@+id/txtPassword"
+                android:layout_width="300dp"
+                android:layout_height="35dp"
+                android:layout_marginBottom="20dip"
+                android:background="@drawable/bg_login_pass"
+                android:ems="10"
+                android:hint="@string/mat_khau"
+                android:paddingLeft="22dip"
+                android:password="true"
+                android:singleLine="true"
+                android:textSize="18sp"
+                android:textColorHint="#9c9999"
+                android:textColor="#5f5a5f"  />
+
+            <RelativeLayout
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <CheckBox
+                    android:id="@+id/cbRemember"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:gravity="center_vertical"
+                    android:text="@string/duy_tri_dang_nhap"
+                    android:textSize="12sp"
+                    android:textColor="#64555a" />
+
+                <Button
+                    android:id="@+id/btnLogin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="35dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:background="@drawable/bg_btn_login_selector"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:text="@string/dang_nhap"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp" />
+            </RelativeLayout>
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

@@ -27,7 +27,7 @@ import com.sicco.erp.service.GetNotificationService;
 
 public class LoginActivity extends Activity {
 
-	//NgaDV 123
+	//LuanDT
 	//Test github
 	
 	// Email, password edittext

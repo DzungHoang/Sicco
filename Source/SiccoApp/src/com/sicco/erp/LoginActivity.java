@@ -27,9 +27,13 @@ import com.sicco.erp.service.GetNotificationService;
 
 public class LoginActivity extends Activity {
 
+<<<<<<< HEAD
 	//DungHV 312312312
 	//Test github
 	
+	//Test 07/10/2014.
+=======
+>>>>>>> parent of 5d7e3ad... Test github
 	// Email, password edittext
 	EditText txtUsername, txtPassword;
 

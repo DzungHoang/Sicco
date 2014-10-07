@@ -28,8 +28,12 @@ import com.sicco.erp.service.GetNotificationService;
 public class LoginActivity extends Activity {
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	//DungHV 312312312
 	//Test github
+=======
+	//LuanDT xong
+>>>>>>> origin/master
 	
 	//Test 07/10/2014.
 =======

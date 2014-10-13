@@ -13,6 +13,6 @@ public class Utils {
 		Intent intent = new Intent(context, GetNotificationService.class);
 		long time = SystemClock.elapsedRealtime();
 		AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-		manager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, time + 30 * 1000, PendingIntent.getService(context, 0, intent, Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT));
+		manager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, time + 30 * 1000, PendingIntent.getService(context, 0, intent, Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT));
 	}
 }

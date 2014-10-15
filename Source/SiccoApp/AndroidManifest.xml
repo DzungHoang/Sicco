@@ -29,6 +29,22 @@
             android:name=".MainActivity"
             android:label="Dashboard Screen">
         </activity>
+        <activity 
+            android:name=".TatCaCongViecActivity"
+            android:label="@string/tat_ca_cong_viec" >
+        </activity>
+        <activity 
+            android:name=".CongViecDaGiao"
+            android:label="@string/cong_viec_da_giao" >
+        </activity>
+        <activity 
+            android:name=".CongViecDuocGiao"
+            android:label="@string/cong_viec_duoc_giao" >
+        </activity>
+        <activity 
+            android:name=".ThemCongViec"
+            android:label="@string/them_cong_viec" >
+        </activity>
         <service android:name=".service.GetNotificationService"></service>
         <service android:name=".service.HandleNotificationService"
             android:exported="true"></service>

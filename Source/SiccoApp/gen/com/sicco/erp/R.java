@@ -1142,7 +1142,9 @@ containing a value of this type.
         public static final int textline=0x7f020085;
     }
     public static final class id {
-        public static final int action_add_congviec=0x7f050066;
+        public static final int Congvan_listView=0x7f05005b;
+        public static final int Sep=0x7f050058;
+        public static final int action_add_congviec=0x7f05006b;
         public static final int action_bar=0x7f05001c;
         public static final int action_bar_activity_content=0x7f050015;
         public static final int action_bar_container=0x7f05001b;
@@ -1154,8 +1156,8 @@ containing a value of this type.
         public static final int action_menu_divider=0x7f050016;
         public static final int action_menu_presenter=0x7f050017;
         public static final int action_mode_close_button=0x7f050024;
-        public static final int action_search=0x7f050067;
-        public static final int action_settings=0x7f050065;
+        public static final int action_search=0x7f05006c;
+        public static final int action_settings=0x7f05006a;
         public static final int activity_chooser_view_content=0x7f050025;
         public static final int always=0x7f05000b;
         public static final int beginning=0x7f050011;
@@ -1164,6 +1166,9 @@ containing a value of this type.
         public static final int checkbox=0x7f05002d;
         public static final int collapseActionView=0x7f05000d;
         public static final int container=0x7f050047;
+        public static final int cvan_txt_detail=0x7f050059;
+        public static final int cvan_txt_loaicv=0x7f050056;
+        public static final int cvan_txt_title=0x7f050057;
         public static final int default_activity_button=0x7f050028;
         public static final int dialog=0x7f05000e;
         public static final int disableHome=0x7f050008;
@@ -1181,19 +1186,19 @@ containing a value of this type.
         public static final int ifRoom=0x7f05000a;
         public static final int image=0x7f050027;
         public static final int imageView1=0x7f050041;
-        public static final int item_lv_han_cuoi=0x7f05005f;
-        public static final int item_lv_ten_cong_viec=0x7f05005e;
-        public static final int jobTitle=0x7f05005d;
-        public static final int jop_list=0x7f050057;
+        public static final int item_lv_han_cuoi=0x7f050064;
+        public static final int item_lv_ten_cong_viec=0x7f050063;
+        public static final int jobTitle=0x7f050062;
+        public static final int jop_list=0x7f05005c;
         public static final int listMode=0x7f050001;
         public static final int list_item=0x7f050029;
-        public static final int list_menu=0x7f05005a;
+        public static final int list_menu=0x7f05005f;
         public static final int lv_cong_viec_da_giao=0x7f05003e;
         public static final int lv_cong_viec_duoc_giao=0x7f05003f;
         public static final int lv_tat_ca_cong_viec=0x7f050049;
         public static final int middle=0x7f050012;
-        public static final int msg_canhbao=0x7f05005b;
-        public static final int nameTxt=0x7f050059;
+        public static final int msg_canhbao=0x7f050060;
+        public static final int nameTxt=0x7f05005e;
         public static final int navigation_drawer=0x7f050048;
         public static final int never=0x7f050009;
         public static final int none=0x7f050010;
@@ -1212,7 +1217,7 @@ containing a value of this type.
         public static final int search_plate=0x7f050036;
         public static final int search_src_text=0x7f050037;
         public static final int search_voice_btn=0x7f05003b;
-        public static final int section_label=0x7f050058;
+        public static final int section_label=0x7f05005d;
         public static final int shortcut=0x7f05002e;
         public static final int showCustom=0x7f050007;
         public static final int showHome=0x7f050004;
@@ -1220,7 +1225,7 @@ containing a value of this type.
         public static final int split_action_bar=0x7f05001e;
         public static final int submit_area=0x7f050039;
         public static final int tabMode=0x7f050002;
-        public static final int tatca=0x7f050068;
+        public static final int tatca=0x7f05006d;
         public static final int textView1=0x7f05003c;
         public static final int textView2=0x7f05003d;
         public static final int textView3=0x7f05004c;
@@ -1237,15 +1242,15 @@ containing a value of this type.
         public static final int tv_tep_dinh_kem=0x7f050055;
         public static final int txtPassword=0x7f050043;
         public static final int txtUsername=0x7f050042;
-        public static final int txt_cong_van=0x7f050060;
-        public static final int txt_cong_viec=0x7f050061;
-        public static final int txt_dang_xuat=0x7f050064;
-        public static final int txt_danh_ba=0x7f050063;
-        public static final int txt_lich_bieu=0x7f050062;
+        public static final int txt_cong_van=0x7f050065;
+        public static final int txt_cong_viec=0x7f050066;
+        public static final int txt_dang_xuat=0x7f050069;
+        public static final int txt_danh_ba=0x7f050068;
+        public static final int txt_lich_bieu=0x7f050067;
         public static final int up=0x7f050021;
-        public static final int url_canhbao=0x7f05005c;
+        public static final int url_canhbao=0x7f050061;
         public static final int useLogo=0x7f050003;
-        public static final int warning_list=0x7f050056;
+        public static final int warning_list=0x7f05005a;
         public static final int withText=0x7f05000c;
     }
     public static final class integer {
@@ -1304,19 +1309,20 @@ containing a value of this type.
         public static final int activity_main=0x7f03001b;
         public static final int activity_tat_ca_cong_viec=0x7f03001c;
         public static final int activity_them_cong_viec=0x7f03001d;
-        public static final int fragment_canhbao=0x7f03001e;
-        public static final int fragment_cong_van=0x7f03001f;
-        public static final int fragment_cong_viec=0x7f030020;
-        public static final int fragment_main=0x7f030021;
-        public static final int fragment_navigation_drawer=0x7f030022;
-        public static final int item_canhbao=0x7f030023;
-        public static final int item_cong_viec=0x7f030024;
-        public static final int item_lv_tat_ca_cong_viec=0x7f030025;
-        public static final int menu_row_category=0x7f030026;
-        public static final int menu_row_item=0x7f030027;
-        public static final int scroll_menu=0x7f030028;
-        public static final int sep=0x7f030029;
-        public static final int support_simple_spinner_dropdown_item=0x7f03002a;
+        public static final int cvan_list_item=0x7f03001e;
+        public static final int fragment_canhbao=0x7f03001f;
+        public static final int fragment_cong_van=0x7f030020;
+        public static final int fragment_cong_viec=0x7f030021;
+        public static final int fragment_main=0x7f030022;
+        public static final int fragment_navigation_drawer=0x7f030023;
+        public static final int item_canhbao=0x7f030024;
+        public static final int item_cong_viec=0x7f030025;
+        public static final int item_lv_tat_ca_cong_viec=0x7f030026;
+        public static final int menu_row_category=0x7f030027;
+        public static final int menu_row_item=0x7f030028;
+        public static final int scroll_menu=0x7f030029;
+        public static final int sep=0x7f03002a;
+        public static final int support_simple_spinner_dropdown_item=0x7f03002b;
     }
     public static final class menu {
         public static final int global=0x7f0c0000;

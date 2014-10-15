@@ -9,7 +9,10 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.sicco.erp.CongViecDaGiao;
+import com.sicco.erp.CongViecDuocGiao;
 import com.sicco.erp.R;
+import com.sicco.erp.TatCaCongViecActivity;
 import com.sicco.erp.R.drawable;
 import com.sicco.erp.R.id;
 import com.sicco.erp.R.layout;
@@ -25,6 +28,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -47,6 +53,7 @@ public class FragmentCongViec extends Fragment {
 			Bundle savedInstanceState) {
 		rootView = inflater.inflate(R.layout.fragment_cong_viec, container,
 				false);
+//		setHasOptionsMenu(true); //optionMenu
 		session = SessionManager.getInstance(getActivity());
 		user = session.getUserDetails();
 		String token = user.get(SessionManager.KEY_TOKEN);
@@ -68,11 +75,29 @@ public class FragmentCongViec extends Fragment {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				Log.d("TuNT", ""+position);
+				Intent intent = new Intent();
+				switch (position) {
+				case 0:
+					intent.setClass(getActivity(), TatCaCongViecActivity.class);
+					startActivityForResult(intent, 1);
+					break;
+				case 1:
+					intent.setClass(getActivity(), CongViecDaGiao.class);
+					startActivityForResult(intent, 2);
+					break;
+				case 2:
+					intent.setClass(getActivity(), CongViecDuocGiao.class);
+					startActivityForResult(intent, 3);
+					break;
+
+				default:
+					break;
+				}
 			}
 		});
 		return rootView;
 	}
+	
 
 //	public class JobAsync extends AsyncTask<String, Void, String> {
 //

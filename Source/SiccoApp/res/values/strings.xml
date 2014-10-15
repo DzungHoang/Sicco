@@ -13,6 +13,10 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_example">Example action</string>
     <string name="action_settings">Settings</string>
+    <!-- menu -->
+    <string name="action_add_congviec">Thêm công việc</string>
+    <string name="action_search">Tìm kiếm</string>
+    <string name="action_tatca">Tất cả</string>
 	<!-- Login -->
 	<string name="dang_nhap">Đăng nhập ></string>
 	<string name="tai_khoan">Tài khoản</string>
@@ -20,11 +24,22 @@
 	<string name="duy_tri_dang_nhap">Duy trì đăng nhập</string>
 	<string name="progress_msg">Đang đăng nhập...</string>
 	<!-- Công việc -->
+	<string name="ngay_hoan_thanh">Ngày hoàn thành</string>
+	<string name="du_an">Dự án</string>
+	<string name="nguoi_xem">Người xem</string>
+	<string name="tep_dinh_kem">Tệp đính kèm</string>
+	<string name="noi_dung">Nội dung</string>
+	<string name="them_cong_viec">Thêm công việc</string>
+	<string name="tat_ca_cong_viec">Tất cả công việc</string>
 	<string name="toan_bo_cong_viec">Toàn bộ công việc</string>
 	<string name="cong_viec_da_giao">Công việc đã giao</string>
 	<string name="cong_viec_duoc_giao">Công việc được giao</string>
 	<string name="cong_viec_theo_doi">Công việc theo dõi</string>
 	<string name="cong_viec_hoan_thanh">Công việc hoàn thành</string>
+	<string name="ten_cong_viec">Tên công việc</string>
+	<string name="han_cuoi">Hạn cuối</string>
+	<string name="nguoi_xu_ly">Người xử lý</string>
+	<string name="nguoi_giao">Người giao</string>
 	<!-- Notify -->
 	<string name="one_msg">Bạn có 1 %1$s</string>
 	<string name="multi_msg">Bạn có %1$i cảnh báo mới</string>

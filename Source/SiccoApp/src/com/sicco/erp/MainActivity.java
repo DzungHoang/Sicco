@@ -118,7 +118,7 @@ public class MainActivity extends ActionBarActivity implements
 
 	public void restoreActionBar() {
 		ActionBar actionBar = getSupportActionBar();
-//		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 		actionBar.setDisplayShowTitleEnabled(true);
 		actionBar.setTitle(mTitle);
 	}
@@ -133,7 +133,7 @@ public class MainActivity extends ActionBarActivity implements
 			restoreActionBar();
 			return true;
 		}
-		return true;
+		return super.onCreateOptionsMenu(menu);
 	}
 
 	@Override

@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.sicco.erp.R;
-import com.sicco.erp.TatCaCongViecActivity;
-import com.sicco.erp.ThemCongViec;
 import com.sicco.erp.R.drawable;
 import com.sicco.erp.R.id;
 import com.sicco.erp.R.layout;
@@ -24,7 +22,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -81,7 +78,7 @@ public class NavigationDrawerFragment extends Fragment {
 	private int mCurrentSelectedPosition = 0;
 	private boolean mFromSavedInstanceState;
 	private boolean mUserLearnedDrawer;
-
+	
 	public NavigationDrawerFragment() {
 	}
 
@@ -119,30 +116,23 @@ public class NavigationDrawerFragment extends Fragment {
 			Bundle savedInstanceState) {
 		mDrawerListView = inflater.inflate(R.layout.fragment_navigation_drawer,
 				container, false);
-		TextView nameTxt = (TextView) mDrawerListView
-				.findViewById(R.id.nameTxt);
-		nameTxt.setText(SessionManager.getInstance(getActivity())
-				.getUserDetails().get(SessionManager.KEY_NAME));
+		TextView nameTxt = (TextView)mDrawerListView.findViewById(R.id.nameTxt);
+		nameTxt.setText(SessionManager.getInstance(getActivity()).getUserDetails().get(SessionManager.KEY_NAME));
 		mList = new ArrayList<Object>();
-		mList.add(Constant.DASHBOARD_POSITION, new CategoryMenu(
-				getString(R.string.trang_chu)));
-		mList.add(Constant.CANHBAO_POSITION, new ItemMenu(
-				R.drawable.ic_warning_selector, getString(R.string.canh_bao)));
-		mList.add(Constant.CONGVAN_POSITION, new ItemMenu(
-				R.drawable.ic_cong_van_selector, getString(R.string.cong_van)));
-		mList.add(Constant.CONGVIEC_POSITION,
-				new ItemMenu(R.drawable.ic_cong_viec_selector,
-						getString(R.string.cong_viec)));
-		mList.add(Constant.LICHBIEU_POSITION,
-				new ItemMenu(R.drawable.ic_lich_bieu_selector,
-						getString(R.string.lich_bieu)));
-		mList.add(Constant.DANHBA_POSITION, new ItemMenu(
-				R.drawable.ic_danh_ba_selector, getString(R.string.danh_ba)));
-		mList.add(Constant.TAIKHOAN_POSITION, new CategoryMenu(
-				getString(R.string.tai_khoan)));
-		mList.add(Constant.DANGXUAT_POSITION,
-				new ItemMenu(R.drawable.ic_dang_xuat_selector,
-						getString(R.string.dang_xuat)));
+		mList.add(Constant.DASHBOARD_POSITION, new CategoryMenu(getString(R.string.trang_chu)));
+		mList.add(Constant.CANHBAO_POSITION, new ItemMenu(R.drawable.ic_warning_selector,
+				getString(R.string.canh_bao)));
+		mList.add(Constant.CONGVAN_POSITION, new ItemMenu(R.drawable.ic_cong_van_selector,
+				getString(R.string.cong_van)));
+		mList.add(Constant.CONGVIEC_POSITION, new ItemMenu(R.drawable.ic_cong_viec_selector,
+				getString(R.string.cong_viec)));
+		mList.add(Constant.LICHBIEU_POSITION, new ItemMenu(R.drawable.ic_lich_bieu_selector,
+				getString(R.string.lich_bieu)));
+		mList.add(Constant.DANHBA_POSITION, new ItemMenu(R.drawable.ic_danh_ba_selector,
+				getString(R.string.danh_ba)));
+		mList.add(Constant.TAIKHOAN_POSITION, new CategoryMenu(getString(R.string.tai_khoan)));
+		mList.add(Constant.DANGXUAT_POSITION, new ItemMenu(R.drawable.ic_dang_xuat_selector,
+				getString(R.string.dang_xuat)));
 		mListView = (ListView) mDrawerListView.findViewById(R.id.list_menu);
 		mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
@@ -236,7 +226,7 @@ public class NavigationDrawerFragment extends Fragment {
 		// If the user hasn't 'learned' about the drawer, open it to introduce
 		// them to the drawer,
 		// per the navigation drawer design guidelines.
-		// if (!mUserLearnedDrawer && !mFromSavedInstanceState) {
+//		if (!mUserLearnedDrawer && !mFromSavedInstanceState) {
 		if (!mFromSavedInstanceState) {
 			mDrawerLayout.openDrawer(mFragmentContainerView);
 		}
@@ -302,30 +292,11 @@ public class NavigationDrawerFragment extends Fragment {
 		// showGlobalContextActionBar, which controls the top-left area of the
 		// action bar.
 		if (mDrawerLayout != null && isDrawerOpen()) {
-			inflater.inflate(R.menu.main, menu);
+			inflater.inflate(R.menu.global, menu);
 			showGlobalContextActionBar();
 		}
 		super.onCreateOptionsMenu(menu, inflater);
 	}
-	
-//	@Override
-//	public boolean onOptionsItemSelected(MenuItem item) {
-//		Intent intent = new Intent();
-//		switch (item.getItemId()) {
-//		case R.id.search:
-//			intent.setClass(getActivity(), TatCaCongViecActivity.class);
-//			startActivityForResult(intent, 0);
-//			break;
-//		case R.id.add_congviec:
-//			intent.setClass(getActivity(), ThemCongViec.class);
-//			startActivityForResult(intent, 0);
-//			break;
-//
-//		default:
-//			break;
-//		}
-//		return false;
-//	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -333,33 +304,13 @@ public class NavigationDrawerFragment extends Fragment {
 			return true;
 		}
 
-		Intent intent = new Intent();
-		switch (item.getItemId()) {
-		case R.id.action_search:
-			intent.setClass(getActivity(), TatCaCongViecActivity.class);
-			startActivityForResult(intent, 0);
-			break;
-		case R.id.action_add_congviec:
-			intent.setClass(getActivity(), ThemCongViec.class);
-			startActivityForResult(intent, 0);
-			break;
-
-		default:
-			break;
+		if (item.getItemId() == R.id.action_settings) {
+			Toast.makeText(getActivity(), "Example action.", Toast.LENGTH_SHORT)
+					.show();
+			return true;
 		}
 
 		return super.onOptionsItemSelected(item);
-	}
-
-	@Override
-	public void onPrepareOptionsMenu(Menu menu) {
-		if (mCurrentSelectedPosition != 3) {
-			((MenuItem) menu.findItem(R.id.action_add_congviec)).setVisible(false);
-			MenuItem item = ((MenuItem) menu.findItem(R.id.action_search));
-			if (item != null)
-				item.setVisible(false);
-		}
-		super.onPrepareOptionsMenu(menu);
 	}
 
 	/**

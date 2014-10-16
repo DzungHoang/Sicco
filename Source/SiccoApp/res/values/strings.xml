@@ -43,4 +43,6 @@
 	<!-- Notify -->
 	<string name="one_msg">Bạn có 1 %1$s</string>
 	<string name="multi_msg">Bạn có %1$i cảnh báo mới</string>
+	<!-- Widget công việc -->
+	<string name="them_cv">+</string>
 </resources>

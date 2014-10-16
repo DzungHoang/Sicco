@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minHeight="48dp"
+    android:minWidth="300dp"
+    android:previewImage="@drawable/ic_launcher"
+    android:resizeMode="vertical"
+    android:updatePeriodMillis="10000"
+    android:configure="com.sicco.erp.widget.WidgetCVConfigure"
+    android:initialLayout="@layout/widget_cong_viec" >
+
+</appwidget-provider>

@@ -36,16 +36,20 @@
             android:label="@string/tat_ca_cong_viec" >
         </activity>
         <activity 
-            android:name=".CongViecDaGiao"
+            android:name=".CongViecDaGiaoActivity"
             android:label="@string/cong_viec_da_giao" >
         </activity>
         <activity 
-            android:name=".CongViecDuocGiao"
+            android:name=".CongViecDuocGiaoActivity"
             android:label="@string/cong_viec_duoc_giao" >
         </activity>
         <activity 
-            android:name=".ThemCongViec"
+            android:name=".ThemCongViecActivity"
             android:label="@string/them_cong_viec" >
+        </activity>
+        <activity 
+            android:name=".ChiTietCongViecActivity"
+            android:label="@string/chi_tiet_cong_viec" >
         </activity>
         
         <activity

@@ -2,41 +2,25 @@ package com.sicco.erp.fragment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import com.sicco.erp.CongViecDaGiao;
-import com.sicco.erp.CongViecDuocGiao;
-import com.sicco.erp.R;
-import com.sicco.erp.TatCaCongViecActivity;
-import com.sicco.erp.R.drawable;
-import com.sicco.erp.R.id;
-import com.sicco.erp.R.layout;
-import com.sicco.erp.R.string;
-import com.sicco.erp.adapter.CongViecAdapter;
-import com.sicco.erp.manager.AlertDialogManager;
-import com.sicco.erp.manager.SessionManager;
-import com.sicco.erp.model.CongViec;
 
 import android.app.Fragment;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
-import android.widget.Toast;
+
+import com.sicco.erp.CongViecDaGiaoActivity;
+import com.sicco.erp.CongViecDuocGiaoActivity;
+import com.sicco.erp.R;
+import com.sicco.erp.TatCaCongViecActivity;
+import com.sicco.erp.adapter.CongViecAdapter;
+import com.sicco.erp.manager.AlertDialogManager;
+import com.sicco.erp.manager.SessionManager;
+import com.sicco.erp.model.CongViec;
 
 public class FragmentCongViec extends Fragment {
 	View rootView;
@@ -82,11 +66,11 @@ public class FragmentCongViec extends Fragment {
 					startActivityForResult(intent, 1);
 					break;
 				case 1:
-					intent.setClass(getActivity(), CongViecDaGiao.class);
+					intent.setClass(getActivity(), CongViecDaGiaoActivity.class);
 					startActivityForResult(intent, 2);
 					break;
 				case 2:
-					intent.setClass(getActivity(), CongViecDuocGiao.class);
+					intent.setClass(getActivity(), CongViecDuocGiaoActivity.class);
 					startActivityForResult(intent, 3);
 					break;
 

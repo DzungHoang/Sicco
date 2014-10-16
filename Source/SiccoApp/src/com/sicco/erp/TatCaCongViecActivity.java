@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,12 +27,13 @@ import com.sicco.erp.model.TatCaCongViec;
 
 public class TatCaCongViecActivity extends Activity {
 	ProgressDialog pDialog;
-	String url_congviec = "http://192.168.1.109:8080/sicco/congviec.php";
+	String url_congviec = "http://apis.mobile.vareco.vn/sicco/congviec.php";
 	JSONArray congviec = null;
 	ArrayList<HashMap<String, String>> congViecList;
 	ArrayList<TatCaCongViec> mTatCaCongViec;
 	ListView mListView;
 	TatCaCongViecAdapter mAdapter;
+	String idCongViec;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +56,10 @@ public class TatCaCongViecActivity extends Activity {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				Log.d("LuanDT", "" + id);
+				Intent intent = new Intent();
+				intent.setClass(getApplicationContext(), ChiTietCongViecActivity.class);
+				startActivityForResult(intent, 1);
+				Log.d("LuanDT", "ID Công việc = " + idCongViec);
 			}
 		});
 
@@ -103,12 +108,12 @@ public class TatCaCongViecActivity extends Activity {
 					for (int i = 0; i < congviec.length(); i++) {
 						JSONObject c = congviec.getJSONObject(i);
 
-						String id = c.getString("id");
-						String title = c.getString("ten_cong_viec");
-						String han_cuoi = c.getString("ngay_ket_thuc");
+						idCongViec = c.getString("id");
+						String tencongviec = c.getString("ten_cong_viec");
+						String hancuoi = c.getString("ngay_ket_thuc");
 
-						mTatCaCongViec.add(new TatCaCongViec(id, title,
-								han_cuoi));
+						mTatCaCongViec.add(new TatCaCongViec(idCongViec, tencongviec,
+								hancuoi));
 						mAdapter.notifyDataSetChanged();
 
 					}

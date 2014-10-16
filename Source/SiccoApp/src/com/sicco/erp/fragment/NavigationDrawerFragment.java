@@ -3,32 +3,18 @@ package com.sicco.erp.fragment;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.sicco.erp.R;
-import com.sicco.erp.TatCaCongViecActivity;
-import com.sicco.erp.ThemCongViec;
-import com.sicco.erp.R.drawable;
-import com.sicco.erp.R.id;
-import com.sicco.erp.R.layout;
-import com.sicco.erp.R.menu;
-import com.sicco.erp.R.string;
-import com.sicco.erp.adapter.MenuAdapter;
-import com.sicco.erp.manager.SessionManager;
-import com.sicco.erp.model.CategoryMenu;
-import com.sicco.erp.model.ItemMenu;
-import com.sicco.erp.utils.Constant;
-
-import android.support.v7.app.ActionBarActivity;
 import android.app.Activity;
-import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -36,10 +22,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.sicco.erp.R;
+import com.sicco.erp.TatCaCongViecActivity;
+import com.sicco.erp.ThemCongViecActivity;
+import com.sicco.erp.adapter.MenuAdapter;
+import com.sicco.erp.manager.SessionManager;
+import com.sicco.erp.model.CategoryMenu;
+import com.sicco.erp.model.ItemMenu;
+import com.sicco.erp.model.TatCaCongViec;
+import com.sicco.erp.utils.Constant;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation
@@ -340,7 +334,7 @@ public class NavigationDrawerFragment extends Fragment {
 			startActivityForResult(intent, 0);
 			break;
 		case R.id.action_add_congviec:
-			intent.setClass(getActivity(), ThemCongViec.class);
+			intent.setClass(getActivity(), ThemCongViecActivity.class);
 			startActivityForResult(intent, 0);
 			break;
 

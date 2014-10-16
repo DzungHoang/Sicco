@@ -35,9 +35,9 @@ public class TatCaCongViecAdapter extends ArrayAdapter<TatCaCongViec> {
 		mView = ((LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(mResourceID, parent,false);
 		TatCaCongViec tatCaCongViec = getItem(position);
 		TextView tenCongViec = (TextView) mView.findViewById(R.id.item_lv_ten_cong_viec);
-		tenCongViec.setText(tatCaCongViec.getTitle());
+		tenCongViec.setText(tatCaCongViec.getTenCongViec());
 		TextView hanCuoi = (TextView) mView.findViewById(R.id.item_lv_han_cuoi);
-		hanCuoi.setText(tatCaCongViec.getHancuoi());
+		hanCuoi.setText(tatCaCongViec.getHanCuoi());
 		return mView;
 	}
 

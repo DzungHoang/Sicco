@@ -17,6 +17,10 @@
     <string name="action_add_congviec">Thêm công việc</string>
     <string name="action_search">Tìm kiếm</string>
     <string name="action_tatca">Tất cả</string>
+    <string name="action_update">Cập nhật</string>
+    <string name="action_edit">Sửa</string>
+    <string name="action_cancel">Hủy</string>
+    <string name="action_save">Lưu</string>
 	<!-- Login -->
 	<string name="dang_nhap">Đăng nhập ></string>
 	<string name="tai_khoan">Tài khoản</string>
@@ -30,6 +34,7 @@
 	<string name="tep_dinh_kem">Tệp đính kèm</string>
 	<string name="noi_dung">Nội dung</string>
 	<string name="them_cong_viec">Thêm công việc</string>
+	<string name="chi_tiet_cong_viec">Chi tiết công việc</string>
 	<string name="tat_ca_cong_viec">Tất cả công việc</string>
 	<string name="toan_bo_cong_viec">Toàn bộ công việc</string>
 	<string name="cong_viec_da_giao">Công việc đã giao</string>

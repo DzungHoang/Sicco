@@ -32,7 +32,7 @@ public class FragmentCongVan extends Fragment{
 	View rootView;
 	ProgressDialog pDialog;
 	
-	String url_congvan = "http://192.168.56.1/sicco/congvan.php";
+	String url_congvan = "http://apis.mobile.vareco.vn/sicco/congvan.php";
 	JSONArray contacts = null;
 
 	ArrayList<HashMap<String, String>> contactList;

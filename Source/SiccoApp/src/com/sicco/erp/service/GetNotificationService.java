@@ -96,10 +96,10 @@ public class GetNotificationService extends Service {
 						String notification_type = json.getString("notification_type");
 						String msg_type = json.getString("message_type");
 						String url = json.getString("url");
-						Log.d("DungHV", "==================Notification==============");
-						Log.d("DungHV", "notification_type = " + notification_type);
-						Log.d("DungHV", "msg_type = " + msg_type);
-						Log.d("DungHV", "url = " + url);
+//						Log.d("DungHV", "==================Notification==============");
+//						Log.d("DungHV", "notification_type = " + notification_type);
+//						Log.d("DungHV", "msg_type = " + msg_type);
+//						Log.d("DungHV", "url = " + url);
 						
 //						NotificationDBController db1 = new NotificationDBController(context);
 						NotificationModel temp = new NotificationModel(
@@ -121,10 +121,10 @@ public class GetNotificationService extends Service {
 								null, selection, selectionArgs, null, null, null);
 						db.checkedNotification(temp);
 						if (cursor != null && cursor.getCount() > 0) {
-							Log.d("DungHV", "already in db");
+//							Log.d("DungHV", "already in db");
 						} 
 						else {
-							Log.d("DungHV", "not in db");
+//							Log.d("DungHV", "not in db");
 							ContentValues values = new ContentValues();
 							values.put(NotificationDBController.NOTIFI_TYPE_COL,
 									notification_type);

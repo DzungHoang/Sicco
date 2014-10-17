@@ -63,7 +63,7 @@ public class WidgetCVConfigure extends Activity implements OnClickListener {
 				bgColor);
 
 		colorDialog.setAlphaSliderVisible(true);
-		colorDialog.setTitle("Chá»�n mÃ u ná»�n vÃ  Ä‘á»™ trong suá»‘t!");
+		colorDialog.setTitle(getResources().getString(R.string.choose_bg_color));
 
 		colorDialog.setButton(DialogInterface.BUTTON_POSITIVE,
 				getString(android.R.string.ok),
@@ -98,7 +98,7 @@ public class WidgetCVConfigure extends Activity implements OnClickListener {
 				textColor);
 
 		colorDialog.setAlphaSliderVisible(false);
-		colorDialog.setTitle("Chá»�n mÃ u chá»¯!");
+		colorDialog.setTitle(getResources().getString(R.string.choose_text_color));
 
 		colorDialog.setButton(DialogInterface.BUTTON_POSITIVE,
 				getString(android.R.string.ok),

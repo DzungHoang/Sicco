@@ -50,4 +50,7 @@
 	<string name="multi_msg">Bạn có %1$i cảnh báo mới</string>
 	<!-- Widget công việc -->
 	<string name="them_cv">+</string>
+	<!-- Widget Configure -->
+	<string name="choose_bg_color">Chọn màu nền và độ trong suốt!</string>
+	<string name="choose_text_color">Chọn màu chữ!</string>
 </resources>

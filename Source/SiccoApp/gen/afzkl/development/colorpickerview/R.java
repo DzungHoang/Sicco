@@ -8,39 +8,39 @@ package afzkl.development.colorpickerview;
 
 public final class R {
 	public static final class attr {
-		public static final int alphaChannelText = 0x7f010003;
-		public static final int alphaChannelVisible = 0x7f010002;
-		public static final int colorPickerBorderColor = 0x7f010005;
-		public static final int colorPickerSliderColor = 0x7f010004;
-		public static final int showDialogTitle = 0x7f010000;
-		public static final int showSelectedColorInList = 0x7f010001;
+		public static final int alphaChannelText = 0x7f010071;
+		public static final int alphaChannelVisible = 0x7f010070;
+		public static final int colorPickerBorderColor = 0x7f010073;
+		public static final int colorPickerSliderColor = 0x7f010072;
+		public static final int showDialogTitle = 0x7f01006e;
+		public static final int showSelectedColorInList = 0x7f01006f;
 	}
 	public static final class drawable {
 		public static final int icon = 0x7f020084;
 	}
 	public static final class id {
-		public static final int color_panel_new = 0x7f060002;
-		public static final int color_panel_old = 0x7f060001;
-		public static final int color_picker_view = 0x7f060000;
-		public static final int dialog_color_picker_extra_layout_landscape = 0x7f060004;
+		public static final int color_panel_new = 0x7f06001c;
+		public static final int color_panel_old = 0x7f06001b;
+		public static final int color_picker_view = 0x7f06001a;
+		public static final int dialog_color_picker_extra_layout_landscape = 0x7f06001e;
 		public static final int layout1 = 0x7f06006e;
-		public static final int preference_preview_color_panel = 0x7f060003;
+		public static final int preference_preview_color_panel = 0x7f06001d;
 	}
 	public static final class layout {
 		public static final int dialog_color_picker = 0x7f030020;
 		public static final int preference_preview_layout = 0x7f03002e;
 	}
 	public static final class string {
-		public static final int app_name = 0x7f070000;
+		public static final int app_name = 0x7f0b000d;
 	}
 	public static final class style {
-		public static final int dialog_color_pciker_view_portrait = 0x7f080000;
+		public static final int dialog_color_pciker_view_portrait = 0x7f0c008b;
 	}
 	public static final class styleable {
-		public static final int[] ColorPickerPreference = { 0x7f010000, 0x7f010001 };
+		public static final int[] ColorPickerPreference = { 0x7f01006e, 0x7f01006f };
 		public static final int ColorPickerPreference_showDialogTitle = 0;
 		public static final int ColorPickerPreference_showSelectedColorInList = 1;
-		public static final int[] ColorPickerView = { 0x7f010002, 0x7f010003, 0x7f010004, 0x7f010005 };
+		public static final int[] ColorPickerView = { 0x7f010070, 0x7f010071, 0x7f010072, 0x7f010073 };
 		public static final int ColorPickerView_alphaChannelText = 1;
 		public static final int ColorPickerView_alphaChannelVisible = 0;
 		public static final int ColorPickerView_colorPickerBorderColor = 3;

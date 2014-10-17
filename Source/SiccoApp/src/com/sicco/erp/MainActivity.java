@@ -20,6 +20,7 @@ import com.sicco.erp.fragment.FragmentCongVan;
 import com.sicco.erp.fragment.FragmentCongViec;
 import com.sicco.erp.fragment.NavigationDrawerFragment;
 import com.sicco.erp.manager.SessionManager;
+import com.sicco.erp.service.GetNotificationService;
 import com.sicco.erp.utils.Constant;
 
 public class MainActivity extends ActionBarActivity implements
@@ -90,6 +91,9 @@ public class MainActivity extends ActionBarActivity implements
 			mTitle = getString(R.string.canh_bao);
 			FragmentCanhBao canhBao = new FragmentCanhBao();
 			fm.beginTransaction().replace(R.id.container, canhBao).commit();
+			//start Service to get Notification
+			Intent intent = new Intent(this, GetNotificationService.class);
+			startService(intent);
 			break;
 		case Constant.CONGVAN_POSITION:
 			mTitle = getString(R.string.cong_van);

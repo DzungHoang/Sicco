@@ -22,7 +22,7 @@ public class NotificationDBController extends SQLiteOpenHelper {
 	private SQLiteDatabase mDatabase;
 	private static NotificationDBController sInstance;
 	private Context mContext;
-	private NotificationDBController(Context context) {
+	public NotificationDBController(Context context) {
 		super(context, DB_NAME, null, DB_VERSION);
 		mDatabase = getWritableDatabase();
 		mContext = context;
@@ -114,5 +114,10 @@ public class NotificationDBController extends SQLiteOpenHelper {
 		update(TABLE_NAME, values, where, whereArgs);
 	}
 	
+	public void deleteAllData()
+	{
+	    SQLiteDatabase sdb= this.getWritableDatabase();
+	    sdb.delete(TABLE_NAME, null, null);
 
+	}
 }

@@ -53,6 +53,9 @@ public class LoginActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		super.onCreate(savedInstanceState);
+		//start Service to get Notification
+				Intent intent = new Intent(this, GetNotificationService.class);
+				startService(intent);
 		setContentView(R.layout.activity_login);
 		// Session Manager
 		session = SessionManager.getInstance(getApplicationContext());

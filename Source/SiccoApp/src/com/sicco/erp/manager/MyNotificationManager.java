@@ -61,7 +61,7 @@ public class MyNotificationManager {
 		long[] pattern = {(long)100, (long)100, (long) 100, (long) 100, (long) 100};
 		builder.setVibrate(pattern);
 		builder.setLights(0xFF0000FF, 500, 500);
-		builder.setAutoCancel(true);
+//		builder.setAutoCancel(true);
 		Notification notification = builder.getNotification();
 		notification.flags |= Notification.FLAG_SHOW_LIGHTS;
 		

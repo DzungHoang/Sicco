@@ -7,6 +7,7 @@ import com.sicco.erp.R;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService.RemoteViewsFactory;
 
@@ -24,12 +25,15 @@ public class ListProvider implements RemoteViewsFactory {
 	private ArrayList<ListItem> listItemList = new ArrayList<ListItem>();
 	private Context context = null;
 	private int appWidgetId;
+	private int mTextColor;
 
 	public ListProvider(Context context, Intent intent) {
 		this.context = context;
 		appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
 				AppWidgetManager.INVALID_APPWIDGET_ID);
-
+		mTextColor = intent.getIntExtra(WidgetCVProvider.TEXT_COLOR_EXTRA, 0);
+		Log.d("DungHV", "ListProvider: textColor = " + mTextColor);
+		Log.d("DungHV", "ListProvider: appWidgetId = " + appWidgetId);
 		populateListItem();
 	}
 
@@ -64,6 +68,9 @@ public class ListProvider implements RemoteViewsFactory {
 		ListItem listItem = listItemList.get(position);
 		remoteView.setTextViewText(R.id.item_lv_ten_cong_viec, listItem.title);
 		remoteView.setTextViewText(R.id.item_lv_han_cuoi, listItem.han_cuoi);
+		
+		remoteView.setTextColor(R.id.item_lv_ten_cong_viec, mTextColor);
+		remoteView.setTextColor(R.id.item_lv_han_cuoi, mTextColor);
 
 		return remoteView;
 	}

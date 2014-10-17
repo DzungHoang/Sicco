@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -50,15 +51,19 @@ public class WidgetCVConfigure extends Activity implements OnClickListener {
 				SharedPrefUtils.KEY_BG_WIDGET_COLOR, 0x80E5E5E5);
 		textColor = SharedPrefUtils.getPref(getApplicationContext(),
 				SharedPrefUtils.KEY_TEXT_WIDGET_COLOR, 0xFFFFFFFF);
+		Log.d("DungHV","onCreate: bgColor = " + bgColor);
+		Log.d("DungHV","onCreate:textColor = " + textColor);
 
 	}
 
 	public void onClickColorPickerDialogAlpha() {
+		Log.d("DungHV","onClickColorPickerDialogAlpha:bgColor = " + bgColor);
+		Log.d("DungHV","onClickColorPickerDialogAlpha:textColor = " + textColor);
 		final ColorPickerDialog colorDialog = new ColorPickerDialog(this,
 				bgColor);
 
 		colorDialog.setAlphaSliderVisible(true);
-		colorDialog.setTitle("Chọn màu nền và độ trong suốt!");
+		colorDialog.setTitle("Chá»�n mÃ u ná»�n vÃ  Ä‘á»™ trong suá»‘t!");
 
 		colorDialog.setButton(DialogInterface.BUTTON_POSITIVE,
 				getString(android.R.string.ok),
@@ -87,11 +92,13 @@ public class WidgetCVConfigure extends Activity implements OnClickListener {
 	}
 
 	public void onClickColorPickerDialog() {
+		Log.d("DungHV","onClickColorPickerDialog:bgColor = " + bgColor);
+		Log.d("DungHV","onClickColorPickerDialog:textColor = " + textColor);
 		final ColorPickerDialog colorDialog = new ColorPickerDialog(this,
 				textColor);
 
 		colorDialog.setAlphaSliderVisible(false);
-		colorDialog.setTitle("Chọn màu chữ!");
+		colorDialog.setTitle("Chá»�n mÃ u chá»¯!");
 
 		colorDialog.setButton(DialogInterface.BUTTON_POSITIVE,
 				getString(android.R.string.ok),
@@ -101,8 +108,9 @@ public class WidgetCVConfigure extends Activity implements OnClickListener {
 					public void onClick(DialogInterface dialog, int which) {
 						textColor = Color.parseColor(colorToHexString(colorDialog
 								.getColor()));
+						Log.d("DungHV", "onClickColorPickerDialog: textColor = " + textColor);
 						SharedPrefUtils.savePref(getApplicationContext(),
-								SharedPrefUtils.KEY_BG_WIDGET_COLOR, textColor);
+								SharedPrefUtils.KEY_TEXT_WIDGET_COLOR, textColor);
 					}
 				});
 

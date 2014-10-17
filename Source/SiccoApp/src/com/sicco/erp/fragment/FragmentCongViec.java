@@ -15,6 +15,8 @@ import android.widget.ListView;
 
 import com.sicco.erp.CongViecDaGiaoActivity;
 import com.sicco.erp.CongViecDuocGiaoActivity;
+import com.sicco.erp.CongViecHoanThanhActivity;
+import com.sicco.erp.CongViecTheoDoiActivity;
 import com.sicco.erp.R;
 import com.sicco.erp.TatCaCongViecActivity;
 import com.sicco.erp.adapter.CongViecAdapter;
@@ -72,6 +74,14 @@ public class FragmentCongViec extends Fragment {
 				case 2:
 					intent.setClass(getActivity(), CongViecDuocGiaoActivity.class);
 					startActivityForResult(intent, 3);
+					break;
+				case 3:
+					intent.setClass(getActivity(), CongViecTheoDoiActivity.class);
+					startActivityForResult(intent, 4);
+					break;
+				case 4:
+					intent.setClass(getActivity(), CongViecHoanThanhActivity.class);
+					startActivityForResult(intent, 5);
 					break;
 
 				default:

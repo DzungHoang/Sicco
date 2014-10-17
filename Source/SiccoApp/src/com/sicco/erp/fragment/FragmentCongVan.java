@@ -2,13 +2,18 @@ package com.sicco.erp.fragment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Fragment;
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,6 +31,7 @@ import com.sicco.erp.MainActivity;
 import com.sicco.erp.R;
 import com.sicco.erp.adapter.CongVanAdapter;
 import com.sicco.erp.http.HTTPHandler;
+import com.sicco.erp.manager.SessionManager;
 import com.sicco.erp.model.CongVan;
 
 public class FragmentCongVan extends Fragment{
@@ -44,8 +50,15 @@ public class FragmentCongVan extends Fragment{
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		rootView = inflater.inflate(R.layout.fragment_cong_van, container, false);
+		
+		SessionManager session = SessionManager.getInstance(getActivity());
+		String token = session.getUserDetails().get(SessionManager.KEY_TOKEN);
+		String userName = session.getUserDetails().get(SessionManager.KEY_NAME);
+		String page = "2";
+		
 		contactList = new ArrayList<HashMap<String, String>>();
-		new GetContacts().execute();
+		new GetCongViec().execute(token,userName,page);
+		
 		
 		mCongVan = new ArrayList<CongVan>();
 		
@@ -60,7 +73,9 @@ public class FragmentCongVan extends Fragment{
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				Toast.makeText(getActivity(), "Má»Ÿ trĂ¬nh duyá»‡t vá»›i URL : " + mCongVan.get(position).getUrl(), 0).show();
+				Toast.makeText(getActivity(), "Mo trinh duyet voi URL : " + mCongVan.get(position).getUrl(), 0).show();
+				Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(mCongVan.get(position).getUrl()));
+				startActivity(browserIntent);
 				
 			}
 			
@@ -69,7 +84,7 @@ public class FragmentCongVan extends Fragment{
 		return rootView;
 	}
 	
-	private class GetContacts extends AsyncTask<Void, Void, String> {
+	private class GetCongViec extends AsyncTask<String, Void, String> {
 
 		@Override
 		protected void onPreExecute() {
@@ -83,12 +98,20 @@ public class FragmentCongVan extends Fragment{
 		}
 
 		@Override
-		protected String doInBackground(Void... arg0) {
+		protected String doInBackground(String... arg0) {
 			// Creating service handler class instance
 			HTTPHandler sh = new HTTPHandler();
 
 			// Making a request to url and getting response
-			String jsonStr = sh.makeHTTPRequest(url_congvan, HTTPHandler.GET);
+			String token = arg0[0];
+			String userName = arg0[1];
+			String page = arg0[2];
+			
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			nameValuePairs.add(new BasicNameValuePair("token" , token));
+			nameValuePairs.add(new BasicNameValuePair("username", userName));
+			nameValuePairs.add(new BasicNameValuePair("page", page));
+			String jsonStr = sh.makeHTTPRequest(url_congvan, HTTPHandler.POST,nameValuePairs);
 
 			Log.d("NgaDV", "json" + jsonStr);
 

@@ -69,7 +69,7 @@ public class WidgetCVProvider extends AppWidgetProvider{
 		
 		// setting a unique Uri to the intent
 		// don't know its purpose to me right now
-//		svcIntent.setData(Uri.parse(svcIntent.toUri(Intent.URI_INTENT_SCHEME)));
+		svcIntent.setData(Uri.parse(svcIntent.toUri(Intent.URI_INTENT_SCHEME)));
 		// setting adapter to listview of the widget
 		remoteViews.setRemoteAdapter(appWidgetId, R.id.listViewWidget,
 				svcIntent);

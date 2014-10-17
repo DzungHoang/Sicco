@@ -22,7 +22,7 @@ public class RemoteFetchService extends Service {
 
 	private int appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
 	private AQuery aquery;
-	private String remoteJsonUrl = "http://apis.mobile.vareco.vn/sicco/congviec.php";
+	private String remoteJsonUrl = "http://apis.mobile.vareco.vn/sicco/congviec_old.php";
 
 	public static ArrayList<ListItem> listItemList;
 	JSONArray congviec = null;

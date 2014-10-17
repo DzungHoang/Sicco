@@ -12,9 +12,11 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.ShapeDrawable;
+import android.net.Uri;
 import android.util.Log;
 import android.widget.RemoteViews;
 
+import com.sicco.erp.MainActivity;
 import com.sicco.erp.R;
 import com.sicco.erp.utils.SharedPrefUtils;
 
@@ -73,6 +75,16 @@ public class WidgetCVProvider extends AppWidgetProvider{
 				svcIntent);
 		// setting an empty view in case of no data
 		remoteViews.setEmptyView(R.id.listViewWidget, R.id.empty_view);
+		
+		final Intent intent = new Intent(context, MainActivity.class);
+		intent.setAction("dzunghoang.WIDGET_ACTION");
+		intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+		
+		
+		intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
+		
+		PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+		remoteViews.setPendingIntentTemplate(R.id.listViewWidget, pendingIntent);
 		return remoteViews;
 	}
 

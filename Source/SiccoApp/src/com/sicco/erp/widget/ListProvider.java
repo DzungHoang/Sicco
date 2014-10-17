@@ -7,6 +7,7 @@ import com.sicco.erp.R;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService.RemoteViewsFactory;
@@ -71,6 +72,13 @@ public class ListProvider implements RemoteViewsFactory {
 		
 		remoteView.setTextColor(R.id.item_lv_ten_cong_viec, mTextColor);
 		remoteView.setTextColor(R.id.item_lv_han_cuoi, mTextColor);
+		
+		final Intent intent = new Intent();
+		final Bundle bundle = new Bundle();
+		bundle.putInt("extra_id", position);
+		intent.putExtras(bundle);
+		remoteView.setOnClickFillInIntent(R.id.item_lv_ten_cong_viec, intent);
+		remoteView.setOnClickFillInIntent(R.id.item_lv_han_cuoi, intent);
 
 		return remoteView;
 	}

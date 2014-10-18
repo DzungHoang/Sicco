@@ -36,6 +36,7 @@
                 android:paddingLeft="22dip"
                 android:singleLine="true"
                 android:textSize="18sp"
+                android:text="khachhang"
                 android:textColorHint="#9c9999" 
                 android:textColor="#5f5a5f"/>
 
@@ -46,6 +47,7 @@
                 android:layout_marginBottom="20dip"
                 android:background="@drawable/bg_login_pass"
                 android:ems="10"
+                android:text="12345"
                 android:hint="@string/mat_khau"
                 android:paddingLeft="22dip"
                 android:password="true"
@@ -68,7 +70,8 @@
                     android:gravity="center_vertical"
                     android:text="@string/duy_tri_dang_nhap"
                     android:textSize="12sp"
-                    android:textColor="#64555a" />
+                    android:textColor="#64555a"
+                    android:checked="true" />
 
                 <Button
                     android:id="@+id/btnLogin"

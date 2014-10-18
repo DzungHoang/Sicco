@@ -7,6 +7,7 @@ import com.sicco.erp.utils.Constant;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +23,7 @@ public class CanhbaoAdapter extends CursorAdapter {
 	}
 
 	@Override
-	public void bindView(View view, Context context, Cursor cursor) {
+	public void bindView(final View view, Context context, final Cursor cursor) {
 		if (view != null) {
 			TextView msgTxt = (TextView) view.findViewById(R.id.msg_canhbao);
 			TextView urlTxt = (TextView) view.findViewById(R.id.url_canhbao);
@@ -33,10 +34,17 @@ public class CanhbaoAdapter extends CursorAdapter {
 			msgTxt.setText(msg);
 			urlTxt.setText(url);
 			
-			String state = cursor.getString(cursor.getColumnIndex(NotificationDBController.STATE_COL));
-			if(state.equals(Constant.NOTIFICATION_STATE_NEW)){
-				view.setBackgroundColor(Color.CYAN);
-			}
+			new Handler().postDelayed(new Runnable() {
+				
+				@Override
+				public void run() {
+					String state = cursor.getString(cursor.getColumnIndex(NotificationDBController.STATE_COL));
+					if(state.equals(Constant.NOTIFICATION_STATE_NEW)){
+						view.setBackgroundColor(Color.CYAN);
+					}
+				}
+			}, 3000);
+			
 		}
 
 	}

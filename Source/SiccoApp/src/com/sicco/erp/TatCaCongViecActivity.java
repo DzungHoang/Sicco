@@ -1,8 +1,12 @@
 package com.sicco.erp;
 
+import java.io.ObjectOutputStream.PutField;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -12,6 +16,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.view.PagerAdapter;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -40,12 +45,17 @@ public class TatCaCongViecActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_tat_ca_cong_viec);
 
-		congViecList = new ArrayList<HashMap<String, String>>();
-		new GetCongViec().execute();
-		mTatCaCongViec = new ArrayList<TatCaCongViec>();
+		SessionManager sessionManager = SessionManager
+				.getInstance(getApplicationContext());
+		String token = sessionManager.getUserDetails().get(
+				SessionManager.KEY_TOKEN);
+		String username = sessionManager.getUserDetails().get(
+				SessionManager.KEY_NAME);
+		String page = "2";
 
-		// mTatCaCongViec.add(new TatCaCongViec("1",
-		// getString(R.string.toan_bo_cong_viec), "14/10/2014"));
+		congViecList = new ArrayList<HashMap<String, String>>();
+		new GetCongViec().execute(token, username, page);
+		mTatCaCongViec = new ArrayList<TatCaCongViec>();
 
 		mListView = (ListView) findViewById(R.id.lv_tat_ca_cong_viec);
 		mAdapter = new TatCaCongViecAdapter(getApplicationContext(),
@@ -57,15 +67,17 @@ public class TatCaCongViecActivity extends Activity {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				Intent intent = new Intent();
-				intent.setClass(getApplicationContext(), ChiTietCongViecActivity.class);
-				startActivityForResult(intent, 1);
+				intent.putExtra("idcongviec", idCongViec);
+				intent.setClass(getApplicationContext(),
+						ChiTietCongViecActivity.class);
+				startActivity(intent);
 				Log.d("LuanDT", "ID Công việc = " + idCongViec);
 			}
 		});
 
 	}
 
-	private class GetCongViec extends AsyncTask<Void, Void, String> {
+	private class GetCongViec extends AsyncTask<String, Void, String> {
 
 		@Override
 		protected void onPreExecute() {
@@ -79,16 +91,24 @@ public class TatCaCongViecActivity extends Activity {
 		}
 
 		@Override
-		protected String doInBackground(Void... arg0) {
-			// Creating service handler class instance
-			HTTPHandler sh = new HTTPHandler();
-
+		protected String doInBackground(String... arg0) {
+			HTTPHandler handler = new HTTPHandler();
+			
+			String token = arg0[0];
+			String username = arg0[1];
+			String page = arg0[2];
+			
+			List<NameValuePair> valuePairs = new ArrayList<NameValuePair>();
+			valuePairs.add(new BasicNameValuePair("page", page));
+			valuePairs.add(new BasicNameValuePair("token", token));
+			valuePairs.add(new BasicNameValuePair("username", username));
 			// Making a request to url and getting response
-			String jsonStr = sh.makeHTTPRequest(url_congviec, HTTPHandler.GET);
+			String ret = handler.makeHTTPRequest(url_congviec,
+					HTTPHandler.POST, valuePairs);
 
-			Log.d("LuanDT", "json" + jsonStr);
-
-			return jsonStr;
+			Log.d("LuanDT", "POST = " + valuePairs);
+			
+			return ret;
 		}
 
 		@Override
@@ -108,12 +128,14 @@ public class TatCaCongViecActivity extends Activity {
 					for (int i = 0; i < congviec.length(); i++) {
 						JSONObject c = congviec.getJSONObject(i);
 
-						idCongViec = c.getString("id");
+						String id = c.getString("id");
 						String tencongviec = c.getString("ten_cong_viec");
 						String hancuoi = c.getString("ngay_ket_thuc");
+						
+						idCongViec = id;
 
-						mTatCaCongViec.add(new TatCaCongViec(idCongViec, tencongviec,
-								hancuoi));
+						mTatCaCongViec.add(new TatCaCongViec(id,
+								tencongviec, hancuoi));
 						mAdapter.notifyDataSetChanged();
 
 					}
@@ -126,15 +148,17 @@ public class TatCaCongViecActivity extends Activity {
 		}
 
 	}
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.menu_toan_bo_cong_viec, menu);
 		return true;
 	}
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// TODO Auto-generated method stub
 		return super.onOptionsItemSelected(item);
 	}
-	
+
 }

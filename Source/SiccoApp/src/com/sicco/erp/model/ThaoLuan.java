@@ -1,10 +1,9 @@
 package com.sicco.erp.model;
 
 public class ThaoLuan {
-	int anhdaidien;
-	String nguoithaoluan, thoigianthaoluan, noidungthaoluan;
+	String anhdaidien, nguoithaoluan, thoigianthaoluan, noidungthaoluan;
 
-	public ThaoLuan(int anhdaidien, String nguoithaoluan,
+	public ThaoLuan(String anhdaidien, String nguoithaoluan,
 			String thoigianthaoluan, String noidungthaoluan) {
 		this.anhdaidien = anhdaidien;
 		this.nguoithaoluan = nguoithaoluan;
@@ -12,11 +11,11 @@ public class ThaoLuan {
 		this.noidungthaoluan = noidungthaoluan;
 	}
 
-	public void setAnhDaiDien(int image) {
-		this.anhdaidien = image;
+	public void setAnhDaiDien(String anhdaidien) {
+		this.anhdaidien = anhdaidien;
 	}
 
-	public int getAnhDaiDien() {
+	public String getAnhDaiDien() {
 		return anhdaidien;
 	}
 

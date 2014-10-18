@@ -75,7 +75,7 @@ public class ListProvider implements RemoteViewsFactory {
 		
 		final Intent intent = new Intent();
 		final Bundle bundle = new Bundle();
-		bundle.putString("item_id", listItem.id);
+		bundle.putString("idcongviec", listItem.id);
 		intent.putExtras(bundle);
 		remoteView.setOnClickFillInIntent(R.id.item_cong_viec, intent);
 

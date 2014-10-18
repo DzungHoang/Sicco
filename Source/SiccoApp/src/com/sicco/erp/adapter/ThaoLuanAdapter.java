@@ -8,6 +8,7 @@ import com.sicco.erp.model.CongViecDaGiao;
 import com.sicco.erp.model.ThaoLuan;
 
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,7 +39,7 @@ public class ThaoLuanAdapter extends ArrayAdapter<ThaoLuan> {
 				mResourceID, parent, false);
 		ThaoLuan thaoLuan = getItem(position);
 		ImageView anhDaiDien = (ImageView) mView.findViewById(R.id.avatar_nguoi_thao_luan);
-		anhDaiDien.setImageResource(thaoLuan.getAnhDaiDien());
+//		anhDaiDien.setImageURI("");
 		TextView nguoiThaoLuan = (TextView) mView
 				.findViewById(R.id.item_lv_nguoi_thao_luan);
 		nguoiThaoLuan.setText(thaoLuan.getNguoiThaoLuan());

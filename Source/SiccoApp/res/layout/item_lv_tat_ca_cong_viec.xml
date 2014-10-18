@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_vertical"
-    android:orientation="horizontal" >
+    android:orientation="horizontal"
+    android:id="@+id/item_cong_viec" >
 
     <TextView
         android:id="@+id/item_lv_ten_cong_viec"

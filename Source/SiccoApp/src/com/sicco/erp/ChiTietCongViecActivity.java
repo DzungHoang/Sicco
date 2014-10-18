@@ -57,14 +57,10 @@ public class ChiTietCongViecActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_chi_tiet_cong_viec);
-
-		// Intent intent = getIntent();
-		// idCongViec = intent.getStringExtra("idcongviec");
-		//
-		// Log.d("LuanDT", "ID Công việc : " + idCongViec);
 		
 		// TuNT
 		Intent intent = getIntent();
+		idCongViec = intent.getStringExtra("idcongviec");
 		if (!intent.getStringExtra("idcongviec").equals("")
 				|| intent.getStringExtra("idcongviec") != null) {
 			Toast.makeText(getApplicationContext(),

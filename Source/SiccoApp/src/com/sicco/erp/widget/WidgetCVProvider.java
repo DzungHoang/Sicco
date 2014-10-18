@@ -16,6 +16,7 @@ import android.net.Uri;
 import android.util.Log;
 import android.widget.RemoteViews;
 
+import com.sicco.erp.ChiTietCongViecActivity;
 import com.sicco.erp.MainActivity;
 import com.sicco.erp.R;
 import com.sicco.erp.utils.SharedPrefUtils;
@@ -76,8 +77,8 @@ public class WidgetCVProvider extends AppWidgetProvider{
 		// setting an empty view in case of no data
 		remoteViews.setEmptyView(R.id.listViewWidget, R.id.empty_view);
 		
-		final Intent intent = new Intent(context, MainActivity.class);
-		intent.setAction("dzunghoang.WIDGET_ACTION");
+		final Intent intent = new Intent(context, ChiTietCongViecActivity.class);
+		intent.setAction("tunt.INTENT_ID");
 		intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
 		
 		

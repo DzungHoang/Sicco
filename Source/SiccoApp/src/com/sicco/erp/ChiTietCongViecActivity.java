@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,7 +23,7 @@ import com.sicco.erp.http.HTTPHandler;
 import com.sicco.erp.model.ThaoLuan;
 
 public class ChiTietCongViecActivity extends Activity {
-	
+
 	ProgressDialog pDialog;
 	String url_congviec = "http://apis.mobile.vareco.vn/sicco/chitietcongviec.php";
 	JSONArray thaoluan = null;
@@ -31,23 +32,31 @@ public class ChiTietCongViecActivity extends Activity {
 	ListView mListView;
 	ThaoLuanAdapter mAdapter;
 	String idCongViec;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_chi_tiet_cong_viec);
-		
+
+		//TuNT
+		Intent intent = getIntent();
+		if (!intent.getStringExtra("item_id").equals("")
+				|| intent.getStringExtra("item_id") != null)
+		{
+			Toast.makeText(getApplicationContext(), "ID: "+intent.getStringExtra("item_id"), Toast.LENGTH_SHORT).show();
+		}
+		//End TuNT
 		thaoLuanList = new ArrayList<HashMap<String, String>>();
 		new GetThaoLuan().execute();
 		mThaoLuan = new ArrayList<ThaoLuan>();
-		
-		
+
 		mListView = (ListView) findViewById(R.id.lv_thao_luan);
-		mAdapter = new ThaoLuanAdapter(getBaseContext(), R.layout.item_lv_thao_luan, mThaoLuan);
+		mAdapter = new ThaoLuanAdapter(getBaseContext(),
+				R.layout.item_lv_thao_luan, mThaoLuan);
 		mListView.setAdapter(mAdapter);
-		
+
 	}
-	
+
 	private class GetThaoLuan extends AsyncTask<Void, Void, String> {
 
 		@Override
@@ -84,22 +93,25 @@ public class ChiTietCongViecActivity extends Activity {
 				try {
 					JSONObject jsonObj = new JSONObject(result);
 					thaoluan = jsonObj.getJSONArray("row");
-					
-					for (int i = 0; i < thaoluan.length(); i++) {
-					
-					JSONObject object = thaoluan.getJSONObject(i);
-					
-					int anhdaidien = R.drawable.default_avatar;
-					String urlImages = object.getString("anh_dai_dien");
-					String nguoithaoluan = object.getString("nguoi_thao_luan");
-					String thoigianthaoluan = object.getString("thoi_gian_thao_luan");
-					String noidungthaoluan = object.getString("noi_dung_thao_luan");
 
-					Log.d("LuanDT", "anh dai dien :" + urlImages);
-					
-					mThaoLuan.add(new ThaoLuan(anhdaidien, nguoithaoluan,
-							thoigianthaoluan, noidungthaoluan));
-					mAdapter.notifyDataSetChanged();
+					for (int i = 0; i < thaoluan.length(); i++) {
+
+						JSONObject object = thaoluan.getJSONObject(i);
+
+						int anhdaidien = R.drawable.default_avatar;
+						String urlImages = object.getString("anh_dai_dien");
+						String nguoithaoluan = object
+								.getString("nguoi_thao_luan");
+						String thoigianthaoluan = object
+								.getString("thoi_gian_thao_luan");
+						String noidungthaoluan = object
+								.getString("noi_dung_thao_luan");
+
+						Log.d("LuanDT", "anh dai dien :" + urlImages);
+
+						mThaoLuan.add(new ThaoLuan(anhdaidien, nguoithaoluan,
+								thoigianthaoluan, noidungthaoluan));
+						mAdapter.notifyDataSetChanged();
 
 					}
 				} catch (JSONException e) {
@@ -111,26 +123,28 @@ public class ChiTietCongViecActivity extends Activity {
 		}
 
 	}
-	
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.menu_chi_tiet_cong_viec, menu);
 		return true;
 	}
-@Override
-public boolean onOptionsItemSelected(MenuItem item) {
-	switch (item.getItemId()) {
-	case R.id.action_update:
-		Toast.makeText(getApplicationContext(), "Cập Nhật", Toast.LENGTH_SHORT).show();
-		break;
-	case R.id.action_edit:
-		Toast.makeText(getApplicationContext(), "Sửa", Toast.LENGTH_SHORT).show();
-		break;
 
-	default:
-		break;
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.action_update:
+			Toast.makeText(getApplicationContext(), "Cập Nhật",
+					Toast.LENGTH_SHORT).show();
+			break;
+		case R.id.action_edit:
+			Toast.makeText(getApplicationContext(), "Sửa", Toast.LENGTH_SHORT)
+					.show();
+			break;
+
+		default:
+			break;
+		}
+		return super.onOptionsItemSelected(item);
 	}
-	return super.onOptionsItemSelected(item);
-}
 }

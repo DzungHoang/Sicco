@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:padding="10dp"
     android:layout_margin="10dp"
-    android:background="#bbb" >
+    android:background="@drawable/item_congvan_bg" >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,7 +15,8 @@
             android:id="@+id/cvan_txt_loaicv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Loại công văn : " />
+            android:text="Loại công văn : "
+            android:textColor="#606060" />
 
         <TextView
             android:id="@+id/cvan_txt_title"
@@ -23,7 +24,8 @@
             android:layout_height="wrap_content"
             android:text="CV từ Đảng bộ" 
             android:textStyle="bold"
-            android:textSize="16sp"/>
+            android:textSize="15sp"
+            android:textColor="#393939"/>
 
     </LinearLayout>
 
@@ -32,7 +34,7 @@
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:text="" 
-        android:background="#ccc"
+        android:background="#a7a7a7"
         />
 
     <LinearLayout
@@ -43,7 +45,8 @@
             android:id="@+id/cvan_txt_detail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TextView" />
+            android:text="TextView"
+            android:textColor="#393939" />
 
     </LinearLayout>
 

@@ -44,8 +44,19 @@
             android:label="@string/cong_viec_duoc_giao" >
         </activity>
         <activity 
+            android:name=".CongViecTheoDoiActivity"
+            android:label="@string/cong_viec_theo_doi" >
+        </activity>
+        <activity 
+            android:name=".CongViecHoanThanhActivity"
+            android:label="@string/cong_viec_hoan_thanh" >
+        </activity>
+        <activity 
             android:name=".ThemCongViecActivity"
             android:label="@string/them_cong_viec" >
+        </activity>
+        <activity 
+            android:name=".TimKiemActivity">
         </activity>
         <activity 
             android:name=".ChiTietCongViecActivity"

@@ -28,6 +28,7 @@ import android.widget.TextView;
 import com.sicco.erp.R;
 import com.sicco.erp.TatCaCongViecActivity;
 import com.sicco.erp.ThemCongViecActivity;
+import com.sicco.erp.TimKiemActivity;
 import com.sicco.erp.adapter.MenuAdapter;
 import com.sicco.erp.manager.SessionManager;
 import com.sicco.erp.model.CategoryMenu;
@@ -330,7 +331,7 @@ public class NavigationDrawerFragment extends Fragment {
 		Intent intent = new Intent();
 		switch (item.getItemId()) {
 		case R.id.action_search:
-			intent.setClass(getActivity(), TatCaCongViecActivity.class);
+			intent.setClass(getActivity(), TimKiemActivity.class);
 			startActivityForResult(intent, 0);
 			break;
 		case R.id.action_add_congviec:

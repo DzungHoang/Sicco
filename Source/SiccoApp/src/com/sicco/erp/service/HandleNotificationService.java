@@ -29,9 +29,13 @@ public class HandleNotificationService extends Service {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		Log.d("DungHV", "HandleNotificationService.onStartCommand");
-		int CongViecCount = MyNotificationManager.getCongViecCount();
-		int CongVanCount = MyNotificationManager.getCongVanCount();
-		int LichBieuCount = MyNotificationManager.getLichbieuCount();
+		getNotificationCount();
+//		int CongViecCount = MyNotificationManager.getCongViecCount();
+//		int CongVanCount = MyNotificationManager.getCongVanCount();
+//		int LichBieuCount = MyNotificationManager.getLichbieuCount();
+		int CongViecCount = MyNotificationManager.CongViecCount;
+		int CongVanCount = MyNotificationManager.CongVanCount;
+		int LichBieuCount = MyNotificationManager.LichBieuCount;
 		Log.d("DungHV","CongViecCount = " + CongViecCount);
 		Log.d("DungHV","CongVanCount = " + CongVanCount);
 		Log.d("DungHV","LichBieuCount = " + LichBieuCount);
@@ -151,6 +155,17 @@ public class HandleNotificationService extends Service {
 //		LichBieucancelNotification();
 //		stopSelf();
 		return START_NOT_STICKY;
+	}
+	private void getNotificationCount(){
+		//test getCount:
+		if(GetNotificationService.checkNotificationCount){
+			if (GetNotificationService.notification_type.contains("congviec"))
+				MyNotificationManager.CongViecCount++;			
+			if (GetNotificationService.notification_type.contains("congvan"))
+				MyNotificationManager.CongVanCount++;
+			if (GetNotificationService.notification_type.contains("lichbieu"))
+				MyNotificationManager.LichBieuCount++;
+		}
 	}
 	public void CongVancancelNotification() {
 		String notificationServiceStr = Context.NOTIFICATION_SERVICE;

@@ -19,11 +19,11 @@ import com.sicco.erp.service.HandleNotificationService;
 public class MyNotificationManager {
 	static Context mContext;
 	public static final int CongViecNOTIFICATION_ID = 1;
-	public static final int CongVanNOTIFICATION_ID = 1;
-	public static final int LichBieuNOTIFICATION_ID = 1;
-	static int CongVanCount = 0;
-	static int CongViecCount = 0;
-	static int LichBieuCount = 0;
+	public static final int CongVanNOTIFICATION_ID = 2;
+	public static final int LichBieuNOTIFICATION_ID = 3;
+	public static int CongVanCount = 0;
+	public static int CongViecCount = 0;
+	public static int LichBieuCount = 0;
 	static String congvan = "congvan";
 	static String congviec = "congviec";
 	static String lichbieu = "lichbieu";
@@ -48,28 +48,28 @@ public class MyNotificationManager {
 	
 	public static void buildNormalNotification(Context context, NotificationModel data){
 		//test getCount:
-		if (
-				GetNotificationService.notification_type.contains(congviec) 
-//				|| 
-//				notificationModel.getNotify().equalsIgnoreCase(congviec)
-				)
-			CongViecCount++;
-		
-		if (
-				GetNotificationService.notification_type.contains(congvan)
-//				||
-//				notificationModel.getNotify().equalsIgnoreCase(congvan)
-				)
-			CongVanCount++;
-		if (
-				GetNotificationService.notification_type.contains(lichbieu)
-//				|| 
-//				notificationModel.getNotify().equalsIgnoreCase(lichbieu)
-				)
-			LichBieuCount++;
-		// ============================================================= //
-		
-		
+		if(GetNotificationService.checkNotificationCount){
+			if (
+					GetNotificationService.notification_type.contains(congviec) 
+	//				|| 
+	//				notificationModel.getNotify().equalsIgnoreCase(congviec)
+					)
+				CongViecCount++;
+			
+			if (
+					GetNotificationService.notification_type.contains(congvan)
+	//				||
+	//				notificationModel.getNotify().equalsIgnoreCase(congvan)
+					)
+				CongVanCount++;
+			if (
+					GetNotificationService.notification_type.contains(lichbieu)
+	//				|| 
+	//				notificationModel.getNotify().equalsIgnoreCase(lichbieu)
+					)
+				LichBieuCount++;
+			// ============================================================= //
+		}
 		
 		if(CongVanCount == 1){
 //			message = String.format(context.getString(R.string.one_msg), data.getMsg());
@@ -92,9 +92,9 @@ public class MyNotificationManager {
 	    // ==============================
 	    builder.setContentIntent(pendInt);
 		builder.setSmallIcon(R.drawable.ic_launcher);
-		builder.setContentTitle(context.getString(R.string.app_name));
+		builder.setContentTitle(context.getString(R.string.new_noti));
 		builder.setContentText(CongVanmessage);
-		builder.setContentInfo("");
+		builder.setContentInfo(GetNotificationService.ten);
 		
 		Intent resultIntent = new Intent();
 		resultIntent.setClass(context, HandleNotificationService.class);
@@ -121,6 +121,7 @@ public class MyNotificationManager {
 		
 		NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 		manager.notify(CongVanNOTIFICATION_ID, notification);
+		
 		}
 		
 		//Congviec:
@@ -144,9 +145,9 @@ public class MyNotificationManager {
 			    builder.setContentIntent(pendInt);
 		builder.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher));
 		builder.setSmallIcon(R.drawable.ic_launcher);
-		builder.setContentTitle(context.getString(R.string.app_name));
+		builder.setContentTitle(context.getString(R.string.new_noti));
 		builder.setContentText(CongViecmessage);
-		builder.setContentInfo("");
+		builder.setContentInfo(GetNotificationService.ten);
 		
 		Intent resultIntent = new Intent();
 		resultIntent.setClass(context, HandleNotificationService.class);
@@ -178,10 +179,12 @@ public class MyNotificationManager {
 		//lichbieu:
 		if(LichBieuCount == 1){
 //					message = String.format(context.getString(R.string.one_msg), data.getMsg());
-			LichBieumessage = "Ban co "+LichBieuCount +" Lich Bieu";
+//			LichBieumessage = R.string.new_noti_mess + LichBieuCount + "" + R.string.lichbieu;
+			LichBieumessage = "Ban co "+LichBieuCount +" Lich bieu";
 		}else if(LichBieuCount > 1){
 //					message = String.format(context.getString(R.string.multi_msg), mCount);
-			LichBieumessage = "Ban co "+LichBieuCount +" Lich Bieu";
+//			LichBieumessage = R.string.new_noti_mess + LichBieuCount + "" + R.string.lichbieu;
+			LichBieumessage = "Ban co "+LichBieuCount +" Lich bieu";
 		}
 		//
 		if(LichBieuCount!=0){
@@ -196,9 +199,9 @@ public class MyNotificationManager {
 			    // ==============================
 			    builder.setContentIntent(pendInt);
 		builder.setSmallIcon(R.drawable.ic_launcher);
-		builder.setContentTitle(context.getString(R.string.app_name));
+		builder.setContentTitle(context.getString(R.string.new_noti));
 		builder.setContentText(LichBieumessage);
-		builder.setContentInfo("");
+		builder.setContentInfo(GetNotificationService.ten);
 		
 		Intent resultIntent = new Intent();
 		resultIntent.setClass(context, HandleNotificationService.class);

@@ -48,6 +48,11 @@
 	<!-- Notify -->
 	<string name="one_msg">Bạn có 1 %1$s</string>
 	<string name="multi_msg">Bạn có %1$i cảnh báo mới</string>
+	<string name="new_noti">Cảnh báo mới</string>
+	<string name="new_noti_mess">Bạn có </string>
+	<string name="congvan">Công văn</string>
+	<string name="congviec">Công việc</string>
+	<string name="lichbieu">Lịch biểu</string>
 	<!-- Widget công việc -->
 	<string name="them_cv">+</string>
 	<!-- Widget Configure -->

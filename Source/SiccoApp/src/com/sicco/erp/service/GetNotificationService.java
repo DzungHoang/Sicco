@@ -30,6 +30,8 @@ public class GetNotificationService extends Service {
 	JSONObject json;
 	private static String url_get_notification = "http://sicco.tk/sicco_db.php";
 	public static String notification_type="";
+	public static String ten="";
+	public static boolean checkNotificationCount=false;
 	@Override
 	public IBinder onBind(Intent arg0) {
 		// TODO Auto-generated method stub
@@ -83,6 +85,8 @@ public class GetNotificationService extends Service {
 					for (int i = 0; i < rows.length(); i++){
 						json = rows.getJSONObject(i);
 						notification_type = json.getString("notification_type");
+						//
+						ten = json.getString("ten");
 						String msg_type = json.getString("message_type");
 						String url = json.getString("url");
 //						Log.d("DungHV", "==================Notification==============");
@@ -121,7 +125,7 @@ public class GetNotificationService extends Service {
 							values.put(NotificationDBController.STATE_COL, Constant.NOTIFICATION_STATE_NEW);
 							
 							db.insert(NotificationDBController.TABLE_NAME, null, values);
-
+							checkNotificationCount = true;
 							MyNotificationManager.buildNormalNotification(mContext, temp);
 						}
 					}

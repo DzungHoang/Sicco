@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="vui_long_doi">Vui lòng đợi ... !</string>
     <string name="app_name">Sicco</string>
     <string name="trang_chu">Trang chủ</string>
     <string name="canh_bao">Cảnh báo</string>
@@ -58,4 +59,13 @@
 	<!-- Widget Configure -->
 	<string name="choose_bg_color">Chọn màu nền và độ trong suốt!</string>
 	<string name="choose_text_color">Chọn màu chữ!</string>
+	
+	<!-- Các tiêu chí Tìm kiếm -->
+	<string-array name="cac_tieu_chi">
+	    <item name="tieu_chi_tatca">Tất cả</item>
+	    <item name="tieu_chi_tencongviec">Tên công việc</item>
+	    <item name="tieu_chi_nguoigiao">Người giao</item>
+	    <item name="tieu_chi_nguoiduocgiao">Người được giao</item>
+	</string-array>
 </resources>
+

@@ -49,6 +49,7 @@ public class FragmentCongVan extends Fragment{
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+		
 		rootView = inflater.inflate(R.layout.fragment_cong_van, container, false);
 		
 		SessionManager session = SessionManager.getInstance(getActivity());
@@ -91,7 +92,7 @@ public class FragmentCongVan extends Fragment{
 			super.onPreExecute();
 			// Showing progress dialog
 			pDialog = new ProgressDialog(getActivity());
-			pDialog.setMessage("Vui long doi !...");
+			pDialog.setMessage(getResources().getString(R.string.vui_long_doi));
 			pDialog.setCancelable(false);
 			pDialog.show();
 

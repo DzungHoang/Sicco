@@ -86,7 +86,7 @@ public class ChiTietCongViecActivity extends Activity {
 			super.onPreExecute();
 			// Showing progress dialog
 			pDialog = new ProgressDialog(ChiTietCongViecActivity.this);
-			pDialog.setMessage("Vui lĂ²ng Ä‘á»£i !...");
+			pDialog.setMessage(getResources().getString(R.string.vui_long_doi));
 			pDialog.setCancelable(false);
 			pDialog.show();
 

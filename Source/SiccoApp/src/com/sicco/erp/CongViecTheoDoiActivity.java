@@ -22,6 +22,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.sicco.erp.adapter.CongViecDaGiaoAdapter;
 import com.sicco.erp.adapter.CongViecTheoDoiAdapter;
@@ -63,9 +64,11 @@ public class CongViecTheoDoiActivity extends Activity {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				Intent intent = new Intent();
+				intent.putExtra("idcongviec", idCongViec);
 				intent.setClass(getApplicationContext(), ChiTietCongViecActivity.class);
-				startActivityForResult(intent, 1);
-				Log.d("LuanDT", "ID Công việc = " + idCongViec);
+				startActivity(intent);
+				
+//				Toast.makeText(getApplicationContext(), "ban vua chon cong viec co id la : " +_ idCongViec, 0);
 			}
 		});
 
@@ -78,7 +81,7 @@ public class CongViecTheoDoiActivity extends Activity {
 			super.onPreExecute();
 			// Showing progress dialog
 			pDialog = new ProgressDialog(CongViecTheoDoiActivity.this);
-			pDialog.setMessage("Vui lòng đợi !...");
+			pDialog.setMessage(getResources().getString(R.string.vui_long_doi));
 			pDialog.setCancelable(false);
 			pDialog.show();
 

@@ -63,8 +63,9 @@ public class CongViecHoanThanhActivity extends Activity {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				Intent intent = new Intent();
+				intent.putExtra("idcongviec", idCongViec);
 				intent.setClass(getApplicationContext(), ChiTietCongViecActivity.class);
-				startActivityForResult(intent, 1);
+				startActivity(intent);
 				Log.d("LuanDT", "ID Công việc = " + idCongViec);
 			}
 		});
@@ -78,7 +79,7 @@ public class CongViecHoanThanhActivity extends Activity {
 			super.onPreExecute();
 			// Showing progress dialog
 			pDialog = new ProgressDialog(CongViecHoanThanhActivity.this);
-			pDialog.setMessage("Vui lòng đợi !...");
+			pDialog.setMessage(getResources().getString(R.string.vui_long_doi));
 			pDialog.setCancelable(false);
 			pDialog.show();
 

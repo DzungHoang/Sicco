@@ -53,17 +53,14 @@ public class TimKiemActivity  extends Activity{
 	Spinner spn_TieuChi;
 	
 	//Cac tieu chi trong spinner
-	 String cacTieuChi[]={
-	 "Tất cả",
-	 "Tên công việc",
-	 "Người giao",
-	 "Người được giao"};
+	 String[] cacTieuChi;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_tim_kiem);
 		
+		cacTieuChi = getResources().getStringArray(R.array.cac_tieu_chi); 
 
 //-------------------------Action bar -----------------------------------------------------------//
 		
@@ -83,10 +80,10 @@ public class TimKiemActivity  extends Activity{
 		 android.R.layout.simple_spinner_item,
 		 cacTieuChi
 		 );
-		 //phải gọi lệnh này để hiển thị danh sách cho Spinner
+		 //pháº£i gá»�i lá»‡nh nĂ y Ä‘á»ƒ hiá»ƒn thá»‹ danh sĂ¡ch cho Spinner
 		mSpnAdapter.setDropDownViewResource
-		 (android.R.layout.simple_list_item_single_choice);
-		 //Thiết lập adapter cho Spinner
+		 (android.R.layout.simple_list_item_1);
+		 //Thiáº¿t láº­p adapter cho Spinner
 		 spn_TieuChi.setAdapter(mSpnAdapter);
 		 
 		 edt_KeyWork.setOnEditorActionListener(new OnEditorActionListener() {
@@ -132,7 +129,7 @@ public class TimKiemActivity  extends Activity{
 				Intent intent = new Intent();
 				intent.setClass(getApplicationContext(), ChiTietCongViecActivity.class);
 				startActivityForResult(intent, 1);
-				Log.d("LuanDT", "ID Công việc = " + idCongViec);
+				Log.d("LuanDT", "ID CĂ´ng viá»‡c = " + idCongViec);
 			}
 		});
 
@@ -145,7 +142,7 @@ public class TimKiemActivity  extends Activity{
 			super.onPreExecute();
 			// Showing progress dialog
 			pDialog = new ProgressDialog(TimKiemActivity.this);
-			pDialog.setMessage("Vui lòng đợi !...");
+			pDialog.setMessage(getResources().getString(R.string.vui_long_doi));
 			pDialog.setCancelable(false);
 			pDialog.show();
 

@@ -46,6 +46,7 @@
 	<string name="han_cuoi">Hạn cuối</string>
 	<string name="nguoi_xu_ly">Người xử lý</string>
 	<string name="nguoi_giao">Người giao</string>
+	<string name="tien_do">Tiến độ</string>
 	<!-- Notify -->
 	<string name="one_msg">Bạn có 1 %1$s</string>
 	<string name="multi_msg">Bạn có %1$i cảnh báo mới</string>

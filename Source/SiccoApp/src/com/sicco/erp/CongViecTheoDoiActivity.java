@@ -128,10 +128,10 @@ public class CongViecTheoDoiActivity extends Activity {
 
 						idCongViec = c.getString("id");
 						String tencongviec = c.getString("ten_cong_viec");
-						String nguoixuly = c.getString("nguoi_thuc_hien");
+						String tiendo = c.getString("tien_do");
 
 						mCongViecTheoDoi.add(new CongViecTheoDoi(idCongViec, tencongviec,
-								nguoixuly));
+								tiendo));
 						mAdapter.notifyDataSetChanged();
 
 					}

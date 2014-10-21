@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Service;
@@ -31,7 +32,14 @@ public class GetNotificationService extends Service {
 	private static String url_get_notification = "http://sicco.tk/sicco_db.php";
 	public static String notification_type="";
 	public static String ten="";
-	public static boolean checkNotificationCount=false;
+	public static String content="";
+	static String msg_type="";
+	String congviec="congviec";
+	String congvan="congvan";
+	String lichbieu="lichbieu";
+	public static int notification_Count;
+	public static int msn_Count;
+	public static boolean check_Notification_Count=false;
 	@Override
 	public IBinder onBind(Intent arg0) {
 		// TODO Auto-generated method stub
@@ -84,18 +92,48 @@ public class GetNotificationService extends Service {
 				if(rows != null && rows.length() > 0){
 					for (int i = 0; i < rows.length(); i++){
 						json = rows.getJSONObject(i);
+						//notification_type=congvan/congviec/lichbieu/						
 						notification_type = json.getString("notification_type");
-						//
+						//Notification 's name:
 						ten = json.getString("ten");
-						String msg_type = json.getString("message_type");
+						
+						// ============================================================== \\
 						String url = json.getString("url");
+						// check and get msg_type & notifi_type
+						//messenger_type: 
+						/** 
+						 * notification_type="congvan"{ messenger_type = congvanmoi/canpheduyet/duocpheduyet.}
+						 * notification_type="congviec"{ messenger_type = congviecmoi/tiendomoi/thaoluanmoi.}
+						 * notification_type="lichbieu"{ messenger_type = lichcanhan/lichcoquan/lichphong.}
+						 * */
+						msg_type = json.getString("message_type");
+							if(notification_type.contains(congvan)){
+								notification_Count=1;
+								if(msg_type.contains("congvanmoi"))msn_Count=11;
+								if(msg_type.contains("canpheduyet"))msn_Count=12;
+								if(msg_type.contains("duocpheduyet"))msn_Count=13;
+								
+							}else if(notification_type.contains(congviec)){
+								notification_Count=2;
+								if(msg_type.contains("congviecmoi"))msn_Count=21;
+								if(msg_type.contains("tiendomoi"))msn_Count=22;
+								if(msg_type.contains("thaoluanmoi"))msn_Count=23;
+							}else if(notification_type.contains(lichbieu)){
+								notification_Count=3;
+								if(msg_type.contains("lichcanhan"))msn_Count=31;
+								if(msg_type.contains("lichcoquan"))msn_Count=32;
+								if(msg_type.contains("lichphong"))msn_Count=33;
+							}
+							Log.d("ToanNM", "notification_Count:" +notification_Count + ",msn_Count" +msn_Count);
+						// noi dung:
+						content = json.getString("noi_dung");
 //						Log.d("DungHV", "==================Notification==============");
 //						Log.d("DungHV", "notification_type = " + notification_type);
 //						Log.d("DungHV", "msg_type = " + msg_type);
 //						Log.d("DungHV", "url = " + url);
 						
 						NotificationModel temp = new NotificationModel(
-								notification_type, msg_type, url, "new");
+								notification_type, msg_type, content, url, "new");
 						NotificationDBController db = NotificationDBController
 								.getInstance(mContext);
 						
@@ -106,9 +144,12 @@ public class GetNotificationService extends Service {
 						String selection = NotificationDBController.USER_COL
 								+ "=? AND " + NotificationDBController.NOTIFI_TYPE_COL
 								+ "=? AND " + NotificationDBController.MSG_TYPE_COL
-								+ "=? AND " + NotificationDBController.URL_COL + "=?";
+								+ "=? AND " + NotificationDBController.CONTENT_COL
+								+ "=? AND " + NotificationDBController.URL_COL 
+//								+ "=? AND " + NotificationDBController.STATE_COL 
+								+ "=?";
 						String[] selectionArgs = new String[] { user, notification_type,
-								msg_type, url };
+								msg_type, content, url };
 						Cursor cursor = db.query(NotificationDBController.TABLE_NAME,
 								null, selection, selectionArgs, null, null, null);
 						db.checkedNotification(temp);
@@ -118,14 +159,14 @@ public class GetNotificationService extends Service {
 						else {
 //							Log.d("DungHV", "not in db");
 							ContentValues values = new ContentValues();
-							values.put(NotificationDBController.NOTIFI_TYPE_COL,
-									notification_type);
+							values.put(NotificationDBController.NOTIFI_TYPE_COL, notification_type);
 							values.put(NotificationDBController.MSG_TYPE_COL, msg_type);
+							values.put(NotificationDBController.CONTENT_COL, content);
 							values.put(NotificationDBController.URL_COL, url);
 							values.put(NotificationDBController.STATE_COL, Constant.NOTIFICATION_STATE_NEW);
 							
 							db.insert(NotificationDBController.TABLE_NAME, null, values);
-							checkNotificationCount = true;
+							check_Notification_Count = true;
 							MyNotificationManager.buildNormalNotification(mContext, temp);
 						}
 					}

@@ -33,9 +33,9 @@ public class HandleNotificationService extends Service {
 //		int CongViecCount = MyNotificationManager.getCongViecCount();
 //		int CongVanCount = MyNotificationManager.getCongVanCount();
 //		int LichBieuCount = MyNotificationManager.getLichbieuCount();
-		int CongViecCount = MyNotificationManager.CongViecCount;
-		int CongVanCount = MyNotificationManager.CongVanCount;
-		int LichBieuCount = MyNotificationManager.LichBieuCount;
+		int CongViecCount = MyNotificationManager.congViec_Count;
+		int CongVanCount = MyNotificationManager.congVan_Count;
+		int LichBieuCount = MyNotificationManager.lichBieu_Count;
 		Log.d("DungHV","CongViecCount = " + CongViecCount);
 		Log.d("DungHV","CongVanCount = " + CongVanCount);
 		Log.d("DungHV","LichBieuCount = " + LichBieuCount);
@@ -50,8 +50,6 @@ public class HandleNotificationService extends Service {
 						Log.d("DungHV","show URL");
 						Intent resultIntent = new Intent(this,MainActivity.class);
 						resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-						PendingIntent pendInt = PendingIntent.getActivity(this, 0,
-								resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 						resultIntent.setAction(Intent.ACTION_VIEW);
 						resultIntent.setData(Uri.parse(data.getUrl()));
 						// 
@@ -87,8 +85,6 @@ public class HandleNotificationService extends Service {
 						Log.d("DungHV","show URL");
 						Intent resultIntent = new Intent(this,MainActivity.class);
 						resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-						PendingIntent pendInt = PendingIntent.getActivity(this, 0,
-								resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 						resultIntent.setAction(Intent.ACTION_VIEW);
 						resultIntent.setData(Uri.parse(data.getUrl()));
 						// 
@@ -124,8 +120,6 @@ public class HandleNotificationService extends Service {
 						Log.d("DungHV","show URL");
 						Intent resultIntent = new Intent(this,MainActivity.class);
 						resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-						PendingIntent pendInt = PendingIntent.getActivity(this, 0,
-								resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 						resultIntent.setAction(Intent.ACTION_VIEW);
 						resultIntent.setData(Uri.parse(data.getUrl()));
 						// 
@@ -158,29 +152,29 @@ public class HandleNotificationService extends Service {
 	}
 	private void getNotificationCount(){
 		//test getCount:
-		if(GetNotificationService.checkNotificationCount){
+		if(GetNotificationService.check_Notification_Count){
 			if (GetNotificationService.notification_type.contains("congviec"))
-				MyNotificationManager.CongViecCount++;			
+				MyNotificationManager.congViec_Count++;			
 			if (GetNotificationService.notification_type.contains("congvan"))
-				MyNotificationManager.CongVanCount++;
+				MyNotificationManager.congVan_Count++;
 			if (GetNotificationService.notification_type.contains("lichbieu"))
-				MyNotificationManager.LichBieuCount++;
+				MyNotificationManager.lichBieu_Count++;
 		}
 	}
 	public void CongVancancelNotification() {
 		String notificationServiceStr = Context.NOTIFICATION_SERVICE;
 		NotificationManager mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(notificationServiceStr);
-		mNotificationManager.cancel(MyNotificationManager.CongVanNOTIFICATION_ID);
+		mNotificationManager.cancel(MyNotificationManager.CONGVAN_NOTIFICATION_ID);
 	}
 	public void CongVieccancelNotification() {
 		String notificationServiceStr = Context.NOTIFICATION_SERVICE;
 		NotificationManager mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(notificationServiceStr);
-		mNotificationManager.cancel(MyNotificationManager.CongViecNOTIFICATION_ID);
+		mNotificationManager.cancel(MyNotificationManager.CONGVIEC_NOTIFICATION_ID);
 	}
 	public void LichBieucancelNotification() {
 		String notificationServiceStr = Context.NOTIFICATION_SERVICE;
 		NotificationManager mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(notificationServiceStr);
-		mNotificationManager.cancel(MyNotificationManager.LichBieuNOTIFICATION_ID);
+		mNotificationManager.cancel(MyNotificationManager.LICHBIEU_NOTIFICATION_ID);
 	}
 
 }

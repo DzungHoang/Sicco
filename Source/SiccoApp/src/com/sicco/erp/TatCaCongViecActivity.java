@@ -1,22 +1,14 @@
 package com.sicco.erp;
 
-import java.io.ObjectOutputStream.PutField;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.view.PagerAdapter;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,9 +16,14 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import com.costum.android.widget.LoadMoreListView;
+import com.costum.android.widget.LoadMoreListView.OnLoadMoreListener;
+import com.costum.android.widget.PullAndLoadListView;
 import com.sicco.erp.adapter.TatCaCongViecAdapter;
-import com.sicco.erp.http.HTTPHandler;
+import com.sicco.erp.database.DBController;
+import com.sicco.erp.database.DBController.LoadingFinishListener;
 import com.sicco.erp.manager.SessionManager;
 import com.sicco.erp.model.TatCaCongViec;
 
@@ -40,27 +37,59 @@ public class TatCaCongViecActivity extends Activity {
 	TatCaCongViecAdapter mAdapter;
 	String idCongViec;
 
+	static int pnumber = 1;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_tat_ca_cong_viec);
 
-		SessionManager sessionManager = SessionManager
-				.getInstance(getApplicationContext());
-		String token = sessionManager.getUserDetails().get(
-				SessionManager.KEY_TOKEN);
-		String username = sessionManager.getUserDetails().get(
-				SessionManager.KEY_NAME);
-		String page = "2";
+//		SessionManager sessionManager = SessionManager
+//				.getInstance(getApplicationContext());
+//		String token = sessionManager.getUserDetails().get(
+//				SessionManager.KEY_TOKEN);
+//		String username = sessionManager.getUserDetails().get(
+//				SessionManager.KEY_NAME);
 
-		congViecList = new ArrayList<HashMap<String, String>>();
-		new GetCongViec().execute(token, username, page);
-		mTatCaCongViec = new ArrayList<TatCaCongViec>();
-
+		pDialog = new ProgressDialog(TatCaCongViecActivity.this);
+		pDialog.setMessage(getResources().getString(R.string.vui_long_doi));
+		pDialog.setCancelable(false);
+		pDialog.show();
+		
 		mListView = (ListView) findViewById(R.id.lv_tat_ca_cong_viec);
+		
+		final DBController controller = DBController.getInstance(getApplicationContext());
+		mTatCaCongViec = controller.getCongViec();
 		mAdapter = new TatCaCongViecAdapter(getApplicationContext(),
 				R.layout.item_lv_tat_ca_cong_viec, mTatCaCongViec);
-		mListView.setAdapter(mAdapter);
+		
+		controller.setLoadingFinishListener(new LoadingFinishListener() {
+			
+			@Override
+			public void onFinished() {
+				if (pDialog.isShowing())
+					pDialog.dismiss();
+				mListView.setAdapter(mAdapter);
+			}
+		});
+		
+		
+		((LoadMoreListView) mListView)
+		.setOnLoadMoreListener(new OnLoadMoreListener() {
+			public void onLoadMore() {
+				pnumber = pnumber+1;
+
+				controller.loadData(pnumber, DBController.TYPE_CONG_VIEC);
+				controller.setLoadingFinishListener(new LoadingFinishListener() {
+					
+					@Override
+					public void onFinished() {
+						mAdapter.notifyDataSetChanged();
+						Toast.makeText(getApplicationContext(), "onLoad "+pnumber, 0).show();
+						((LoadMoreListView) mListView).onLoadMoreComplete();
+					}
+				});
+			}
+		});
 		mListView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
@@ -76,79 +105,7 @@ public class TatCaCongViecActivity extends Activity {
 		});
 
 	}
-
-	private class GetCongViec extends AsyncTask<String, Void, String> {
-
-		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-			// Showing progress dialog
-			pDialog = new ProgressDialog(TatCaCongViecActivity.this);
-			pDialog.setMessage("Vui lòng đợi !...");
-			pDialog.setCancelable(false);
-			pDialog.show();
-
-		}
-
-		@Override
-		protected String doInBackground(String... arg0) {
-			HTTPHandler handler = new HTTPHandler();
-			
-			String token = arg0[0];
-			String username = arg0[1];
-			String page = arg0[2];
-			
-			List<NameValuePair> valuePairs = new ArrayList<NameValuePair>();
-			valuePairs.add(new BasicNameValuePair("page", page));
-			valuePairs.add(new BasicNameValuePair("token", token));
-			valuePairs.add(new BasicNameValuePair("username", username));
-			// Making a request to url and getting response
-			String ret = handler.makeHTTPRequest(url_congviec,
-					HTTPHandler.POST, valuePairs);
-
-			Log.d("LuanDT", "POST = " + valuePairs);
-			
-			return ret;
-		}
-
-		@Override
-		protected void onPostExecute(String result) {
-			super.onPostExecute(result);
-			// Dismiss the progress dialog
-			if (pDialog.isShowing())
-				pDialog.dismiss();
-			if (result != null) {
-				try {
-					JSONObject jsonObj = new JSONObject(result);
-
-					// Getting JSON Array node
-					congviec = jsonObj.getJSONArray("row");
-
-					// looping through All Contacts
-					for (int i = 0; i < congviec.length(); i++) {
-						JSONObject c = congviec.getJSONObject(i);
-
-						String id = c.getString("id");
-						String tencongviec = c.getString("ten_cong_viec");
-						String hancuoi = c.getString("ngay_ket_thuc");
-						
-						idCongViec = id;
-
-						mTatCaCongViec.add(new TatCaCongViec(id,
-								tencongviec, hancuoi));
-						mAdapter.notifyDataSetChanged();
-
-					}
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
-			} else {
-				Log.e("LuanDT", "Khong the lay data tu url nay");
-			}
-		}
-
-	}
-
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.menu_toan_bo_cong_viec, menu);

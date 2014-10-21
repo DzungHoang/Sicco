@@ -28,13 +28,19 @@
             android:layout_marginRight="10dp"
             android:text="@string/han_cuoi"
             android:textColor="#ffffff" />
-
     </RelativeLayout>
 
+    <!--
     <ListView
         android:id="@+id/lv_tat_ca_cong_viec"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
     </ListView>
+    -->
+
+    <com.costum.android.widget.LoadMoreListView
+        android:id="@+id/lv_tat_ca_cong_viec"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" />
 
 </LinearLayout>

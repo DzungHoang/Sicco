@@ -63,6 +63,11 @@ public class ChiTietCongViecActivity extends Activity {
 		idCongViec = intent.getStringExtra("idcongviec");
 		if (!intent.getStringExtra("idcongviec").equals("")
 				|| intent.getStringExtra("idcongviec") != null) {
+			if(intent.getStringExtra("idcongviec").equals("-1")){
+				finish();
+				Intent intent2 = new Intent(getApplicationContext(), TatCaCongViecActivity.class);
+				startActivity(intent2);
+			}
 			Toast.makeText(getApplicationContext(),
 					"ID: " + intent.getStringExtra("idcongviec"),
 					Toast.LENGTH_LONG).show();

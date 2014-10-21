@@ -89,7 +89,11 @@ public class RemoteFetchService extends Service {
 					listItem.han_cuoi = han_cuoi;
 					listItemList.add(listItem);
 				}
-
+				ListItem loadMore = new ListItem();
+				loadMore.id = "-1";
+				loadMore.title = "Xem them";
+				loadMore.han_cuoi = "";
+				listItemList.add(loadMore);
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}

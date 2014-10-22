@@ -57,6 +57,7 @@
 	<string name="lichbieu">Lịch biểu</string>
 	<!-- Widget công việc -->
 	<string name="them_cv">+</string>
+	<string name="read_more">Xem thêm</string>
 	<!-- Widget Configure -->
 	<string name="choose_bg_color">Chọn màu nền và độ trong suốt!</string>
 	<string name="choose_text_color">Chọn màu chữ!</string>

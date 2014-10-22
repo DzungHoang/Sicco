@@ -14,59 +14,82 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.sicco.erp.R;
 import com.sicco.erp.http.HTTPHandler;
+import com.sicco.erp.manager.SessionManager;
 import com.sicco.erp.model.CongVan;
 import com.sicco.erp.model.TatCaCongViec;
 import com.sicco.erp.model.ThaoLuan;
 
 public class DBController {
 	private static DBController instance;
-	private static ArrayList<TatCaCongViec> DataCongViec;
+	public static ArrayList<TatCaCongViec> DataCongViec;
 	private static ArrayList<CongVan> DataCongVan;
 
 	public static final int TYPE_CONG_VIEC = 0;
 	public static final int TYPE_CONG_VAN = TYPE_CONG_VIEC + 1;
+	public static final int PAGE_SIZE = 20;
 
 	Context mContext;
-	
+
 	ProgressDialog pDialog;
 	String url_congviec = "http://apis.mobile.vareco.vn/sicco/congviec.php";
 	String url_congvan = "http://apis.mobile.vareco.vn/sicco/congvan.php";
 	JSONArray congviec = null, thaoluan = null, congvan = null;
 
+	String token, username;
 	public DBController(Context context) {
+		mContext = context;
+		SessionManager sessionManager = SessionManager.getInstance(mContext);
+		token = sessionManager.getUserDetails().get(
+				SessionManager.KEY_TOKEN);
+		username = sessionManager.getUserDetails().get(
+				SessionManager.KEY_NAME);
 		DataCongViec = new ArrayList<TatCaCongViec>();
 		DataCongVan = new ArrayList<CongVan>();
-		new GetCongViec().execute("121313", "1324", "1");
-		new GetCongVan().execute("121313", "1324", "1");
-		mContext = context;
 	}
 
 	public static DBController getInstance(Context context) {
 		if (instance == null && context != null) {
+			Log.d("TuNT", "create DB");
 			instance = new DBController(context);
 		}
 		return instance;
 	}
 
-	public ArrayList<TatCaCongViec> getCongViec() {
-		return DataCongViec;
+	GetCongViec mGetCongViecAsync;
+	ArrayList<LoadCongViecListener> mCallback = new ArrayList<DBController.LoadCongViecListener>();
+	int mRunningPage = -1;
+
+	public ArrayList<TatCaCongViec> getCongViec(int page,
+			LoadCongViecListener callback) {
+		Log.d("TuNT",
+				"getCongViec: DataCongViec.size() = " + DataCongViec.size());
+
+		if ((DataCongViec != null && DataCongViec.size() < page * PAGE_SIZE - 1)
+				|| DataCongViec == null) {
+			Log.d("TuNT", "start loading: page = " + page);
+			mCallback.add(callback);
+			if(mRunningPage == -1){
+				GetCongViec async = new GetCongViec();
+				async.execute(token, username, Integer.toString(page));
+				mRunningPage = page;
+			}
+
+			return null;
+		} else {
+			ArrayList<TatCaCongViec> temp = new ArrayList<TatCaCongViec>();
+			temp.addAll(DataCongViec.subList(0, page * PAGE_SIZE));
+			return temp;
+		}
+
+	}
+
+	public static interface LoadCongViecListener {
+		public void onFinished(ArrayList<TatCaCongViec> data);
 	}
 
 	public ArrayList<CongVan> getCongVan() {
 		return DataCongVan;
-	}
-
-	public void loadData(int page, int type) {
-		if (type == TYPE_CONG_VIEC) {
-			new GetCongViec().execute("121313", "1324", Integer.toString(page));
-			DataCongViec.clone();
-			Log.d("TuNT", "cong viec: "+DataCongViec);
-		} else if(type == TYPE_CONG_VAN){
-			new GetCongVan().execute("121313", "1324", Integer.toString(page));
-			DataCongVan.clone();
-		}
 	}
 
 	private class GetCongViec extends AsyncTask<String, Void, String> {
@@ -74,11 +97,12 @@ public class DBController {
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
-			Log.d("TuNT", "getCV");
+			Log.d("TuNT", "GetCongViec.onPreExecute");
 		}
 
 		@Override
 		protected String doInBackground(String... arg0) {
+			Log.d("TuNT", "GetCongViec.doInBackground");
 			HTTPHandler handler = new HTTPHandler();
 
 			String token = arg0[0];
@@ -98,6 +122,7 @@ public class DBController {
 		@Override
 		protected void onPostExecute(String result) {
 			super.onPostExecute(result);
+			Log.d("TuNT", "GetCongViec.onPostExecute");
 			if (result != null) {
 				try {
 					JSONObject jsonObj = new JSONObject(result);
@@ -153,8 +178,14 @@ public class DBController {
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
-				if (mInterface != null) {
-					mInterface.onFinished();
+				mRunningPage = -1;
+				if (mCallback != null && mCallback.size() > 0) {
+					Log.d("TuNT",
+							"GetCongViec.onPostExecute: mCallback.onFinished: "
+									+ DataCongViec);
+					for (int i = 0; i < mCallback.size(); i++) {
+						mCallback.get(i).onFinished(DataCongViec);
+					}
 				}
 			} else {
 				Log.e("TuNT", "ERROR!");
@@ -162,9 +193,9 @@ public class DBController {
 		}
 
 	}
-	
+
 	private class GetCongVan extends AsyncTask<String, Void, String> {
-		
+
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
@@ -179,12 +210,13 @@ public class DBController {
 			String token = arg0[0];
 			String userName = arg0[1];
 			String page = arg0[2];
-			
+
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-			nameValuePairs.add(new BasicNameValuePair("token" , token));
+			nameValuePairs.add(new BasicNameValuePair("token", token));
 			nameValuePairs.add(new BasicNameValuePair("username", userName));
 			nameValuePairs.add(new BasicNameValuePair("page", page));
-			String jsonStr = sh.makeHTTPRequest(url_congvan, HTTPHandler.POST,nameValuePairs);
+			String jsonStr = sh.makeHTTPRequest(url_congvan, HTTPHandler.POST,
+					nameValuePairs);
 
 			return jsonStr;
 		}
@@ -196,44 +228,41 @@ public class DBController {
 				try {
 					JSONObject jsonObj = new JSONObject(result);
 
-					
 					// Getting JSON Array node
 					congvan = jsonObj.getJSONArray("row");
-					
+
 					// looping through All Contacts
 					for (int i = 0; i < congvan.length(); i++) {
 						JSONObject c = congvan.getJSONObject(i);
-						
-						
+
 						String id = c.getString("id");
 						String title = c.getString("loai_cong_van");
 						String detail = c.getString("trich_yeu");
 						String url = c.getString("url");
-						
-						
+
 						DataCongVan.add(new CongVan(title, detail, url, id));
 
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
-				Log.d("TuNT", "Data Cong van" + DataCongVan);
-				if (mInterface != null) {
-					mInterface.onFinished();
-				}
+//				Log.d("TuNT", "Data Cong van" + DataCongVan);
+//				if (mInterface != null) {
+//					mInterface.onFinished();
+//				}
 			} else {
 				Log.e("TuNT", "Khong the lay data tu url nay");
 			}
 		}
 	}
 
-	private LoadingFinishListener mInterface;
-
-	public void setLoadingFinishListener(LoadingFinishListener listener) {
-		mInterface = listener;
-	}
-
-	public static interface LoadingFinishListener {
-		public void onFinished();
-	}
+//	public LoadingFinishListener mInterface;
+//
+//	public void setLoadingFinishListener(LoadingFinishListener listener) {
+//		mInterface = listener;
+//	}
+//
+//	public static interface LoadingFinishListener {
+//		public void onFinished();
+//	}
 }

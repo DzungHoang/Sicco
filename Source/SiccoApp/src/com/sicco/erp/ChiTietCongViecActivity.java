@@ -56,26 +56,28 @@ public class ChiTietCongViecActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_chi_tiet_cong_viec);
-		
 		// TuNT
 		Intent intent = getIntent();
 		idCongViec = intent.getStringExtra("idcongviec");
-		if (!intent.getStringExtra("idcongviec").equals("")
-				|| intent.getStringExtra("idcongviec") != null) {
-			if(intent.getStringExtra("idcongviec").equals("-1")){
-				finish();
-				Intent intent2 = new Intent(getApplicationContext(), TatCaCongViecActivity.class);
-				startActivity(intent2);
+		if (intent.getStringExtra("idcongviec") != null) {
+			if (!intent.getStringExtra("idcongviec").equals("")) {
+				if (intent.getStringExtra("idcongviec").equals("-1")) {
+					finish();
+					Intent intent2 = new Intent(getApplicationContext(),
+							TatCaCongViecActivity.class);
+					startActivity(intent2);
+				}else{
+					new GetThaoLuan().execute(idCongViec);
+				}
+				Toast.makeText(getApplicationContext(),
+						"ID: " + intent.getStringExtra("idcongviec"),
+						Toast.LENGTH_LONG).show();
 			}
-			Toast.makeText(getApplicationContext(),
-					"ID: " + intent.getStringExtra("idcongviec"),
-					Toast.LENGTH_LONG).show();
 		}
 		// End TuNT
-
+		setContentView(R.layout.activity_chi_tiet_cong_viec);
+		
 		thaoLuanList = new ArrayList<HashMap<String, String>>();
-		new GetThaoLuan().execute(idCongViec);
 		mThaoLuan = new ArrayList<ThaoLuan>();
 		mListView = (ListView) findViewById(R.id.lv_thao_luan);
 		mAdapter = new ThaoLuanAdapter(getBaseContext(),

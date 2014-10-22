@@ -2,8 +2,6 @@ package com.sicco.erp.widget;
 
 import java.util.ArrayList;
 
-import com.sicco.erp.R;
-
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
@@ -12,18 +10,11 @@ import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService.RemoteViewsFactory;
 
-/**
- * If you are familiar with Adapter of ListView,this is the same as adapter
- * with few changes
- * here it now takes RemoteFetchService ArrayList<ListItem> for data
- * which is a static ArrayList
- * and this example won't work if there are multiple widgets and 
- * they update at same time i.e they modify RemoteFetchService ArrayList at same
- * time.
- * For that use Database or other techniquest
- */
+import com.sicco.erp.R;
+import com.sicco.erp.model.TatCaCongViec;
+
 public class ListProvider implements RemoteViewsFactory {
-	private ArrayList<ListItem> listItemList = new ArrayList<ListItem>();
+	private ArrayList<TatCaCongViec> listItemList = new ArrayList<TatCaCongViec>();
 	private Context context = null;
 	private int appWidgetId;
 	private int mTextColor;
@@ -39,11 +30,15 @@ public class ListProvider implements RemoteViewsFactory {
 	}
 
 	private void populateListItem() {
-		if(RemoteFetchService.listItemList !=null )
-		listItemList = (ArrayList<ListItem>) RemoteFetchService.listItemList
-				.clone();
+		if (RemoteFetchService.listItemList != null){
+			listItemList = (ArrayList<TatCaCongViec>) RemoteFetchService.listItemList
+					.clone();
+			listItemList.add(new TatCaCongViec("-1", context.getResources().getString(R.string.read_more), ""));
+		}
 		else
-			listItemList = new ArrayList<ListItem>();
+			listItemList = new ArrayList<TatCaCongViec>();
+
+		Log.d("TuNT", "data  = " + listItemList);
 
 	}
 
@@ -58,30 +53,29 @@ public class ListProvider implements RemoteViewsFactory {
 	}
 
 	/*
-	 *Similar to getView of Adapter where instead of View
-	 *we return RemoteViews 
-	 * 
+	 * Similar to getView of Adapter where instead of Viewwe return RemoteViews
 	 */
 	@Override
 	public RemoteViews getViewAt(int position) {
 		final RemoteViews remoteView = new RemoteViews(
 				context.getPackageName(), R.layout.item_lv_tat_ca_cong_viec);
-		ListItem listItem = listItemList.get(position);
-		remoteView.setTextViewText(R.id.item_lv_ten_cong_viec, listItem.title);
-		remoteView.setTextViewText(R.id.item_lv_han_cuoi, listItem.han_cuoi);
-		
+		TatCaCongViec listItem = listItemList.get(position);
+		remoteView.setTextViewText(R.id.item_lv_ten_cong_viec,
+				listItem.getTenCongViec());
+		remoteView
+				.setTextViewText(R.id.item_lv_han_cuoi, listItem.getHanCuoi());
+
 		remoteView.setTextColor(R.id.item_lv_ten_cong_viec, mTextColor);
 		remoteView.setTextColor(R.id.item_lv_han_cuoi, mTextColor);
-		
+
 		final Intent intent = new Intent();
 		final Bundle bundle = new Bundle();
-		bundle.putString("idcongviec", listItem.id);
+		bundle.putString("idcongviec", listItem.getID());
 		intent.putExtras(bundle);
 		remoteView.setOnClickFillInIntent(R.id.item_cong_viec, intent);
 
 		return remoteView;
 	}
-	
 
 	@Override
 	public RemoteViews getLoadingView() {

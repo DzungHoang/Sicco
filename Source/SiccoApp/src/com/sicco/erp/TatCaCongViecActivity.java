@@ -20,11 +20,9 @@ import android.widget.Toast;
 
 import com.costum.android.widget.LoadMoreListView;
 import com.costum.android.widget.LoadMoreListView.OnLoadMoreListener;
-import com.costum.android.widget.PullAndLoadListView;
 import com.sicco.erp.adapter.TatCaCongViecAdapter;
 import com.sicco.erp.database.DBController;
-import com.sicco.erp.database.DBController.LoadingFinishListener;
-import com.sicco.erp.manager.SessionManager;
+import com.sicco.erp.database.DBController.LoadCongViecListener;
 import com.sicco.erp.model.TatCaCongViec;
 
 public class TatCaCongViecActivity extends Activity {
@@ -53,36 +51,42 @@ public class TatCaCongViecActivity extends Activity {
 		pDialog = new ProgressDialog(TatCaCongViecActivity.this);
 		pDialog.setMessage(getResources().getString(R.string.vui_long_doi));
 		pDialog.setCancelable(false);
-		pDialog.show();
+		
 		
 		mListView = (ListView) findViewById(R.id.lv_tat_ca_cong_viec);
 		
 		final DBController controller = DBController.getInstance(getApplicationContext());
-		mTatCaCongViec = controller.getCongViec();
-		mAdapter = new TatCaCongViecAdapter(getApplicationContext(),
-				R.layout.item_lv_tat_ca_cong_viec, mTatCaCongViec);
-		
-		controller.setLoadingFinishListener(new LoadingFinishListener() {
+		mTatCaCongViec = controller.getCongViec(1, new LoadCongViecListener() {
 			
 			@Override
-			public void onFinished() {
+			public void onFinished(ArrayList<TatCaCongViec> data) {
 				if (pDialog.isShowing())
 					pDialog.dismiss();
-				mListView.setAdapter(mAdapter);
+				Log.d("TuNT", "onFinished: " + data);
+				mTatCaCongViec.clear();
+				mTatCaCongViec.addAll(data);
+				Log.d("TuNT", "onFinished: " + mTatCaCongViec.size());
+				mAdapter.notifyDataSetChanged();
 			}
 		});
-		
+		if(mTatCaCongViec == null) {
+			pDialog.show();
+			mTatCaCongViec = new ArrayList<TatCaCongViec>();
+		}
+		mAdapter = new TatCaCongViecAdapter(getApplicationContext(),
+				R.layout.item_lv_tat_ca_cong_viec, mTatCaCongViec);
+		mListView.setAdapter(mAdapter);
 		
 		((LoadMoreListView) mListView)
 		.setOnLoadMoreListener(new OnLoadMoreListener() {
 			public void onLoadMore() {
 				pnumber = pnumber+1;
-
-				controller.loadData(pnumber, DBController.TYPE_CONG_VIEC);
-				controller.setLoadingFinishListener(new LoadingFinishListener() {
+				controller.getCongViec(pnumber, new LoadCongViecListener() {
 					
 					@Override
-					public void onFinished() {
+					public void onFinished(ArrayList<TatCaCongViec> data) {
+						mTatCaCongViec.clear();
+						mTatCaCongViec.addAll(data);
 						mAdapter.notifyDataSetChanged();
 						Toast.makeText(getApplicationContext(), "onLoad "+pnumber, 0).show();
 						((LoadMoreListView) mListView).onLoadMoreComplete();

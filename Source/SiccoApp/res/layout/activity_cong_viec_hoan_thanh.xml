@@ -27,7 +27,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
-            android:text="@string/nguoi_giao"
+            android:text="@string/ngay_hoan_thanh"
             android:textColor="#ffffff"
             android:textStyle="bold" />
 

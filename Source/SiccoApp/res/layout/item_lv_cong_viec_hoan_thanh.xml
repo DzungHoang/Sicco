@@ -17,7 +17,7 @@
         android:text="TextView" />
 
     <TextView
-        android:id="@+id/item_lv_nguoi_xu_ly"
+        android:id="@+id/item_lv_ngay_hoan_thanh"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginRight="10dp"

@@ -27,6 +27,8 @@ public class DBController {
 
 	public static final int TYPE_CONG_VIEC = 0;
 	public static final int TYPE_CONG_VAN = TYPE_CONG_VIEC + 1;
+	public static final int TYPE_CONG_VIEC_THEO_DOI = TYPE_CONG_VAN + 1;
+	
 	public static final int PAGE_SIZE = 20;
 
 	Context mContext;
@@ -52,10 +54,12 @@ public class DBController {
 			Log.d("TuNT", "create DB");
 			instance = new DBController(context);
 		}
+		
 		return instance;
 	}
 
-	// -------------------------Cong Viec -----------------------------------------------------------------//
+// -------------------------   Cong Viec  --------------------------------------------------------------------//
+//-----------------------------------------------------------------------------------------------------------//
 	GetCongViec mGetCongViecAsync;
 	ArrayList<LoadCongViecListener> mCViecCallback = new ArrayList<DBController.LoadCongViecListener>();
 	int mCViecRunningPage = -1;
@@ -87,35 +91,7 @@ public class DBController {
 	public static interface LoadCongViecListener {
 		public void onFinished(ArrayList<TatCaCongViec> data);
 	}
-
-	// ----------------------------------------- Cong Van --------------------------------------------------------//
-	GetCongVan mGetCongVan;
-	ArrayList<LoadCongVanListener> mCVanCallback = new ArrayList<DBController.LoadCongVanListener>();
-	int mCVanRunningPage = -1;
-
-	public ArrayList<CongVan> getCongVan(int page, LoadCongVanListener callback) {
-		if ((DataCongVan != null && DataCongVan.size() < page * PAGE_SIZE - 1)
-				|| DataCongVan == null) {
-			mCVanCallback.add(callback);
-			if (mCVanRunningPage == -1) {
-				GetCongVan congvan = new GetCongVan();
-				congvan.execute(token, username, Integer.toString(page));
-				mCVanRunningPage = page;
-			}
-			return null;
-
-		} else {
-			ArrayList<CongVan> temp = new ArrayList<CongVan>();
-			temp.addAll(DataCongVan.subList(0, page * PAGE_SIZE));
-
-			return temp;
-		}
-	}
-
-	public static interface LoadCongVanListener {
-		public void onFinished(ArrayList<CongVan> data);
-	}
-
+	
 	private class GetCongViec extends AsyncTask<String, Void, String> {
 
 		@Override
@@ -216,6 +192,39 @@ public class DBController {
 		}
 
 	}
+//---------------------------------------Ket thuc get Cong viec -------------------------------------------------//
+
+// ----------------------------------------- Cong Van --------------------------------------------------------//
+// -----------------------------------------------------------------------------------------------------------//
+	
+	GetCongVan mGetCongVan;
+	ArrayList<LoadCongVanListener> mCVanCallback = new ArrayList<DBController.LoadCongVanListener>();
+	int mCVanRunningPage = -1;
+
+	public ArrayList<CongVan> getCongVan(int page, LoadCongVanListener callback) {
+		if ((DataCongVan != null && DataCongVan.size() < page * PAGE_SIZE - 1)
+				|| DataCongVan == null) {
+			mCVanCallback.add(callback);
+			if (mCVanRunningPage == -1) {
+				GetCongVan congvan = new GetCongVan();
+				congvan.execute(token, username, Integer.toString(page));
+				mCVanRunningPage = page;
+			}
+			return null;
+
+		} else {
+			ArrayList<CongVan> temp = new ArrayList<CongVan>();
+			temp.addAll(DataCongVan.subList(0, page * PAGE_SIZE));
+
+			return temp;
+		}
+	}
+
+	public static interface LoadCongVanListener {
+		public void onFinished(ArrayList<CongVan> data);
+	}
+
+	
 
 	private class GetCongVan extends AsyncTask<String, Void, String> {
 
@@ -283,14 +292,8 @@ public class DBController {
 			}
 		}
 	}
-
-	// public LoadingFinishListener mInterface;
-	//
-	// public void setLoadingFinishListener(LoadingFinishListener listener) {
-	// mInterface = listener;
-	// }
-	//
-	// public static interface LoadingFinishListener {
-	// public void onFinished();
-	// }
+//-------------------------------- Get CongViecTheoDoi -------------------------------------------//
+//-------------------------------------------------------------------------------------------------//
+	
+	
 }

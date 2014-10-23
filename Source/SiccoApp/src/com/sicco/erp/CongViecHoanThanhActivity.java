@@ -127,10 +127,10 @@ public class CongViecHoanThanhActivity extends Activity {
 
 						idCongViec = c.getString("id");
 						String tencongviec = c.getString("ten_cong_viec");
-						String nguoixuly = c.getString("nguoi_thuc_hien");
+						String ngayhoanthanh = c.getString("ngay_ket_thuc");
 
 						mCongViecHoanThanh.add(new CongViecHoanThanh(idCongViec, tencongviec,
-								nguoixuly));
+								ngayhoanthanh));
 						mAdapter.notifyDataSetChanged();
 
 					}

@@ -5,10 +5,12 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 
 public class SuaCongViecActivity extends Activity implements OnClickListener {
@@ -18,17 +20,30 @@ public class SuaCongViecActivity extends Activity implements OnClickListener {
 	LinearLayout mLayoutNguoiXem;
 	LinearLayout mLayoutTepDinhKem;
 	Dialog mDialog;
+	EditText edtTenCongViec,edtNoiDung;
+	
+	String editTenCongViec,editNoiDung,editNgayHoanThanh,editDuAn,editNguoiXuLy,editNguoiXem;
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_them_cong_viec);
+		setContentView(R.layout.activity_sua_cong_viec);
 
 		mLayoutNgayHoanThanh = (LinearLayout) findViewById(R.id.layout_ngay_hoan_thanh);
 		mLayoutDuAn = (LinearLayout) findViewById(R.id.layout_du_an);
 		mLayoutNguoiXuLy = (LinearLayout) findViewById(R.id.layout_nguoi_xu_ly);
 		mLayoutNguoiXem = (LinearLayout) findViewById(R.id.layout_nguoi_xem);
 		mLayoutTepDinhKem = (LinearLayout) findViewById(R.id.layout_tep_dinh_kem);
+		
+		edtTenCongViec = (EditText)findViewById(R.id.edt_ten_cong_viec);
+		edtNoiDung = (EditText)findViewById(R.id.edt_noi_dung);
+		
+		//------- set value cho TenCongViec va NoiDung-----------//
+		editTenCongViec = edtTenCongViec.getText().toString();
+		editNoiDung = edtNoiDung.getText().toString();
+		
+		Log.d("NgaDV", "edttencong viec :" +  editNoiDung.toString() + edtTenCongViec.toString());
 	}
 
 	@Override

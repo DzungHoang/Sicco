@@ -194,12 +194,15 @@ public class ChiTietCongViecActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.action_update:
-			Toast.makeText(getApplicationContext(), "Cáº­p Nháº­t",
+			Toast.makeText(getApplicationContext(), "Cap nhat",
 					Toast.LENGTH_LONG).show();
 			break;
 		case R.id.action_edit:
-			Toast.makeText(getApplicationContext(), "Sá»­a", Toast.LENGTH_SHORT)
+			Toast.makeText(getApplicationContext(), "Sua", Toast.LENGTH_SHORT)
 					.show();
+			Intent intent = getIntent();
+			intent.setClass(getApplicationContext(), SuaCongViecActivity.class);
+			startActivity(intent);
 			break;
 
 		default:

@@ -1,12 +1,12 @@
 package com.sicco.erp.model;
 
 public class CongViecHoanThanh {
-	String tencongviec, nguoixuly, id;
+	String tencongviec, ngayhoanthanh, id;
 
-	public CongViecHoanThanh(String id, String tencongviec, String nguoixuly) {
+	public CongViecHoanThanh(String id, String tencongviec, String ngayhoanthanh) {
 		this.id = id;
 		this.tencongviec = tencongviec;
-		this.nguoixuly = nguoixuly;
+		this.ngayhoanthanh = ngayhoanthanh;
 	}
 
 	public void setID(String id) {
@@ -25,11 +25,11 @@ public class CongViecHoanThanh {
 		return tencongviec;
 	}
 
-	public void setNguoiXuLy(String nguoixuly) {
-		this.nguoixuly = nguoixuly;
+	public void setNgayHoanThanh(String ngayhoanthanh) {
+		this.ngayhoanthanh = ngayhoanthanh;
 	}
 
-	public String getNguoiXuLy() {
-		return nguoixuly;
+	public String getNgayHoanThanh() {
+		return ngayhoanthanh;
 	}
 }

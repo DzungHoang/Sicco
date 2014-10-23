@@ -39,9 +39,9 @@ public class CongViecTheoDoiAdapter extends ArrayAdapter<CongViecTheoDoi> {
 		TextView tenCongViec = (TextView) mView
 				.findViewById(R.id.item_lv_ten_cong_viec);
 		tenCongViec.setText(congViecTheoDoi.getTenCongViec());
-		TextView nguoiXuLy = (TextView) mView
-				.findViewById(R.id.item_lv_nguoi_xu_ly);
-		nguoiXuLy.setText(congViecTheoDoi.getNguoiXuLy());
+		TextView tiendo = (TextView) mView
+				.findViewById(R.id.item_lv_tien_do);
+		tiendo.setText(congViecTheoDoi.getTienDo() + " %");
 		return mView;
 	}
 }

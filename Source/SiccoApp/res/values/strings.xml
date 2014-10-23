@@ -29,13 +29,13 @@
 	<string name="duy_tri_dang_nhap">Duy trì đăng nhập</string>
 	<string name="progress_msg">Đang đăng nhập...</string>
 	<!-- Công việc -->
-	<string name="ngay_hoan_thanh">Ngày hoàn thành</string>
 	<string name="du_an">Dự án</string>
 	<string name="nguoi_xem">Người xem</string>
 	<string name="tep_dinh_kem">Tệp đính kèm</string>
 	<string name="noi_dung">Nội dung</string>
 	<string name="them_cong_viec">Thêm công việc</string>
 	<string name="chi_tiet_cong_viec">Chi tiết công việc</string>
+	<string name="sua_cong_viec">Sửa công việc</string>
 	<string name="tat_ca_cong_viec">Tất cả công việc</string>
 	<string name="toan_bo_cong_viec">Toàn bộ công việc</string>
 	<string name="cong_viec_da_giao">Công việc đã giao</string>
@@ -46,6 +46,7 @@
 	<string name="han_cuoi">Hạn cuối</string>
 	<string name="nguoi_xu_ly">Người xử lý</string>
 	<string name="nguoi_giao">Người giao</string>
+	<string name="ngay_hoan_thanh">Ngày hoàn thành</string>
 	<string name="tien_do">Tiến độ</string>
 	<!-- Notify -->
 	<string name="one_msg">Bạn có 1 %1$s</string>

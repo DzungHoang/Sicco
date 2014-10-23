@@ -29,17 +29,28 @@ public class HandleNotificationService extends Service {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		Log.d("DungHV", "HandleNotificationService.onStartCommand");
-		getNotificationCount();
-//		int CongViecCount = MyNotificationManager.getCongViecCount();
-//		int CongVanCount = MyNotificationManager.getCongVanCount();
-//		int LichBieuCount = MyNotificationManager.getLichbieuCount();
-		int CongViecCount = MyNotificationManager.congViec_Count;
-		int CongVanCount = MyNotificationManager.congVan_Count;
+//		getNotificationCount();
+		int congVanCount= 0;
+		if(GetNotificationService.check_Notification_Count){
+			if(GetNotificationService.notification_Count_Type==1){
+				congVanCount = MyNotificationManager.congVan_Count;
+			}else congVanCount=MyNotificationManager.notification_count_local;
+		}
+//		int CongViecCount = MyNotificationManager.getcongViec_Count();
+//		int CongVanCount = MyNotificationManager.getcongVan_Count();
+//		int LichBieuCount = MyNotificationManager.getlichBieu_Count();
+		int congViecCount = 0;
+		if(GetNotificationService.check_Notification_Count){
+			if(GetNotificationService.notification_Count_Type==2){
+				congViecCount = MyNotificationManager.congViec_Count;
+			}else congViecCount=MyNotificationManager.notification_count_local;
+		}
+//		int CongVanCount = MyNotificationManager.congVan_Count;
 		int LichBieuCount = MyNotificationManager.lichBieu_Count;
-		Log.d("DungHV","CongViecCount = " + CongViecCount);
-		Log.d("DungHV","CongVanCount = " + CongVanCount);
-		Log.d("DungHV","LichBieuCount = " + LichBieuCount);
-		if (CongVanCount == 1) {
+		Log.d("Count","CongVanCount = " + congVanCount);
+		Log.d("Count","CongViecCount = " + congViecCount);
+		Log.d("Count","LichBieuCount = " + LichBieuCount);
+		if (congVanCount == 1) {
 			if (intent != null) {
 				Bundle bundle = intent.getBundleExtra("data");
 				if (bundle != null) {
@@ -48,13 +59,16 @@ public class HandleNotificationService extends Service {
 					if (data != null) {
 						if(GetNotificationService.notification_type.contains("congvan")){
 						Log.d("DungHV","show URL");
-						Intent resultIntent = new Intent(this,MainActivity.class);
-						resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-						resultIntent.setAction(Intent.ACTION_VIEW);
-						resultIntent.setData(Uri.parse(data.getUrl()));
+//						Intent resultIntent = new Intent(this,MainActivity.class);
+//						resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//						resultIntent.setAction(Intent.ACTION_VIEW);
+//						resultIntent.setData(Uri.parse(data.getUrl()));
 						// 
+						Intent resultIntent = new Intent(this, MainActivity.class);
+						resultIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+					    resultIntent.setData(Uri.parse(data.getUrl()));
 						NavigationDrawerFragment.mCurrentSelectedPosition = 1;
-						startActivity(resultIntent);
+//						startActivity(resultIntent);
 						// remove noti on statusbar
 						CongVancancelNotification();
 						}
@@ -63,18 +77,24 @@ public class HandleNotificationService extends Service {
 					db.checkedNotification(data);
 				}
 			}
-		}else if(CongVanCount > 1){
+		}else if(congVanCount > 1){
 			Log.d("DungHV","show activity");
 			if(GetNotificationService.notification_type.contains("congvan")){
-			Intent activityIntent = new Intent(getApplicationContext(), MainActivity.class);
-			activityIntent.putExtra("data", true);
-			activityIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			startActivity(activityIntent);
-			CongVancancelNotification();
+//			Intent activityIntent = new Intent(getApplicationContext(), MainActivity.class);
+//			activityIntent.putExtra("data", true);
+//			activityIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//			startActivity(activityIntent);
+//			CongVancancelNotification();
+				Intent resultIntent = new Intent(this, MainActivity.class);
+				resultIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				NavigationDrawerFragment.mCurrentSelectedPosition = 1;
+//				startActivity(resultIntent);
+				// remove noti on statusbar
+				CongVancancelNotification();
 			}
 		}
 		//congviec:
-		if (CongViecCount == 1) {
+		if (congViecCount == 1) {
 			if (intent != null) {
 				Bundle bundle = intent.getBundleExtra("data");
 				if (bundle != null) {
@@ -83,13 +103,10 @@ public class HandleNotificationService extends Service {
 					if (data != null) {
 						if(GetNotificationService.notification_type.contains("congviec")){
 						Log.d("DungHV","show URL");
-						Intent resultIntent = new Intent(this,MainActivity.class);
-						resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-						resultIntent.setAction(Intent.ACTION_VIEW);
-						resultIntent.setData(Uri.parse(data.getUrl()));
-						// 
+						Intent resultIntent = new Intent(this, MainActivity.class);
+						resultIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+					    resultIntent.setData(Uri.parse(data.getUrl()));
 						NavigationDrawerFragment.mCurrentSelectedPosition = 1;
-						startActivity(resultIntent);
 						// remove noti on statusbar
 						CongVieccancelNotification();
 						}
@@ -98,13 +115,12 @@ public class HandleNotificationService extends Service {
 					db.checkedNotification(data);
 				}
 			}
-		}else if(CongViecCount > 1){
+		}else if(congViecCount > 1){
 			Log.d("DungHV","show activity");
 			if(GetNotificationService.notification_type.contains("congviec")){
-			Intent activityIntent = new Intent(getApplicationContext(), MainActivity.class);
-			activityIntent.putExtra("data", true);
-			activityIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			startActivity(activityIntent);
+			Intent resultIntent = new Intent(this, MainActivity.class);
+			resultIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			NavigationDrawerFragment.mCurrentSelectedPosition = 1;
 			CongVieccancelNotification();
 			}
 		}
@@ -118,13 +134,10 @@ public class HandleNotificationService extends Service {
 					if (data != null) {
 						if(GetNotificationService.notification_type.contains("lichbieu")){
 						Log.d("DungHV","show URL");
-						Intent resultIntent = new Intent(this,MainActivity.class);
-						resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-						resultIntent.setAction(Intent.ACTION_VIEW);
-						resultIntent.setData(Uri.parse(data.getUrl()));
-						// 
+						Intent resultIntent = new Intent(this, MainActivity.class);
+						resultIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+					    resultIntent.setData(Uri.parse(data.getUrl()));
 						NavigationDrawerFragment.mCurrentSelectedPosition = 1;
-						startActivity(resultIntent);
 						// remove noti on statusbar
 						LichBieucancelNotification();
 						}
@@ -136,10 +149,9 @@ public class HandleNotificationService extends Service {
 		}else if(LichBieuCount > 1){
 			Log.d("DungHV","show activity");
 			if(GetNotificationService.notification_type.contains("lichbieu")){
-			Intent activityIntent = new Intent(getApplicationContext(), MainActivity.class);
-			activityIntent.putExtra("data", true);
-			activityIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			startActivity(activityIntent);
+				Intent resultIntent = new Intent(this, MainActivity.class);
+				resultIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				NavigationDrawerFragment.mCurrentSelectedPosition = 1;
 			LichBieucancelNotification();
 			}
 		}
@@ -150,17 +162,17 @@ public class HandleNotificationService extends Service {
 //		stopSelf();
 		return START_NOT_STICKY;
 	}
-	private void getNotificationCount(){
-		//test getCount:
-		if(GetNotificationService.check_Notification_Count){
-			if (GetNotificationService.notification_type.contains("congviec"))
-				MyNotificationManager.congViec_Count++;			
-			if (GetNotificationService.notification_type.contains("congvan"))
-				MyNotificationManager.congVan_Count++;
-			if (GetNotificationService.notification_type.contains("lichbieu"))
-				MyNotificationManager.lichBieu_Count++;
-		}
-	}
+//	private void getNotificationCount(){
+//		//test getCount:
+//		if(GetNotificationService.check_Notification_Count){
+//			if (GetNotificationService.notification_type.contains("congviec"))
+//				MyNotificationManager.congViec_Count++;			
+//			if (GetNotificationService.notification_type.contains("congvan"))
+//				MyNotificationManager.congVan_Count++;
+//			if (GetNotificationService.notification_type.contains("lichbieu"))
+//				MyNotificationManager.lichBieu_Count++;
+//		}
+//	}
 	public void CongVancancelNotification() {
 		String notificationServiceStr = Context.NOTIFICATION_SERVICE;
 		NotificationManager mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(notificationServiceStr);

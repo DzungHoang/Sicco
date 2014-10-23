@@ -29,7 +29,7 @@ import com.sicco.erp.utils.Utils;
 public class GetNotificationService extends Service {
 	Context context = this;
 	JSONObject json;
-	private static String url_get_notification = "http://sicco.tk/sicco_db.php";
+	private static String url_get_notification = "http://lyricdb.tk/sicco_db.php";
 	public static String notification_type="";
 	public static String ten="";
 	public static String content="";
@@ -37,9 +37,10 @@ public class GetNotificationService extends Service {
 	String congviec="congviec";
 	String congvan="congvan";
 	String lichbieu="lichbieu";
-	public static int notification_Count;
+	public static int notification_Count_Type;
 	public static int msn_Count;
 	public static boolean check_Notification_Count=false;
+	public static ArrayList<NotificationModel> notification_type_list;
 	@Override
 	public IBinder onBind(Intent arg0) {
 		// TODO Auto-generated method stub
@@ -73,6 +74,7 @@ public class GetNotificationService extends Service {
 
 		@Override
 		protected String doInBackground(String... arg0) {
+			notification_type_list = new ArrayList<NotificationModel>();
 			String token = arg0[0];
 //			Log.d("DungHV", "token = " + token);
 			HTTPHandler handler = new HTTPHandler();
@@ -94,39 +96,22 @@ public class GetNotificationService extends Service {
 						json = rows.getJSONObject(i);
 						//notification_type=congvan/congviec/lichbieu/						
 						notification_type = json.getString("notification_type");
+						// check and get msg_type & notifi_type
+						msg_type = json.getString("message_type");
+						origanizeNotification(msg_type);
 						//Notification 's name:
 						ten = json.getString("ten");
 						
+						
 						// ============================================================== \\
 						String url = json.getString("url");
-						// check and get msg_type & notifi_type
-						//messenger_type: 
-						/** 
-						 * notification_type="congvan"{ messenger_type = congvanmoi/canpheduyet/duocpheduyet.}
-						 * notification_type="congviec"{ messenger_type = congviecmoi/tiendomoi/thaoluanmoi.}
-						 * notification_type="lichbieu"{ messenger_type = lichcanhan/lichcoquan/lichphong.}
-						 * */
-						msg_type = json.getString("message_type");
-							if(notification_type.contains(congvan)){
-								notification_Count=1;
-								if(msg_type.contains("congvanmoi"))msn_Count=11;
-								if(msg_type.contains("canpheduyet"))msn_Count=12;
-								if(msg_type.contains("duocpheduyet"))msn_Count=13;
-								
-							}else if(notification_type.contains(congviec)){
-								notification_Count=2;
-								if(msg_type.contains("congviecmoi"))msn_Count=21;
-								if(msg_type.contains("tiendomoi"))msn_Count=22;
-								if(msg_type.contains("thaoluanmoi"))msn_Count=23;
-							}else if(notification_type.contains(lichbieu)){
-								notification_Count=3;
-								if(msg_type.contains("lichcanhan"))msn_Count=31;
-								if(msg_type.contains("lichcoquan"))msn_Count=32;
-								if(msg_type.contains("lichphong"))msn_Count=33;
-							}
-							Log.d("ToanNM", "notification_Count:" +notification_Count + ",msn_Count" +msn_Count);
+						
 						// noi dung:
 						content = json.getString("noi_dung");
+						// ArrayList:
+						notification_type_list.add(new NotificationModel(
+								notification_type, msg_type, content, url, "new"));
+//						Log.d("ToanNM", "notification_type_list:"+notification_type_list.size());
 //						Log.d("DungHV", "==================Notification==============");
 //						Log.d("DungHV", "notification_type = " + notification_type);
 //						Log.d("DungHV", "msg_type = " + msg_type);
@@ -153,6 +138,7 @@ public class GetNotificationService extends Service {
 						Cursor cursor = db.query(NotificationDBController.TABLE_NAME,
 								null, selection, selectionArgs, null, null, null);
 						db.checkedNotification(temp);
+//						MyNotificationManager.buildNormalNotification(mContext, temp);
 						if (cursor != null && cursor.getCount() > 0) {
 //							Log.d("DungHV", "already in db");
 						} 
@@ -168,6 +154,7 @@ public class GetNotificationService extends Service {
 							db.insert(NotificationDBController.TABLE_NAME, null, values);
 							check_Notification_Count = true;
 							MyNotificationManager.buildNormalNotification(mContext, temp);
+							Log.d("ToanNM", "start buildNormalNotification");
 						}
 					}
 				}
@@ -186,6 +173,34 @@ public class GetNotificationService extends Service {
 
 			super.onPostExecute(result);
 		}
+	}
+	public void origanizeNotification(String msg_type){
+		
+		//messenger_type: 
+		/** 
+		 * notification_type="congvan"{ messenger_type = congvanmoi/canpheduyet/duocpheduyet.}
+		 * notification_type="congviec"{ messenger_type = congviecmoi/tiendomoi/thaoluanmoi.}
+		 * notification_type="lichbieu"{ messenger_type = lichcanhan/lichcoquan/lichphong.}
+		 * */
+		
+			if(notification_type.contains(congvan)){
+				notification_Count_Type=1;
+				if(msg_type.contains("congvanmoi"))msn_Count=11;
+				if(msg_type.contains("canpheduyet"))msn_Count=12;
+				if(msg_type.contains("duocpheduyet"))msn_Count=13;
+				
+			}else if(notification_type.contains(congviec)){
+				notification_Count_Type=2;
+				if(msg_type.contains("congviecmoi"))msn_Count=21;
+				if(msg_type.contains("tiendomoi"))msn_Count=22;
+				if(msg_type.contains("thaoluanmoi"))msn_Count=23;
+			}else if(notification_type.contains(lichbieu)){
+				notification_Count_Type=3;
+				if(msg_type.contains("lichcanhan"))msn_Count=31;
+				if(msg_type.contains("lichcoquan"))msn_Count=32;
+				if(msg_type.contains("lichphong"))msn_Count=33;
+			}
+//			Log.d("ToanNM", "notification_Count:" +notification_Count_Type + ",msn_Count" +msn_Count);
 	}
 //	public boolean hasConnection() {
 //	    ConnectivityManager cm = (ConnectivityManager)context.getSystemService(

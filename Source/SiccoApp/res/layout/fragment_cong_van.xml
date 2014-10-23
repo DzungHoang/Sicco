@@ -7,12 +7,11 @@
     android:background="#fff"
      >
 
-    <ListView
+    <com.costum.android.widget.LoadMoreListView
         android:id="@+id/Congvan_listView"
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:dividerHeight="7dp"
-        android:divider="#fff">
-    </ListView>
+        android:divider="#fff" />
 
 </LinearLayout>

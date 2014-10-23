@@ -17,7 +17,8 @@
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="10dp"
             android:text="@string/ten_cong_viec"
-            android:textColor="#ffffff" />
+            android:textColor="#ffffff"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/textView2"
@@ -27,7 +28,8 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
             android:text="@string/nguoi_xu_ly"
-            android:textColor="#ffffff" />
+            android:textColor="#ffffff" 
+            android:textStyle="bold"/>
 
     </RelativeLayout>
 

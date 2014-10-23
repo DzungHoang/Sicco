@@ -27,30 +27,21 @@ import com.sicco.erp.model.TatCaCongViec;
 
 public class TatCaCongViecActivity extends Activity {
 	ProgressDialog pDialog;
-	String url_congviec = "http://apis.mobile.vareco.vn/sicco/congviec.php";
-	JSONArray congviec = null;
-	ArrayList<HashMap<String, String>> congViecList;
 	ArrayList<TatCaCongViec> mTatCaCongViec;
 	ListView mListView;
 	TatCaCongViecAdapter mAdapter;
 	String idCongViec;
 
-	static int pnumber = 1;
+	static int pnumberCviec = 1;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_tat_ca_cong_viec);
 
-//		SessionManager sessionManager = SessionManager
-//				.getInstance(getApplicationContext());
-//		String token = sessionManager.getUserDetails().get(
-//				SessionManager.KEY_TOKEN);
-//		String username = sessionManager.getUserDetails().get(
-//				SessionManager.KEY_NAME);
 
 		pDialog = new ProgressDialog(TatCaCongViecActivity.this);
 		pDialog.setMessage(getResources().getString(R.string.vui_long_doi));
-		pDialog.setCancelable(false);
+		pDialog.setCancelable(true);
 		
 		
 		mListView = (ListView) findViewById(R.id.lv_tat_ca_cong_viec);
@@ -80,15 +71,15 @@ public class TatCaCongViecActivity extends Activity {
 		((LoadMoreListView) mListView)
 		.setOnLoadMoreListener(new OnLoadMoreListener() {
 			public void onLoadMore() {
-				pnumber = pnumber+1;
-				controller.getCongViec(pnumber, new LoadCongViecListener() {
+				pnumberCviec = pnumberCviec+1;
+				controller.getCongViec(pnumberCviec, new LoadCongViecListener() {
 					
 					@Override
 					public void onFinished(ArrayList<TatCaCongViec> data) {
 						mTatCaCongViec.clear();
 						mTatCaCongViec.addAll(data);
 						mAdapter.notifyDataSetChanged();
-						Toast.makeText(getApplicationContext(), "onLoad "+pnumber, 0).show();
+						Toast.makeText(getApplicationContext(), "onLoad "+pnumberCviec, 0).show();
 						((LoadMoreListView) mListView).onLoadMoreComplete();
 					}
 				});

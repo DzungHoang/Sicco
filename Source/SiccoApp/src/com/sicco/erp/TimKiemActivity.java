@@ -92,7 +92,7 @@ public class TimKiemActivity  extends Activity{
 			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 				
 				Toast.makeText(getApplicationContext(), edt_KeyWork.getText(), 0).show();
-				edt_KeyWork.setText("");
+				Log.d("NgaDV", "onEditor : " + edt_KeyWork.getText());
 				InputMethodManager imm = (InputMethodManager)getSystemService(
 					      Context.INPUT_METHOD_SERVICE);
 					imm.hideSoftInputFromWindow(edt_KeyWork.getWindowToken(), 0);

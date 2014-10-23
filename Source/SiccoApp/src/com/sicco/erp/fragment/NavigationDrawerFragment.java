@@ -348,7 +348,7 @@ public class NavigationDrawerFragment extends Fragment {
 
 	@Override
 	public void onPrepareOptionsMenu(Menu menu) {
-		if (mCurrentSelectedPosition != 3) {
+		if (mCurrentSelectedPosition != Constant.CONGVIEC_POSITION) {
 			((MenuItem) menu.findItem(R.id.action_add_congviec)).setVisible(false);
 			MenuItem item = ((MenuItem) menu.findItem(R.id.action_search));
 			if (item != null)

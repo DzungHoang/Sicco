@@ -166,7 +166,7 @@ public class GetNotificationService extends Service {
 				e.printStackTrace();
 			}
 //		}
-			origanizeNoti();
+			origanizeNoti(notification_list);
 			return ret;
 //			return null;
 		}
@@ -177,7 +177,7 @@ public class GetNotificationService extends Service {
 			super.onPostExecute(result);
 		}
 	}
-	public void origanizeNoti(){
+	public void origanizeNoti(ArrayList<NotificationModel> notification_list){
 		int congviecmoi=0;
 		int congvanmoi = 0;
 		int lichcanhan = 0;
@@ -200,23 +200,23 @@ public class GetNotificationService extends Service {
 			if(notification_list.get(i).getNotify().contains(congvan)){
 				if(notification_list.get(i).getMsg().contains("congvanmoi")){
 				//add a new ArrayList
-					congVan_list.add(i, notification_list.get(i));
+					congVan_list.add(notification_list.get(i));
 					Log.d("ToanNM", "congVan_list.add(i, notification_list):" +notification_list.get(i) + "congvanlist.size() is:"+congVan_list.size());
 				}
 			}
 			// ArrayList for CongViec:
-						if(notification_list.get(i).getNotify().contains(congviec)){
-							if(notification_list.get(i).getMsg().contains("congviecmoi")){
-							//add a new ArrayList
-								congViec_list.add(i, notification_list.get(i));
-								Log.d("ToanNM", "congViec_list.add(i, notification_list):" +notification_list.get(i) + "congViec_list.size() is:"+congViec_list.size());
-							}
-						}
+			if(notification_list.get(i).getNotify().contains(congviec)){
+				if(notification_list.get(i).getMsg().contains("congviecmoi")){
+				//add a new ArrayList
+					congViec_list.add(notification_list.get(i));
+					Log.d("ToanNM", "congViec_list.add(i, notification_list):" +notification_list.get(i) + "congViec_list.size() is:"+congViec_list.size());
+				}
+			}
 			// ArrayList for LichBieu:
 			if(notification_list.get(i).getNotify().contains(lichbieu)){
 				if(notification_list.get(i).getMsg().contains("lichcanhan")){
 				//add a new ArrayList
-					lichBieu_list.add(i, notification_list.get(i));
+					lichBieu_list.add(notification_list.get(i));
 					Log.d("ToanNM", "lichBieu_list.add(i, notification_list):" +notification_list.get(i) + "lichBieu_list.size() is:"+lichBieu_list.size());
 				}
 			}

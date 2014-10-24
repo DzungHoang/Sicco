@@ -129,10 +129,10 @@ public class HandleNotificationService extends Service {
 				NavigationDrawerFragment.mCurrentSelectedPosition = 1;
 				LichBieucancelNotification();
 		}
-		MyNotificationManager.resetCount();
-		CongVancancelNotification();
-		CongVieccancelNotification();
-		LichBieucancelNotification();
+//		MyNotificationManager.resetCount();
+//		CongVancancelNotification();
+//		CongVieccancelNotification();
+//		LichBieucancelNotification();
 		stopSelf();
 		return START_NOT_STICKY;
 	}

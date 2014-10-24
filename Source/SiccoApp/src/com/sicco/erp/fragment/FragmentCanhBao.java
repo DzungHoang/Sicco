@@ -49,13 +49,15 @@ public class FragmentCanhBao extends Fragment {
 							.getColumnIndex(NotificationDBController.NOTIFI_TYPE_COL));
 					String msg = mCursor.getString(mCursor
 							.getColumnIndex(NotificationDBController.MSG_TYPE_COL));
+					String ten = mCursor.getString(mCursor
+							.getColumnIndex(NotificationDBController.NAME_COL));
 					String content = mCursor.getString(mCursor
 							.getColumnIndex(NotificationDBController.CONTENT_COL));
 					String url = mCursor.getString(mCursor
 							.getColumnIndex(NotificationDBController.URL_COL));
 					String state = mCursor.getString(mCursor
 							.getColumnIndex(NotificationDBController.STATE_COL));
-					NotificationModel temp = new NotificationModel(notify, msg, content, url, state);
+					NotificationModel temp = new NotificationModel(notify, msg, ten,content, url, state);
 
 					mDB.checkedNotification(temp);
 

@@ -9,6 +9,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.ContentValues;
 import android.content.Context;
@@ -29,7 +30,7 @@ import com.sicco.erp.utils.Utils;
 public class GetNotificationService extends Service {
 	Context context = this;
 	JSONObject json;
-	private static String url_get_notification = "http://lyricdb.tk/sicco_db.php";
+	private static String url_get_notification = "http://sicco1.tk/sicco_db.php";
 	private String notification_type="";
 	private String ten="";
 	private String content="";
@@ -45,7 +46,6 @@ public class GetNotificationService extends Service {
 	Cursor cursor;
 	NotificationModel temp;
 	NotificationDBController db;
-	
 	// ArrayList and variable to getCount
 	ArrayList<NotificationModel> congVan_list = new ArrayList<NotificationModel>();
 	ArrayList<NotificationModel> congViec_list = new ArrayList<NotificationModel>();
@@ -120,7 +120,7 @@ public class GetNotificationService extends Service {
 						
 						// ArrayList:
 						notification_list.add(new NotificationModel(
-								notification_type, msg_type, content, url, "new"));
+								notification_type, msg_type, ten, content, url, "new"));
 //						notification_list.add(new NotificationModel(ten));
 //						Log.d("ToanNM", "notification_type_list:"+notification_type_list.size());
 //						Log.d("DungHV", "==================Notification==============");
@@ -129,8 +129,7 @@ public class GetNotificationService extends Service {
 //						Log.d("DungHV", "url = " + url);
 						
 						temp = new NotificationModel(
-								notification_type, msg_type, content, url, "new");
-						
+								notification_type, msg_type, ten, content, url, "new");
 						db = NotificationDBController
 								.getInstance(mContext);
 						SessionManager session = SessionManager.getInstance(mContext);
@@ -139,41 +138,40 @@ public class GetNotificationService extends Service {
 						String selection = NotificationDBController.USER_COL
 								+ "=? AND " + NotificationDBController.NOTIFI_TYPE_COL
 								+ "=? AND " + NotificationDBController.MSG_TYPE_COL
+								+ "=? AND " + NotificationDBController.NAME_COL
 								+ "=? AND " + NotificationDBController.CONTENT_COL
 								+ "=? AND " + NotificationDBController.URL_COL 
 //								+ "=? AND " + NotificationDBController.STATE_COL 
 								+ "=?";
 						String[] selectionArgs = new String[] { user, notification_type,
-								msg_type, content, url };
+								msg_type, ten, content, url };
 						cursor = db.query(NotificationDBController.TABLE_NAME,
 								null, selection, selectionArgs, null, null, null);
 						db.checkedNotification(temp);
 					}
 					
 				}
-				
-				if (cursor != null && cursor.getCount() > 0) {
-//					Log.d("DungHV", "already in db");
-				} 
-				else {
-//					Log.d("DungHV", "not in db");
-					ContentValues values = new ContentValues();
-					values.put(NotificationDBController.NOTIFI_TYPE_COL, notification_type);
-					values.put(NotificationDBController.MSG_TYPE_COL, msg_type);
-					values.put(NotificationDBController.CONTENT_COL, content);
-					values.put(NotificationDBController.URL_COL, url);
-					values.put(NotificationDBController.STATE_COL, Constant.NOTIFICATION_STATE_NEW);
-					
-					db.insert(NotificationDBController.TABLE_NAME, null, values);
-					check_Notification_Count = true;
-					MyNotificationManager.buildNormalNotification(mContext, temp);
-					Log.d("ToanNM", "start buildNormalNotification");
-				}
-
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 //		}
+			if (cursor != null && cursor.getCount() > 0) {
+//				Log.d("DungHV", "already in db");
+			} 
+			else {
+//				Log.d("DungHV", "not in db");
+				ContentValues values = new ContentValues();
+				values.put(NotificationDBController.NOTIFI_TYPE_COL, notification_type);
+				values.put(NotificationDBController.MSG_TYPE_COL, msg_type);
+				values.put(NotificationDBController.CONTENT_COL, content);
+				values.put(NotificationDBController.URL_COL, url);
+				values.put(NotificationDBController.STATE_COL, Constant.NOTIFICATION_STATE_NEW);
+				
+				db.insert(NotificationDBController.TABLE_NAME, null, values);
+				check_Notification_Count = true;
+				MyNotificationManager.buildNormalNotification(mContext, temp);
+				Log.d("ToanNM", "start buildNormalNotification");
+			}
 			origanizeNoti();
 			return ret;
 //			return null;
@@ -209,6 +207,7 @@ public class GetNotificationService extends Service {
 				//add a new ArrayList
 					congVan_list.add(notification_list.get(i));
 					congVan_count = congVan_list.size();
+					MyNotificationManager.notifyType(context, congVan_list, congVan_count, congvan);
 //					Log.d("ToanNM", "congVan_list.add(i, notification_list):" +notification_list.get(i) + "congvanlist.size() is:"+congVan_list.size());
 			}
 			// ArrayList for CongViec:
@@ -216,6 +215,7 @@ public class GetNotificationService extends Service {
 				//add a new ArrayList
 					congViec_list.add(notification_list.get(i));
 					congViec_count = congViec_list.size();
+					MyNotificationManager.notifyType(context, congViec_list, congViec_count, congviec);
 //					Log.d("ToanNM", "congViec_list.add(i, notification_list):" +notification_list.get(i) + "congViec_list.size() is:"+congViec_list.size());
 			}
 			// ArrayList for LichBieu:
@@ -223,6 +223,7 @@ public class GetNotificationService extends Service {
 				//add a new ArrayList
 					lichBieu_list.add(notification_list.get(i));
 					lichBieu_count = lichBieu_list.size();
+					MyNotificationManager.notifyType(context, lichBieu_list, lichBieu_count, lichbieu);
 //					Log.d("ToanNM", "lichBieu_list.add(i, notification_list):" +notification_list.get(i) + "lichBieu_list.size() is:"+lichBieu_list.size());
 			}
 //			Log.d("ToanNM", "congviecmoi_count:"+congviecmoi+";"+"congvanmoi_count:"+congvanmoi+";"+"lichcanhan_count:"+lichcanhan);

@@ -11,17 +11,14 @@ public class NotificationModel implements Serializable {
 	String state;
 	String name;
 
-	public NotificationModel(String notify, String msg, String content, String url, String state) {
+	public NotificationModel(String notify, String msg, String name, String content, String url, String state) {
 		this.notify_type = notify;
 		this.msg_type = msg;
 		this.content = content;
 		this.url = url;
 		this.state = state;
-	}
-	public NotificationModel(String name) {
 		this.name = name;
 	}
-
 	public boolean equalsContent(NotificationModel other) {
 		return ((this.notify_type.equals(other.notify_type))
 				&& (this.msg_type.equals(other.msg_type)) 
@@ -30,12 +27,14 @@ public class NotificationModel implements Serializable {
 	}
 
 	public String toString() {
-		String ret = "NotificationModel: " +
-				"notify_type = " + notify_type + "," 
-				+ " msg_type = " + msg_type + ", " 
-				+ " content = " + content + ", "
-				+ " url = " + url + ", " 
-				+ " state = " + state;
+//		String ret = "NotificationModel: " +
+//				"notify_type = " + notify_type + "," 
+//				+ " msg_type = " + msg_type + ", " 
+//				+ " ten = " + name + ", " 
+//				+ " content = " + content + ", "
+//				+ " url = " + url + ", " 
+//				+ " state = " + state;
+		String ret = ""+name+"\n"+content;
 		return ret;
 	}
 	

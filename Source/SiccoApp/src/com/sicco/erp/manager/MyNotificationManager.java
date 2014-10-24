@@ -1,5 +1,7 @@
 package com.sicco.erp.manager;
 
+import java.util.ArrayList;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -31,9 +33,6 @@ public class MyNotificationManager {
 	static String congviec = "congviec";
 	static String lichbieu = "lichbieu";
 	static NotificationModel notificationModel;
-	static String congViec_message;
-	static String congVan_message;
-	static String lichBieu_message;
 	static String message;
 	static RemoteViews notificationView = null;
 	static String my_package = "com.sicco.erp.manager";
@@ -41,7 +40,9 @@ public class MyNotificationManager {
 	GetNotificationService getNotificationService;
 	private static String ten = "";
 	private static String content = "";
-	private static String list_data ="";
+	private static ArrayList<NotificationModel> notification_list;
+	static String noti="";
+	static int noti_count=0;
 	public static void resetCount(){
 		congVan_Count = 0;
 		congViec_Count = 0;
@@ -60,17 +61,8 @@ public class MyNotificationManager {
 	public static void buildNormalNotification(Context context, NotificationModel data){
 	// ============================================== \\
 		
-		ten = notificationModel.getName();
-		Log.d("ToanNM", "ten:" +ten);
-		congVan_Count = GetNotificationService.getCongVanCount();
-		congViec_Count = GetNotificationService.getCongViecCount();
-		lichBieu_Count = GetNotificationService.getLichBieuCount();
-		if(congVan_Count==1){
-			congVan_message = "Ban co" + congVan_Count + " cong van" + "\n" 
-					+ ten + "\n" 
-					+ content + "\n";
-			
-		}
+		ten = data.getName();
+		
 //		getNotificationType();
 //		getNotificationCount();
 //		getMessage();
@@ -88,8 +80,55 @@ public class MyNotificationManager {
 //			congVan_message = "Ban co "+congVan_Count +" cong van" + "\r\n\r";
 //		}
 	}
+	public static void notifyType(Context context,ArrayList<NotificationModel> arrayList,int notification_count,String notification_type){
+		notification_list=arrayList;
+		congVan_Count = GetNotificationService.getCongVanCount();
+		congViec_Count = GetNotificationService.getCongViecCount();
+		lichBieu_Count = GetNotificationService.getLichBieuCount();
+//		ten = notification_list.;
+//		content = notificationModel.getContent();
+//		Log.d("ToanNM", "ten:"+ ten +"content:"+content);
+		if(notification_count==1){
+			if(notification_type.equalsIgnoreCase(congvan)){
+				NOTIFICATION_ID = CONGVAN_NOTIFICATION_ID;
+				noti = " cong van";
+				noti_count = congVan_Count;
+			}
+			if(notification_type.equalsIgnoreCase(congviec)){
+				NOTIFICATION_ID = CONGVIEC_NOTIFICATION_ID;
+				noti = " cong viec";
+				noti_count = congViec_Count;
+			}
+			if(notification_type.equalsIgnoreCase(lichbieu)){
+				NOTIFICATION_ID = LICHBIEU_NOTIFICATION_ID;
+				noti = " lich bieu";
+				noti_count = lichBieu_Count;
+			}
+			message = "Ban co " + noti_count + " " + noti + "\n" + notification_list;
+			notify(context);
+		}
+		if(notification_count>=2){
+			if(notification_type.equalsIgnoreCase(congvan)){
+				NOTIFICATION_ID = CONGVAN_NOTIFICATION_ID;
+				noti = " cong van";
+				noti_count = congVan_Count;
+			}
+			if(notification_type.equalsIgnoreCase(congviec)){
+				NOTIFICATION_ID = CONGVIEC_NOTIFICATION_ID;
+				noti = " cong viec";
+				noti_count = congViec_Count;
+			}
+			if(notification_type.equalsIgnoreCase(lichbieu)){
+				NOTIFICATION_ID = LICHBIEU_NOTIFICATION_ID;
+				noti = " lich bieu";
+				noti_count = lichBieu_Count;
+			}
+			message = "Ban co " + noti_count + " " + ten + "\n" ;
+			notify(context);
+		}
+	}
 	// ======================================================= \\
-	public static void notify(Context context, String notification_type, int notification_Count) {
+	public static void notify(Context context) {
 		//Notification use RemoteViews:
 //		Intent notifyIntent = new Intent(context, MainActivity.class);
 //		notifyIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

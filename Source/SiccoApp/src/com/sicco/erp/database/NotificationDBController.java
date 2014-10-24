@@ -34,13 +34,13 @@ public class NotificationDBController extends SQLiteOpenHelper {
 		
 		return sInstance;
 	}
-
 	
 	public static String TABLE_NAME = "notification_tbl";
 	public static String ID_COL = "_id";
 	public static String USER_COL = "user";
 	public static String NOTIFI_TYPE_COL = "notifi_type";
 	public static String MSG_TYPE_COL = "msg_type";
+	public static String NAME_COL = "ten";
 	public static String CONTENT_COL = "noi_dung";
 	public static String URL_COL = "url";
 	public static String STATE_COL = "state";
@@ -51,6 +51,7 @@ public class NotificationDBController extends SQLiteOpenHelper {
 			+ USER_COL + " text,"
 			+ NOTIFI_TYPE_COL + " text,"
 			+ MSG_TYPE_COL + " text,"
+			+ NAME_COL + " text,"
 			+ CONTENT_COL + " text,"
 			+ URL_COL + " text,"
 			+ STATE_COL + " text);";
@@ -110,6 +111,7 @@ public class NotificationDBController extends SQLiteOpenHelper {
 		String where = NotificationDBController.USER_COL
 				+ "=? AND " + NotificationDBController.NOTIFI_TYPE_COL
 				+ "=? AND " + NotificationDBController.MSG_TYPE_COL
+				+ "=? AND " + NotificationDBController.NAME_COL
 				+ "=? AND " + NotificationDBController.CONTENT_COL
 				+ "=? AND " + NotificationDBController.URL_COL 
 				+ "=? AND " + NotificationDBController.STATE_COL + "=?";

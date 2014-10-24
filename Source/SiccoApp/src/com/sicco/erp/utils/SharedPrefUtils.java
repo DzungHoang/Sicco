@@ -11,6 +11,8 @@ public class SharedPrefUtils {
 	public static final String KEY_CB_REMEMBER = "remember";
 	public static final String KEY_BG_WIDGET_COLOR = "bg_widget_color";
 	public static final String KEY_TEXT_WIDGET_COLOR = "text_widget_color";
+	public static final String KEY_BG_WIDGET_CB_COLOR = "bg_widget_cb_color";
+	public static final String KEY_TEXT_WIDGET_CB_COLOR = "text_widget_cb_color";
 	
 	public static void savePref(Context context, String keyName, Boolean value) {
 		SharedPreferences pref = context.getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE);

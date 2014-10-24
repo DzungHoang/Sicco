@@ -27,9 +27,6 @@ public class MyNotificationManager {
 	public static int congVan_Count = 0;
 	public static int congViec_Count = 0;
 	public static int lichBieu_Count = 0;
-	public static int congVan_Count_local = 0;
-	private static int notification_count_type_local;
-	public static int notification_count_local;
 	static String congvan = "congvan";
 	static String congviec = "congviec";
 	static String lichbieu = "lichbieu";
@@ -41,6 +38,10 @@ public class MyNotificationManager {
 	static RemoteViews notificationView = null;
 	static String my_package = "com.sicco.erp.manager";
 	static Notification.Builder notificationBuilder = null;
+	GetNotificationService getNotificationService;
+	private static String ten = "";
+	private static String content = "";
+	private static String list_data ="";
 	public static void resetCount(){
 		congVan_Count = 0;
 		congViec_Count = 0;
@@ -58,6 +59,18 @@ public class MyNotificationManager {
 	
 	public static void buildNormalNotification(Context context, NotificationModel data){
 	// ============================================== \\
+		
+		ten = notificationModel.getName();
+		Log.d("ToanNM", "ten:" +ten);
+		congVan_Count = GetNotificationService.getCongVanCount();
+		congViec_Count = GetNotificationService.getCongViecCount();
+		lichBieu_Count = GetNotificationService.getLichBieuCount();
+		if(congVan_Count==1){
+			congVan_message = "Ban co" + congVan_Count + " cong van" + "\n" 
+					+ ten + "\n" 
+					+ content + "\n";
+			
+		}
 //		getNotificationType();
 //		getNotificationCount();
 //		getMessage();

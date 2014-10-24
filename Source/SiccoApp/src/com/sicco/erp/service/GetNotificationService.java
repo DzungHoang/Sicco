@@ -38,15 +38,21 @@ public class GetNotificationService extends Service {
 	private String congviec="congviec";
 	private String congvan="congvan";
 	private String lichbieu="lichbieu";
+	//
 	int notification_Count_Type;
 	int msn_Count;
 	boolean check_Notification_Count=false;
 	Cursor cursor;
 	NotificationModel temp;
 	NotificationDBController db;
-	ArrayList congVan_list = new ArrayList();
-	ArrayList congViec_list = new ArrayList();
-	ArrayList lichBieu_list = new ArrayList();
+	
+	// ArrayList and variable to getCount
+	ArrayList<NotificationModel> congVan_list = new ArrayList<NotificationModel>();
+	ArrayList<NotificationModel> congViec_list = new ArrayList<NotificationModel>();
+	ArrayList<NotificationModel> lichBieu_list = new ArrayList<NotificationModel>();
+	static int congVan_count=0;
+	static int congViec_count=0;
+	static int lichBieu_count=0;
 	ArrayList<NotificationModel> notification_list = new ArrayList<NotificationModel>();
 	@Override
 	public IBinder onBind(Intent arg0) {
@@ -104,16 +110,18 @@ public class GetNotificationService extends Service {
 //						origanizeNotification(msg_type);
 						//Notification 's name:
 						ten = json.getString("ten");
-						
-						
-						// ============================================================== \\
-						url = json.getString("url");
-						
 						// noi dung:
 						content = json.getString("noi_dung");
+						url = json.getString("url");
+						
+						// ============================================================== \\
+											
+						
+						
 						// ArrayList:
 						notification_list.add(new NotificationModel(
 								notification_type, msg_type, content, url, "new"));
+//						notification_list.add(new NotificationModel(ten));
 //						Log.d("ToanNM", "notification_type_list:"+notification_type_list.size());
 //						Log.d("DungHV", "==================Notification==============");
 //						Log.d("DungHV", "notification_type = " + notification_type);
@@ -122,9 +130,9 @@ public class GetNotificationService extends Service {
 						
 						temp = new NotificationModel(
 								notification_type, msg_type, content, url, "new");
+						
 						db = NotificationDBController
 								.getInstance(mContext);
-//						Log.d("ToanNM", "temp.getNotify():"+temp.getNotify()+ "\n" +"temp.getMsg():"+temp.getMsg()+"\n");
 						SessionManager session = SessionManager.getInstance(mContext);
 						String user = session.getUserDetails().get(SessionManager.KEY_NAME);
 
@@ -166,7 +174,7 @@ public class GetNotificationService extends Service {
 				e.printStackTrace();
 			}
 //		}
-			origanizeNoti(notification_list);
+			origanizeNoti();
 			return ret;
 //			return null;
 		}
@@ -177,10 +185,10 @@ public class GetNotificationService extends Service {
 			super.onPostExecute(result);
 		}
 	}
-	public void origanizeNoti(ArrayList<NotificationModel> notification_list){
-		int congviecmoi=0;
-		int congvanmoi = 0;
-		int lichcanhan = 0;
+	public void origanizeNoti(){
+//		int congviecmoi=0;
+//		int congvanmoi = 0;
+//		int lichcanhan = 0;
 		for (int i = 0; i < notification_list.size(); i++) {
 			// Set congvan/congviec/lichbieu(count) only
 //			if(notification_list.get(i).getMsg().contains("congviecmoi")){
@@ -195,33 +203,48 @@ public class GetNotificationService extends Service {
 //				lichcanhan++;
 //				Log.d("ToanNM", "lichcanhan_count:"+lichcanhan);
 //			}
-			
+			if(notification_list!=null){
 			// ArrayList for CongVan:
 			if(notification_list.get(i).getNotify().contains(congvan)){
-				if(notification_list.get(i).getMsg().contains("congvanmoi")){
 				//add a new ArrayList
 					congVan_list.add(notification_list.get(i));
-					Log.d("ToanNM", "congVan_list.add(i, notification_list):" +notification_list.get(i) + "congvanlist.size() is:"+congVan_list.size());
-				}
+					congVan_count = congVan_list.size();
+//					Log.d("ToanNM", "congVan_list.add(i, notification_list):" +notification_list.get(i) + "congvanlist.size() is:"+congVan_list.size());
 			}
 			// ArrayList for CongViec:
 			if(notification_list.get(i).getNotify().contains(congviec)){
-				if(notification_list.get(i).getMsg().contains("congviecmoi")){
 				//add a new ArrayList
 					congViec_list.add(notification_list.get(i));
-					Log.d("ToanNM", "congViec_list.add(i, notification_list):" +notification_list.get(i) + "congViec_list.size() is:"+congViec_list.size());
-				}
+					congViec_count = congViec_list.size();
+//					Log.d("ToanNM", "congViec_list.add(i, notification_list):" +notification_list.get(i) + "congViec_list.size() is:"+congViec_list.size());
 			}
 			// ArrayList for LichBieu:
 			if(notification_list.get(i).getNotify().contains(lichbieu)){
-				if(notification_list.get(i).getMsg().contains("lichcanhan")){
 				//add a new ArrayList
 					lichBieu_list.add(notification_list.get(i));
-					Log.d("ToanNM", "lichBieu_list.add(i, notification_list):" +notification_list.get(i) + "lichBieu_list.size() is:"+lichBieu_list.size());
-				}
+					lichBieu_count = lichBieu_list.size();
+//					Log.d("ToanNM", "lichBieu_list.add(i, notification_list):" +notification_list.get(i) + "lichBieu_list.size() is:"+lichBieu_list.size());
 			}
 //			Log.d("ToanNM", "congviecmoi_count:"+congviecmoi+";"+"congvanmoi_count:"+congvanmoi+";"+"lichcanhan_count:"+lichcanhan);
+			}
 		}
+	}
+	public static int getCongVanCount(){
+		return congVan_count;
+	}
+	public static int getCongViecCount(){
+		return congViec_count;
+	}
+	public static int getLichBieuCount(){
+		return lichBieu_count;
+	}
+	public static void resetCount(){
+		congVan_count = 0;
+		congViec_count = 0;
+		lichBieu_count = 0;
+	}
+	public static void getNotificationName(){
+		return;
 	}
 //	public void origanizeNotification(String msg_type){
 //		

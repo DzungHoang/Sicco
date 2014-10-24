@@ -1,6 +1,7 @@
 package com.sicco.erp.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class NotificationModel implements Serializable {
 	String notify_type;
@@ -8,6 +9,7 @@ public class NotificationModel implements Serializable {
 	String content;
 	String url;
 	String state;
+	String name;
 
 	public NotificationModel(String notify, String msg, String content, String url, String state) {
 		this.notify_type = notify;
@@ -15,6 +17,9 @@ public class NotificationModel implements Serializable {
 		this.content = content;
 		this.url = url;
 		this.state = state;
+	}
+	public NotificationModel(String name) {
+		this.name = name;
 	}
 
 	public boolean equalsContent(NotificationModel other) {
@@ -36,6 +41,9 @@ public class NotificationModel implements Serializable {
 	
 	public String getMsg(){
 		return msg_type;
+	}
+	public String getName(){
+		return name;
 	}
 	public String getContent(){
 		return content;

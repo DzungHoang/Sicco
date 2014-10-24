@@ -20,6 +20,7 @@ public class HandleNotificationService extends Service {
 	private NotificationManager mNotificationManager;
 	Context mContext;
 	NotificationModel notificationModel;
+	GetNotificationService getNotificationService;
 	@Override
 	public IBinder onBind(Intent arg0) {
 		// TODO Auto-generated method stub
@@ -29,24 +30,9 @@ public class HandleNotificationService extends Service {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		Log.d("DungHV", "HandleNotificationService.onStartCommand");
-//		getNotificationCount();
-		int congVanCount= 0;
-//		if(GetNotificationService.check_Notification_Count){
-//			if(GetNotificationService.notification_Count_Type==1){
-//				congVanCount = MyNotificationManager.congVan_Count;
-//			}else congVanCount=MyNotificationManager.notification_count_local;
-//		}
-//		int CongViecCount = MyNotificationManager.getcongViec_Count();
-//		int CongVanCount = MyNotificationManager.getcongVan_Count();
-//		int LichBieuCount = MyNotificationManager.getlichBieu_Count();
-		int congViecCount = 0;
-//		if(GetNotificationService.check_Notification_Count){
-//			if(GetNotificationService.notification_Count_Type==2){
-//				congViecCount = MyNotificationManager.congViec_Count;
-//			}else congViecCount=MyNotificationManager.notification_count_local;
-//		}
-//		int CongVanCount = MyNotificationManager.congVan_Count;
-		int LichBieuCount = MyNotificationManager.lichBieu_Count;
+		int congVanCount= GetNotificationService.getCongVanCount();
+		int congViecCount = GetNotificationService.getCongViecCount();
+		int LichBieuCount = GetNotificationService.getLichBieuCount();
 		Log.d("Count","CongVanCount = " + congVanCount);
 		Log.d("Count","CongViecCount = " + congViecCount);
 		Log.d("Count","LichBieuCount = " + LichBieuCount);
@@ -144,23 +130,12 @@ public class HandleNotificationService extends Service {
 				LichBieucancelNotification();
 		}
 		MyNotificationManager.resetCount();
-//		CongVancancelNotification();
-//		CongVieccancelNotification();
-//		LichBieucancelNotification();
-//		stopSelf();
+		CongVancancelNotification();
+		CongVieccancelNotification();
+		LichBieucancelNotification();
+		stopSelf();
 		return START_NOT_STICKY;
 	}
-//	private void getNotificationCount(){
-//		//test getCount:
-//		if(GetNotificationService.check_Notification_Count){
-//			if (GetNotificationService.notification_type.contains("congviec"))
-//				MyNotificationManager.congViec_Count++;			
-//			if (GetNotificationService.notification_type.contains("congvan"))
-//				MyNotificationManager.congVan_Count++;
-//			if (GetNotificationService.notification_type.contains("lichbieu"))
-//				MyNotificationManager.lichBieu_Count++;
-//		}
-//	}
 	public void CongVancancelNotification() {
 		String notificationServiceStr = Context.NOTIFICATION_SERVICE;
 		NotificationManager mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(notificationServiceStr);

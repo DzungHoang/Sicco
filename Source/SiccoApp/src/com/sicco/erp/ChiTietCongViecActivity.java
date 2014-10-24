@@ -11,7 +11,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -30,7 +32,8 @@ import com.sicco.erp.model.ThaoLuan;
 public class ChiTietCongViecActivity extends Activity {
 
 	public static final String urlAvatar = "http://dantri21.vcmedia.vn/zoom/130_100/yT0YJzvK8t63z214dHr/Image/2014/10/russian-president-2a373.jpg";
-
+	final String cap_nhat_tien_do[] = { "0%", "20%", "40%", "60%", "80%",
+			"100%" };
 	ProgressDialog pDialog;
 	String url_congviec = "http://apis.mobile.vareco.vn/sicco/congviec_old.php";
 	JSONArray thaoluan = null, row = null;
@@ -52,6 +55,7 @@ public class ChiTietCongViecActivity extends Activity {
 	String ngayKetThuc;
 	String noiDung;
 	String tongHopBaoCao;
+	String tienDo;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +70,7 @@ public class ChiTietCongViecActivity extends Activity {
 					Intent intent2 = new Intent(getApplicationContext(),
 							TatCaCongViecActivity.class);
 					startActivity(intent2);
-				}else{
+				} else {
 					new GetThaoLuan().execute(idCongViec);
 				}
 				Toast.makeText(getApplicationContext(),
@@ -76,7 +80,7 @@ public class ChiTietCongViecActivity extends Activity {
 		}
 		// End TuNT
 		setContentView(R.layout.activity_chi_tiet_cong_viec);
-		
+
 		thaoLuanList = new ArrayList<HashMap<String, String>>();
 		mThaoLuan = new ArrayList<ThaoLuan>();
 		mListView = (ListView) findViewById(R.id.lv_thao_luan);
@@ -107,6 +111,7 @@ public class ChiTietCongViecActivity extends Activity {
 			// Making a request to url and getting response
 			List<NameValuePair> valuePairs = new ArrayList<NameValuePair>();
 			valuePairs.add(new BasicNameValuePair("id", idCongViec));
+			valuePairs.add(new BasicNameValuePair("tien_do", tienDo));
 			// Making a request to url and getting response
 			String ret = handler.makeHTTPRequest(url_congviec,
 					HTTPHandler.POST, valuePairs);
@@ -153,7 +158,7 @@ public class ChiTietCongViecActivity extends Activity {
 							mThaoLuan.add(new ThaoLuan(anhdaidien,
 									nguoithaoluan, thoigianthaoluan,
 									noidungthaoluan));
-							Log.d("LuanDT", "anh_dai_dien: " + anhdaidien);
+//							Log.d("LuanDT", "anh_dai_dien: " + anhdaidien);
 
 						}
 						mAdapter.notifyDataSetChanged();
@@ -194,12 +199,46 @@ public class ChiTietCongViecActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.action_update:
-			Toast.makeText(getApplicationContext(), "Cap nhat",
-					Toast.LENGTH_LONG).show();
+			final AlertDialog.Builder capNhatTienDo = new AlertDialog.Builder(
+					this);
+			capNhatTienDo
+					.setTitle(R.string.action_update)
+					.setSingleChoiceItems(cap_nhat_tien_do, -1,
+							new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									tienDo = cap_nhat_tien_do[which];
+								}
+							})
+					.setCancelable(false)
+					.setPositiveButton("OK",
+							new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									new GetThaoLuan().execute(idCongViec,
+											tienDo);
+
+								}
+							})
+					.setNegativeButton(
+							getResources().getString(R.string.action_cancel),
+							new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									dialog.cancel();
+
+								}
+							});
+			AlertDialog alertDialog = capNhatTienDo.create();
+			alertDialog.show();
 			break;
 		case R.id.action_edit:
-			Toast.makeText(getApplicationContext(), "Sua", Toast.LENGTH_SHORT)
-					.show();
 			Intent intent = getIntent();
 			intent.setClass(getApplicationContext(), SuaCongViecActivity.class);
 			startActivity(intent);

@@ -63,7 +63,7 @@ public class MyNotificationManager {
 //		getMessage();
 //		Log.d("Count", "message:"+ message + "\n" +"notification_count_local:" + notification_count_local );
 //		notify(context, message, notification_count_local);
-		test();
+//		test();
 	// ============================================== \\
 		
 //		if(congVan_Count == 1){
@@ -119,7 +119,7 @@ public class MyNotificationManager {
 			builder.setSmallIcon(R.drawable.ic_launcher);
 			builder.setContentTitle(context.getString(R.string.new_noti));
 			builder.setContentText(message);
-			builder.setContentInfo(GetNotificationService.ten);
+//			builder.setContentInfo(GetNotificationService.ten);
 			
 			Intent resultIntent = new Intent();
 			resultIntent.setClass(context, HandleNotificationService.class);
@@ -147,129 +147,129 @@ public class MyNotificationManager {
 		
 		}
 //	}
-	public static int getNotificationType(){
-		//test getCount:
-			if(GetNotificationService.notification_Count_Type==1){
-				NOTIFICATION_ID = CONGVAN_NOTIFICATION_ID;
-				notification_count_type_local = 1;
-				return notification_count_type_local;
-			}
-			if(GetNotificationService.notification_Count_Type==2){
-				NOTIFICATION_ID = CONGVIEC_NOTIFICATION_ID;
-				notification_count_type_local = 2;
-				return notification_count_type_local;
-			}
-			if(GetNotificationService.notification_Count_Type==3){
-				NOTIFICATION_ID = LICHBIEU_NOTIFICATION_ID;
-				notification_count_type_local = 3;
-				return notification_count_type_local;
-			}
-			Log.d("ToanNM", "notification_count_local:" +notification_count_type_local);
-			return notification_count_type_local;
-	}
-	public static int getNotificationCount(){
-		//test getCount:
-			for (int i = 0; i < GetNotificationService.notification_type_list.size(); i++) {
-				getNotificationType();
-				if(GetNotificationService.notification_Count_Type==1){
-					congVan_Count++;
-					notification_count_local = congVan_Count;
-					return notification_count_local;
-				}
-				if(GetNotificationService.notification_Count_Type==2){
-					congViec_Count++;
-					notification_count_local = congViec_Count;
-					return notification_count_type_local;
-				}
-				if(GetNotificationService.notification_Count_Type==3){
-					lichBieu_Count++;
-					notification_count_local = lichBieu_Count;
-					return notification_count_type_local;
-				}
-				Log.d("Count", "notification_count_local:" +notification_count_type_local);
-			}			
-			return notification_count_type_local;
-	}
-	public static String getMessage(){
-		if(GetNotificationService.notification_Count_Type==1){
-			getNotificationType();
-			if(notification_count_type_local == 1){
-				message = "Ban co" + congVan_Count + " cong van" + "\n" 
-						+ GetNotificationService.ten + "\n" 
-						+ GetNotificationService.notification_type + "\n"
-						+ GetNotificationService.content + "\n";
-			}else if(notification_count_type_local > 1){
-				message = "Ban co "+congVan_Count +" cong van" + "\r\n\r"
-						+ GetNotificationService.ten + "\n" ;
-			}
-			return message;
-		}
-		if(GetNotificationService.notification_Count_Type==2){
-			getNotificationType();
-			if(notification_count_type_local == 1){
-				message = "Ban co " +notification_count_type_local +"  cong viec" + "\n" 
-						+ GetNotificationService.ten + "\n" 
-						+ GetNotificationService.notification_type + "\n"
-						+ GetNotificationService.content + "\n";
-			}else if(notification_count_type_local > 1){
-				message = "Ban co "+notification_count_type_local +" cong viec" + "\r\n\r"
-						+ GetNotificationService.ten + "\n" ;
-			}
-			Log.d("ToanNM", "message:"+message);
-			return message;
-		}
-		if(GetNotificationService.notification_Count_Type==3){
-			getNotificationType();
-			if(notification_count_type_local == 1){
-				message = "Ban co " +notification_count_type_local +" lich bieu" + "\n" 
-						+ GetNotificationService.ten + "\n" 
-						+ GetNotificationService.notification_type + "\n"
-						+ GetNotificationService.content + "\n"
-						+ GetNotificationService.ten + "\n" ;
-			}else if(notification_count_type_local > 1){
-				message = "Ban co "+notification_count_type_local +" lich bieu" + "\r\n\r";
-			}
-			return message;
-		}
-		Log.d("ToanNM", "message:" +message);
-		return message;
-	}
-	public static void test(){
-		for (int i = 0; i < GetNotificationService.notification_type_list.size(); i++) {
-			if(GetNotificationService.notification_Count_Type==1){
-				NOTIFICATION_ID = CONGVAN_NOTIFICATION_ID;
+//	public static int getNotificationType(){
+//		//test getCount:
+//			if(GetNotificationService.notification_Count_Type==1){
+//				NOTIFICATION_ID = CONGVAN_NOTIFICATION_ID;
 //				notification_count_type_local = 1;
-				congVan_Count++;
-				congVan_message = "Ban co" + congVan_Count + " cong van" + "\n" 
-						+ GetNotificationService.ten + "\n" 
-						+ GetNotificationService.notification_type + "\n"
-						+ GetNotificationService.content + "\n";
-			}
-			if(GetNotificationService.notification_Count_Type==2){
-				NOTIFICATION_ID = CONGVIEC_NOTIFICATION_ID;
+//				return notification_count_type_local;
+//			}
+//			if(GetNotificationService.notification_Count_Type==2){
+//				NOTIFICATION_ID = CONGVIEC_NOTIFICATION_ID;
 //				notification_count_type_local = 2;
-				congViec_Count++;
-				congViec_message = "Ban co" + congViec_Count + " cong viec" + "\n" 
-						+ GetNotificationService.ten + "\n" 
-						+ GetNotificationService.notification_type + "\n"
-						+ GetNotificationService.content + "\n";
-			}
-			if(GetNotificationService.notification_Count_Type==3){
-				NOTIFICATION_ID = LICHBIEU_NOTIFICATION_ID;
+//				return notification_count_type_local;
+//			}
+//			if(GetNotificationService.notification_Count_Type==3){
+//				NOTIFICATION_ID = LICHBIEU_NOTIFICATION_ID;
 //				notification_count_type_local = 3;
-				lichBieu_Count++;
-				lichBieu_message = "Ban co" + lichBieu_Count + " lich bieu" + "\n" 
-						+ GetNotificationService.ten + "\n" 
-						+ GetNotificationService.notification_type + "\n"
-						+ GetNotificationService.content + "\n";
-			}
-		Log.d("ToanNM", "test()" +"congVan_Count:"+congVan_Count+"\n"
-				+"congViec_Count:"+congViec_Count+"\n"
-				+"lichBieu_Count:"+lichBieu_Count+"\n"
-				+congVan_message+"\n"
-				+congViec_message+"\n"
-				+lichBieu_message+"\n");
-		}
-	}
+//				return notification_count_type_local;
+//			}
+//			Log.d("ToanNM", "notification_count_local:" +notification_count_type_local);
+//			return notification_count_type_local;
+//	}
+//	public static int getNotificationCount(){
+//		//test getCount:
+//			for (int i = 0; i < GetNotificationService.notification_type_list.size(); i++) {
+//				getNotificationType();
+//				if(GetNotificationService.notification_Count_Type==1){
+//					congVan_Count++;
+//					notification_count_local = congVan_Count;
+//					return notification_count_local;
+//				}
+//				if(GetNotificationService.notification_Count_Type==2){
+//					congViec_Count++;
+//					notification_count_local = congViec_Count;
+//					return notification_count_type_local;
+//				}
+//				if(GetNotificationService.notification_Count_Type==3){
+//					lichBieu_Count++;
+//					notification_count_local = lichBieu_Count;
+//					return notification_count_type_local;
+//				}
+//				Log.d("Count", "notification_count_local:" +notification_count_type_local);
+//			}			
+//			return notification_count_type_local;
+//	}
+//	public static String getMessage(){
+//		if(GetNotificationService.notification_Count_Type==1){
+//			getNotificationType();
+//			if(notification_count_type_local == 1){
+//				message = "Ban co" + congVan_Count + " cong van" + "\n" 
+//						+ GetNotificationService.ten + "\n" 
+//						+ GetNotificationService.notification_type + "\n"
+//						+ GetNotificationService.content + "\n";
+//			}else if(notification_count_type_local > 1){
+//				message = "Ban co "+congVan_Count +" cong van" + "\r\n\r"
+//						+ GetNotificationService.ten + "\n" ;
+//			}
+//			return message;
+//		}
+//		if(GetNotificationService.notification_Count_Type==2){
+//			getNotificationType();
+//			if(notification_count_type_local == 1){
+//				message = "Ban co " +notification_count_type_local +"  cong viec" + "\n" 
+//						+ GetNotificationService.ten + "\n" 
+//						+ GetNotificationService.notification_type + "\n"
+//						+ GetNotificationService.content + "\n";
+//			}else if(notification_count_type_local > 1){
+//				message = "Ban co "+notification_count_type_local +" cong viec" + "\r\n\r"
+//						+ GetNotificationService.ten + "\n" ;
+//			}
+//			Log.d("ToanNM", "message:"+message);
+//			return message;
+//		}
+//		if(GetNotificationService.notification_Count_Type==3){
+//			getNotificationType();
+//			if(notification_count_type_local == 1){
+//				message = "Ban co " +notification_count_type_local +" lich bieu" + "\n" 
+//						+ GetNotificationService.ten + "\n" 
+//						+ GetNotificationService.notification_type + "\n"
+//						+ GetNotificationService.content + "\n"
+//						+ GetNotificationService.ten + "\n" ;
+//			}else if(notification_count_type_local > 1){
+//				message = "Ban co "+notification_count_type_local +" lich bieu" + "\r\n\r";
+//			}
+//			return message;
+//		}
+//		Log.d("ToanNM", "message:" +message);
+//		return message;
+//	}
+//	public static void test(){
+//		for (int i = 0; i < GetNotificationService.notification_type_list.size(); i++) {
+//			if(GetNotificationService.notification_Count_Type==1){
+//				NOTIFICATION_ID = CONGVAN_NOTIFICATION_ID;
+////				notification_count_type_local = 1;
+//				congVan_Count++;
+//				congVan_message = "Ban co" + congVan_Count + " cong van" + "\n" 
+//						+ GetNotificationService.ten + "\n" 
+//						+ GetNotificationService.notification_type + "\n"
+//						+ GetNotificationService.content + "\n";
+//			}
+//			if(GetNotificationService.notification_Count_Type==2){
+//				NOTIFICATION_ID = CONGVIEC_NOTIFICATION_ID;
+////				notification_count_type_local = 2;
+//				congViec_Count++;
+//				congViec_message = "Ban co" + congViec_Count + " cong viec" + "\n" 
+//						+ GetNotificationService.ten + "\n" 
+//						+ GetNotificationService.notification_type + "\n"
+//						+ GetNotificationService.content + "\n";
+//			}
+//			if(GetNotificationService.notification_Count_Type==3){
+//				NOTIFICATION_ID = LICHBIEU_NOTIFICATION_ID;
+////				notification_count_type_local = 3;
+//				lichBieu_Count++;
+//				lichBieu_message = "Ban co" + lichBieu_Count + " lich bieu" + "\n" 
+//						+ GetNotificationService.ten + "\n" 
+//						+ GetNotificationService.notification_type + "\n"
+//						+ GetNotificationService.content + "\n";
+//			}
+//		Log.d("ToanNM", "test()" +"congVan_Count:"+congVan_Count+"\n"
+//				+"congViec_Count:"+congViec_Count+"\n"
+//				+"lichBieu_Count:"+lichBieu_Count+"\n"
+//				+congVan_message+"\n"
+//				+congViec_message+"\n"
+//				+lichBieu_message+"\n");
+//		}
+//	}
 
 }

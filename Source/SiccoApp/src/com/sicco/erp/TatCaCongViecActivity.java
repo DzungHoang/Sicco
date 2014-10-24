@@ -5,17 +5,21 @@ import java.util.HashMap;
 
 import org.json.JSONArray;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.costum.android.widget.LoadMoreListView;
@@ -31,6 +35,11 @@ public class TatCaCongViecActivity extends Activity {
 	ListView mListView;
 	TatCaCongViecAdapter mAdapter;
 	String idCongViec;
+	ActionBar mActionBar;
+	Spinner sPhongBan;
+	String phongBan[] = { "Tât cả","Ban Giám Đốc", "P.Tổ chức hành chính",
+			"P.Hành chính kế toán", "P.Kinh tế kế hoạch",
+			"P.Kinh doanh đấu thầu" };
 
 	static int pnumberCviec = 1;
 	@Override
@@ -38,14 +47,25 @@ public class TatCaCongViecActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_tat_ca_cong_viec);
 
+		mActionBar = getActionBar();
+		mActionBar.setDisplayShowTitleEnabled(true);
+		LayoutInflater mInflater = LayoutInflater.from(this);
+		View mCustomView = mInflater.inflate(R.layout.layout_spinner_tatcacongviec, null);
+		mActionBar.setCustomView(mCustomView);
+		mActionBar.setDisplayShowCustomEnabled(true);
+		mActionBar.setTitle("LuanDT");
+		sPhongBan = (Spinner) findViewById(R.id.spinnerphongban);
+
+		ArrayAdapter<String> mSpAdapter = new ArrayAdapter<String>(this,
+				android.R.layout.simple_spinner_item, phongBan);
+		mSpAdapter
+				.setDropDownViewResource(android.R.layout.simple_list_item_1);
+		sPhongBan.setAdapter(mSpAdapter);
 
 		pDialog = new ProgressDialog(TatCaCongViecActivity.this);
 		pDialog.setMessage(getResources().getString(R.string.vui_long_doi));
 		pDialog.setCancelable(true);
-		
-		
 		mListView = (ListView) findViewById(R.id.lv_tat_ca_cong_viec);
-		
 		final DBController controller = DBController.getInstance(getApplicationContext());
 		mTatCaCongViec = controller.getCongViec(1, new LoadCongViecListener() {
 			
@@ -101,16 +121,5 @@ public class TatCaCongViecActivity extends Activity {
 
 	}
 	
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.menu_toan_bo_cong_viec, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// TODO Auto-generated method stub
-		return super.onOptionsItemSelected(item);
-	}
 
 }

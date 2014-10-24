@@ -29,6 +29,8 @@
 	<string name="duy_tri_dang_nhap">Duy trì đăng nhập</string>
 	<string name="progress_msg">Đang đăng nhập...</string>
 	<!-- Công việc -->
+	<string name="choose_file">Chọn tệp đính kèm</string>
+	<string name="choose_duan">Chọn dự án</string>
 	<string name="du_an">Dự án</string>
 	<string name="nguoi_xem">Người xem</string>
 	<string name="tep_dinh_kem">Tệp đính kèm</string>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:id="@+id/widget_cb"
+    android:layout_height="40dp"
+    android:orientation="horizontal"
+    android:background="#80F5F5F5" >
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1" >
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Công việc"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:id="@+id/numberCongViec"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1"
+            android:minWidth="19dp"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="#FFF"
+            android:layout_gravity="top|right"
+            android:gravity="center"
+            android:background="@drawable/ic_notification"/>
+
+    </FrameLayout>
+    
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1" >
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Công văn"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:id="@+id/numberCongVan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="70"
+			android:minWidth="19dp"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="#FFF"
+            android:layout_gravity="top|right"
+            android:gravity="center"
+            android:background="@drawable/ic_notification"/>
+
+    </FrameLayout>
+    
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Lịch biểu"
+            android:layout_gravity="center" />
+
+        <TextView
+            android:id="@+id/numberLichBieu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="3"
+            android:minWidth="19dp"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="#FFF"
+            android:layout_gravity="top|right"
+            android:gravity="center"
+            android:background="@drawable/ic_notification"/>
+
+    </FrameLayout>
+
+</LinearLayout>

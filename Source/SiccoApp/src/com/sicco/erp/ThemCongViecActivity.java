@@ -39,6 +39,7 @@ import android.widget.Toast;
 import com.sicco.erp.adapter.DuAnAdapter;
 import com.sicco.erp.http.HTTPHandler;
 import com.sicco.erp.model.DuAn;
+import com.sicco.erp.utils.FileUtils;
 
 public class ThemCongViecActivity extends Activity implements OnClickListener {
 	LinearLayout mLayoutNgayHoanThanh;
@@ -161,7 +162,7 @@ public class ThemCongViecActivity extends Activity implements OnClickListener {
 
 			break;
 		case R.id.layout_tep_dinh_kem:
-//			showFileChooser();
+			showFileChooser();
 			break;
 
 		default:
@@ -269,65 +270,65 @@ public class ThemCongViecActivity extends Activity implements OnClickListener {
 
 	// ------------choose file-------------------------//
 
-//	private void showFileChooser() {
-//		Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-//		intent.setType("*/*");
-//		intent.addCategory(Intent.CATEGORY_OPENABLE);
-//
-//		try {
-//			startActivityForResult(Intent.createChooser(intent,
-//					getString(R.string.choose_file)), FILE_SELECT_CODE);
-//		} catch (android.content.ActivityNotFoundException ex) {
-//			// Potentially direct the user to the Market with a Dialog
-//			Toast.makeText(this, "Please install a File Manager.",
-//					Toast.LENGTH_SHORT).show();
-//		}
-//	}
-//
-//	@Override
-//	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//		switch (requestCode) {
-//		case FILE_SELECT_CODE:
-//			if (resultCode == RESULT_OK) {
-//				// Get the Uri of the selected file
-//				Uri uri = data.getData();
-//				Log.d("LuanDT", "File Uri: " + uri.toString());
-//				// Get the path
-//				path = FileUtils.getPath(this, uri);
-//				Log.d("LuanDT", "File Path: " + path);
-//				Toast.makeText(this, "File Selected: " + path,
-//						Toast.LENGTH_SHORT).show();
-//				// Get the file instance
-//				// File file = new File(path);
-//				// Initiate the upload
-//			}
-//			break;
-//		}
-//		super.onActivityResult(requestCode, resultCode, data);
-//	}
-//
-//	public static String getPath(Context context, Uri uri)
-//			throws URISyntaxException {
-//		if ("content".equalsIgnoreCase(uri.getScheme())) {
-//			String[] projection = { "_data" };
-//			Cursor cursor = null;
-//
-//			try {
-//				cursor = context.getContentResolver().query(uri, projection,
-//						null, null, null);
-//				int column_index = cursor.getColumnIndexOrThrow("_data");
-//				if (cursor.moveToFirst()) {
-//					return cursor.getString(column_index);
-//				}
-//			} catch (Exception e) {
-//				// Eat it
-//			}
-//		} else if ("file".equalsIgnoreCase(uri.getScheme())) {
-//			return uri.getPath();
-//		}
-//
-//		return null;
-//	}
+	private void showFileChooser() {
+		Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+		intent.setType("*/*");
+		intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+		try {
+			startActivityForResult(Intent.createChooser(intent,
+					getString(R.string.choose_file)), FILE_SELECT_CODE);
+		} catch (android.content.ActivityNotFoundException ex) {
+			// Potentially direct the user to the Market with a Dialog
+			Toast.makeText(this, "Please install a File Manager.",
+					Toast.LENGTH_SHORT).show();
+		}
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		switch (requestCode) {
+		case FILE_SELECT_CODE:
+			if (resultCode == RESULT_OK) {
+				// Get the Uri of the selected file
+				Uri uri = data.getData();
+				Log.d("LuanDT", "File Uri: " + uri.toString());
+				// Get the path
+				path = FileUtils.getPath(this, uri);
+				Log.d("LuanDT", "File Path: " + path);
+				Toast.makeText(this, "File Selected: " + path,
+						Toast.LENGTH_SHORT).show();
+				// Get the file instance
+				// File file = new File(path);
+				// Initiate the upload
+			}
+			break;
+		}
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+
+	public static String getPath(Context context, Uri uri)
+			throws URISyntaxException {
+		if ("content".equalsIgnoreCase(uri.getScheme())) {
+			String[] projection = { "_data" };
+			Cursor cursor = null;
+
+			try {
+				cursor = context.getContentResolver().query(uri, projection,
+						null, null, null);
+				int column_index = cursor.getColumnIndexOrThrow("_data");
+				if (cursor.moveToFirst()) {
+					return cursor.getString(column_index);
+				}
+			} catch (Exception e) {
+				// Eat it
+			}
+		} else if ("file".equalsIgnoreCase(uri.getScheme())) {
+			return uri.getPath();
+		}
+
+		return null;
+	}
 
 	// ------------option menu-------------------------//
 

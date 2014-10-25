@@ -57,7 +57,7 @@ public class FragmentCanhBao extends Fragment {
 							.getColumnIndex(NotificationDBController.URL_COL));
 					String state = mCursor.getString(mCursor
 							.getColumnIndex(NotificationDBController.STATE_COL));
-					NotificationModel temp = new NotificationModel(notify, msg, ten,content, url, state);
+					NotificationModel temp = new NotificationModel(notify, msg, ten, content, url, state);
 
 					mDB.checkedNotification(temp);
 

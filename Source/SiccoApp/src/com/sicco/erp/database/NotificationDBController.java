@@ -126,4 +126,6 @@ public class NotificationDBController extends SQLiteOpenHelper {
 	    sdb.delete(TABLE_NAME, null, null);
 
 	}
+	public void getSize(){
+	}
 }

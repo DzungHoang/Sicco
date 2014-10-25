@@ -126,6 +126,7 @@ public class GetNotificationService extends Service {
 								notification_type, msg_type, ten, content, url, "new");
 						// ArrayList:
 						notification_list.add(temp);
+						Log.d("ToanNM", "notification_list:"+notification_list.size());
 						db = NotificationDBController
 								.getInstance(mContext);
 						SessionManager session = SessionManager.getInstance(mContext);
@@ -144,36 +145,35 @@ public class GetNotificationService extends Service {
 						cursor = db.query(NotificationDBController.TABLE_NAME,
 								null, selection, selectionArgs, null, null, null);
 						db.checkedNotification(temp);
-						if (cursor != null && cursor.getCount() > 0) {
-//							Log.d("DungHV", "already in db");
-						} 
-						else {
-//							Log.d("DungHV", "not in db");
-							ContentValues values = new ContentValues();
-							values.put(NotificationDBController.NOTIFI_TYPE_COL, notification_type);
-							values.put(NotificationDBController.MSG_TYPE_COL, msg_type);
-							values.put(NotificationDBController.NAME_COL, ten);
-							values.put(NotificationDBController.CONTENT_COL, content);
-							values.put(NotificationDBController.URL_COL, url);
-							values.put(NotificationDBController.STATE_COL, Constant.NOTIFICATION_STATE_NEW);
-							
-							db.insert(NotificationDBController.TABLE_NAME, null, values);
-							check_Notification_Count = true;
-							MyNotificationManager.buildNormalNotification(mContext, temp);
-							
-							Log.d("ToanNM", "start buildNormalNotification");
-						}
+						
 					}
 					
+				}
+				for (int i = 0; i < notification_list.size(); i++) {
+					if (cursor != null && cursor.getCount() > 0) {
+						Log.d("DungHV", "already in db");
+					} 
+					else {
+						Log.d("DungHV", "not in db");
+						ContentValues values = new ContentValues();
+						values.put(NotificationDBController.NOTIFI_TYPE_COL, notification_type);
+						values.put(NotificationDBController.MSG_TYPE_COL, msg_type);
+						values.put(NotificationDBController.NAME_COL, ten);
+						values.put(NotificationDBController.CONTENT_COL, content);
+						values.put(NotificationDBController.URL_COL, url);
+						values.put(NotificationDBController.STATE_COL, Constant.NOTIFICATION_STATE_NEW);
+						db.insert(NotificationDBController.TABLE_NAME, null, values);
+						check_Notification_Count = true;
+						MyNotificationManager.buildNormalNotification(mContext, temp);
+						origanizeNoti();
+						Log.d("ToanNM", "start buildNormalNotification");
+					}
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-//		}
 			
-			origanizeNoti();
 			return ret;
-//			return null;
 		}
 
 		@Override
@@ -186,6 +186,7 @@ public class GetNotificationService extends Service {
 //		int congviecmoi=0;
 //		int congvanmoi = 0;
 //		int lichcanhan = 0;
+		Log.d("ToanNM", "notification_list.size()"+notification_list.size());
 		for (int i = 0; i < notification_list.size(); i++) {
 			// Set congvan/congviec/lichbieu(count) only
 //			if(notification_list.get(i).getMsg().contains("congviecmoi")){
@@ -200,32 +201,32 @@ public class GetNotificationService extends Service {
 //				lichcanhan++;
 //				Log.d("ToanNM", "lichcanhan_count:"+lichcanhan);
 //			}
+			
 			if(notification_list!=null){
-			// ArrayList for CongVan:
-			if(notification_list.get(i).getNotify().contains(congvan)){
-				//add a new ArrayList
-					congVan_list.add(notification_list.get(i));
-					congVan_count = congVan_list.size();
-					MyNotificationManager.notifyType(context, congVan_list, congVan_count, congvan);
-//					Log.d("ToanNM", "congVan_list.add(i, notification_list):" +notification_list.get(i) + "congvanlist.size() is:"+congVan_list.size());
-			}
-			// ArrayList for CongViec:
-			if(notification_list.get(i).getNotify().contains(congviec)){
-				//add a new ArrayList
-					congViec_list.add(notification_list.get(i));
-					congViec_count = congViec_list.size();
-					MyNotificationManager.notifyType(context, congViec_list, congViec_count, congviec);
-//					Log.d("ToanNM", "congViec_list.add(i, notification_list):" +notification_list.get(i) + "congViec_list.size() is:"+congViec_list.size());
-			}
-			// ArrayList for LichBieu:
-			if(notification_list.get(i).getNotify().contains(lichbieu)){
-				//add a new ArrayList
-					lichBieu_list.add(notification_list.get(i));
-					lichBieu_count = lichBieu_list.size();
-					MyNotificationManager.notifyType(context, lichBieu_list, lichBieu_count, lichbieu);
-//					Log.d("ToanNM", "lichBieu_list.add(i, notification_list):" +notification_list.get(i) + "lichBieu_list.size() is:"+lichBieu_list.size());
-			}
-//			Log.d("ToanNM", "congviecmoi_count:"+congviecmoi+";"+"congvanmoi_count:"+congvanmoi+";"+"lichcanhan_count:"+lichcanhan);
+				// ArrayList for CongVan:
+				if(notification_list.get(i).getNotify().contains(congvan)){
+					//add a new ArrayList
+						congVan_list.add(notification_list.get(i));
+						congVan_count = congVan_list.size();
+						MyNotificationManager.notifyType(context, congVan_list, congVan_count, congvan);
+						Log.d("ToanNM", "run congvanc");
+				}
+				// ArrayList for CongViec:
+				if(notification_list.get(i).getNotify().contains(congviec)){
+					//add a new ArrayList
+						congViec_list.add(notification_list.get(i));
+						congViec_count = congViec_list.size();
+						MyNotificationManager.notifyType(context, congViec_list, congViec_count, congviec);
+						Log.d("ToanNM", "run congviec");
+					}
+				// ArrayList for LichBieu:
+				if(notification_list.get(i).getNotify().contains(lichbieu)){
+					//add a new ArrayList
+						lichBieu_list.add(notification_list.get(i));
+						lichBieu_count = lichBieu_list.size();
+						MyNotificationManager.notifyType(context, lichBieu_list, lichBieu_count, lichbieu);
+						Log.d("ToanNM", "run lichbieu");
+					}
 			}
 		}
 	}
@@ -242,9 +243,6 @@ public class GetNotificationService extends Service {
 		congVan_count = 0;
 		congViec_count = 0;
 		lichBieu_count = 0;
-	}
-	public static void getNotificationName(){
-		return;
 	}
 //	public void origanizeNotification(String msg_type){
 //		

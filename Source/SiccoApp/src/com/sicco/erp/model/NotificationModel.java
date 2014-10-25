@@ -4,6 +4,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class NotificationModel implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	String notify_type;
 	String msg_type;
 	String content;
@@ -14,14 +18,16 @@ public class NotificationModel implements Serializable {
 	public NotificationModel(String notify, String msg, String name, String content, String url, String state) {
 		this.notify_type = notify;
 		this.msg_type = msg;
+		this.name = name;
 		this.content = content;
 		this.url = url;
 		this.state = state;
-		this.name = name;
+		
 	}
 	public boolean equalsContent(NotificationModel other) {
 		return ((this.notify_type.equals(other.notify_type))
 				&& (this.msg_type.equals(other.msg_type)) 
+				&& (this.name.equals(other.name)) 
 				&& (this.content.equals(other.content))
 				&& (this.url.equals(other.url)));
 	}
@@ -34,7 +40,7 @@ public class NotificationModel implements Serializable {
 //				+ " content = " + content + ", "
 //				+ " url = " + url + ", " 
 //				+ " state = " + state;
-		String ret = ""+name+"\n"+content;
+		String ret = ""+content;
 		return ret;
 	}
 	

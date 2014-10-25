@@ -123,7 +123,7 @@ public class MyNotificationManager {
 				noti = " lich bieu";
 				noti_count = lichBieu_Count;
 			}
-			message = "Ban co " + noti_count + " " + ten + "\n" ;
+			message = "Ban co " + noti_count + " " + noti + " " + "\n" ;
 			notify(context);
 		}
 	}

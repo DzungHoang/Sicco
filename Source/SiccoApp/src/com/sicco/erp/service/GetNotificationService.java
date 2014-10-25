@@ -115,12 +115,6 @@ public class GetNotificationService extends Service {
 						url = json.getString("url");
 						
 						// ============================================================== \\
-											
-						
-						
-						// ArrayList:
-						notification_list.add(new NotificationModel(
-								notification_type, msg_type, ten, content, url, "new"));
 //						notification_list.add(new NotificationModel(ten));
 //						Log.d("ToanNM", "notification_type_list:"+notification_type_list.size());
 //						Log.d("DungHV", "==================Notification==============");
@@ -130,6 +124,8 @@ public class GetNotificationService extends Service {
 						
 						temp = new NotificationModel(
 								notification_type, msg_type, ten, content, url, "new");
+						// ArrayList:
+						notification_list.add(temp);
 						db = NotificationDBController
 								.getInstance(mContext);
 						SessionManager session = SessionManager.getInstance(mContext);
@@ -148,6 +144,25 @@ public class GetNotificationService extends Service {
 						cursor = db.query(NotificationDBController.TABLE_NAME,
 								null, selection, selectionArgs, null, null, null);
 						db.checkedNotification(temp);
+						if (cursor != null && cursor.getCount() > 0) {
+//							Log.d("DungHV", "already in db");
+						} 
+						else {
+//							Log.d("DungHV", "not in db");
+							ContentValues values = new ContentValues();
+							values.put(NotificationDBController.NOTIFI_TYPE_COL, notification_type);
+							values.put(NotificationDBController.MSG_TYPE_COL, msg_type);
+							values.put(NotificationDBController.NAME_COL, ten);
+							values.put(NotificationDBController.CONTENT_COL, content);
+							values.put(NotificationDBController.URL_COL, url);
+							values.put(NotificationDBController.STATE_COL, Constant.NOTIFICATION_STATE_NEW);
+							
+							db.insert(NotificationDBController.TABLE_NAME, null, values);
+							check_Notification_Count = true;
+							MyNotificationManager.buildNormalNotification(mContext, temp);
+							
+							Log.d("ToanNM", "start buildNormalNotification");
+						}
 					}
 					
 				}
@@ -155,23 +170,7 @@ public class GetNotificationService extends Service {
 				e.printStackTrace();
 			}
 //		}
-			if (cursor != null && cursor.getCount() > 0) {
-//				Log.d("DungHV", "already in db");
-			} 
-			else {
-//				Log.d("DungHV", "not in db");
-				ContentValues values = new ContentValues();
-				values.put(NotificationDBController.NOTIFI_TYPE_COL, notification_type);
-				values.put(NotificationDBController.MSG_TYPE_COL, msg_type);
-				values.put(NotificationDBController.CONTENT_COL, content);
-				values.put(NotificationDBController.URL_COL, url);
-				values.put(NotificationDBController.STATE_COL, Constant.NOTIFICATION_STATE_NEW);
-				
-				db.insert(NotificationDBController.TABLE_NAME, null, values);
-				check_Notification_Count = true;
-				MyNotificationManager.buildNormalNotification(mContext, temp);
-				Log.d("ToanNM", "start buildNormalNotification");
-			}
+			
 			origanizeNoti();
 			return ret;
 //			return null;

@@ -9,14 +9,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.PendingIntent.OnFinished;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.text.StaticLayout;
 import android.util.Log;
 
 import com.sicco.erp.http.HTTPHandler;
 import com.sicco.erp.manager.SessionManager;
 import com.sicco.erp.model.CongVan;
+import com.sicco.erp.model.CongViecDaGiao;
+import com.sicco.erp.model.CongViecDuocGiao;
 import com.sicco.erp.model.TatCaCongViec;
 import com.sicco.erp.model.ThaoLuan;
 
@@ -24,18 +28,23 @@ public class DBController {
 	private static DBController instance;
 	public static ArrayList<TatCaCongViec> DataCongViec;
 	private static ArrayList<CongVan> DataCongVan;
+	public static ArrayList<CongViecDaGiao> DataCongViecDaGiao; // LuanDT
+	public static ArrayList<CongViecDuocGiao> DataCongViecDuocGiao;
 
-	public static final int TYPE_CONG_VIEC = 0;
-	public static final int TYPE_CONG_VAN = TYPE_CONG_VIEC + 1;
-	public static final int TYPE_CONG_VIEC_THEO_DOI = TYPE_CONG_VAN + 1;
-	
+	// public static final int TYPE_CONG_VIEC = 0;
+	// public static final int TYPE_CONG_VIEC_DA_GIAO = TYPE_CONG_VIEC + 1;
+	// public static final int TYPE_CONG_VAN = TYPE_CONG_VIEC + 1;
+	// public static final int TYPE_CONG_VIEC_THEO_DOI = TYPE_CONG_VAN + 1;
+
 	public static final int PAGE_SIZE = 20;
 
 	Context mContext;
 
 	ProgressDialog pDialog;
-	String url_congviec = "http://apis.mobile.vareco.vn/sicco/congviec.php";
-	String url_congvan = "http://apis.mobile.vareco.vn/sicco/congvan.php";
+	// String url_congviec = "http://apis.mobile.vareco.vn/sicco/congviec.php";
+	// String url_congvan = "http://apis.mobile.vareco.vn/sicco/congvan.php";
+	String url_congviec = "http://thuchutcoi.tk/sicco/congviec.php";
+	String url_congvan = "http://thuchutcoi.tk/sicco/congvan.php";
 	JSONArray congviec = null, thaoluan = null, congvan = null;
 
 	String token, username;
@@ -47,6 +56,8 @@ public class DBController {
 		username = sessionManager.getUserDetails().get(SessionManager.KEY_NAME);
 		DataCongViec = new ArrayList<TatCaCongViec>();
 		DataCongVan = new ArrayList<CongVan>();
+		DataCongViecDaGiao = new ArrayList<CongViecDaGiao>(); // LuanDT
+		DataCongViecDuocGiao = new ArrayList<CongViecDuocGiao>();
 	}
 
 	public static DBController getInstance(Context context) {
@@ -54,15 +65,21 @@ public class DBController {
 			Log.d("TuNT", "create DB");
 			instance = new DBController(context);
 		}
-		
+
 		return instance;
 	}
 
-// -------------------------   Cong Viec  --------------------------------------------------------------------//
-//-----------------------------------------------------------------------------------------------------------//
+	// -------------------------Cong Viec---------------------------//
 	GetCongViec mGetCongViecAsync;
 	ArrayList<LoadCongViecListener> mCViecCallback = new ArrayList<DBController.LoadCongViecListener>();
+	ArrayList<LoadCongViecDaGiaoListener> mCViecDaGiaoCallback = new ArrayList<DBController.LoadCongViecDaGiaoListener>(); // LuanDT
+	ArrayList<LoadCongViecDuocGiaoListener> mCViecDuocGiaoCallback = new ArrayList<DBController.LoadCongViecDuocGiaoListener>();
+
 	int mCViecRunningPage = -1;
+	int mCViecDaGiaoRunningPage = -1;
+	int mCViecDuocGiaoRunningPage = -1;
+
+	// -------------------------tat ca cong viec---------------------------//
 
 	public ArrayList<TatCaCongViec> getCongViec(int page,
 			LoadCongViecListener callback) {
@@ -91,7 +108,62 @@ public class DBController {
 	public static interface LoadCongViecListener {
 		public void onFinished(ArrayList<TatCaCongViec> data);
 	}
-	
+
+	// -------------------------cong viec da giao---------------------------//
+
+	public ArrayList<CongViecDaGiao> getCongViecDaGiao(int page,
+			LoadCongViecDaGiaoListener loadCongViecDaGiaoListener) {
+		if ((DataCongViecDaGiao != null && DataCongViecDaGiao.size() < page
+				* PAGE_SIZE - 1)
+				|| DataCongViecDaGiao == null) {
+			mCViecDaGiaoCallback.add(loadCongViecDaGiaoListener);
+			if (mCViecDaGiaoRunningPage == -1) {
+				GetCongViec congViec = new GetCongViec();
+				congViec.execute(token, username, Integer.toString(page));
+				mCViecDaGiaoRunningPage = page;
+			}
+			return null;
+		} else {
+			ArrayList<CongViecDaGiao> temp = new ArrayList<CongViecDaGiao>();
+			temp.addAll(DataCongViecDaGiao.subList(0, page * PAGE_SIZE));
+			return temp;
+		}
+
+	}
+
+	public static interface LoadCongViecDaGiaoListener {
+		public void onFinished(ArrayList<CongViecDaGiao> data);
+
+	}
+
+	// -------------------------cong viec duoc giao---------------------------//
+
+	public ArrayList<CongViecDuocGiao> getCongViecDuocGiao(int page,
+			LoadCongViecDuocGiaoListener loadCongViecDuocGiaoListener) {
+		if ((DataCongViecDuocGiao != null && DataCongViecDuocGiao.size() < page
+				* PAGE_SIZE - 1)
+				|| DataCongViecDuocGiao == null) {
+			mCViecDuocGiaoCallback.add(loadCongViecDuocGiaoListener);
+			if (mCViecDuocGiaoRunningPage == -1) {
+				GetCongViec getCongViec = new GetCongViec();
+				getCongViec.execute(token, username, Integer.toString(page));
+				mCViecDuocGiaoRunningPage = page;
+			}
+			return null;
+		} else {
+			ArrayList<CongViecDuocGiao> temp = new ArrayList<CongViecDuocGiao>();
+			temp.addAll(DataCongViecDuocGiao.subList(0, page * PAGE_SIZE));
+			return temp;
+		}
+
+	}
+
+	public static interface LoadCongViecDuocGiaoListener {
+		public void onFinished(ArrayList<CongViecDuocGiao> data);
+	}
+
+	// -------------------------get cong viec---------------------------//
+
 	private class GetCongViec extends AsyncTask<String, Void, String> {
 
 		@Override
@@ -173,11 +245,18 @@ public class DBController {
 								phongban, loaicongviec, hancuoi, duan,
 								mucuutien, nguoiduocxem, nguoigiao, mota,
 								tonghopbaocao, tepdinhkem, url, datathaoluan));
+						DataCongViecDaGiao.add(new CongViecDaGiao(id,
+								tencongviec, nguoithuchien)); // LuanDT
+						DataCongViecDuocGiao.add(new CongViecDuocGiao(id,
+								tencongviec, nguoigiao));
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
 				mCViecRunningPage = -1;
+				mCViecDaGiaoRunningPage = -1; // LuanDT
+				mCViecDuocGiaoRunningPage = -1;
+				
 				if (mCViecCallback != null && mCViecCallback.size() > 0) {
 					Log.d("TuNT",
 							"GetCongViec.onPostExecute: mCallback.onFinished: "
@@ -186,17 +265,29 @@ public class DBController {
 						mCViecCallback.get(i).onFinished(DataCongViec);
 					}
 				}
+				if (mCViecDaGiaoCallback != null
+						&& mCViecDaGiaoCallback.size() > 0) { // LuanDT
+					for (int i = 0; i < mCViecDaGiaoCallback.size(); i++) {
+						mCViecDaGiaoCallback.get(i).onFinished(
+								DataCongViecDaGiao);
+					}
+				}
+				if (mCViecDuocGiaoCallback != null
+						&& mCViecDuocGiaoCallback.size() > 0) {
+					for (int i = 0; i < mCViecDuocGiaoCallback.size(); i++) {
+						mCViecDuocGiaoCallback.get(i).onFinished(
+								DataCongViecDuocGiao);
+					}
+				}
 			} else {
 				Log.e("TuNT", "ERROR!");
 			}
 		}
 
 	}
-//---------------------------------------Ket thuc get Cong viec -------------------------------------------------//
 
-// ----------------------------------------- Cong Van --------------------------------------------------------//
-// -----------------------------------------------------------------------------------------------------------//
-	
+	// -------------------------cong van--------------------------//
+
 	GetCongVan mGetCongVan;
 	ArrayList<LoadCongVanListener> mCVanCallback = new ArrayList<DBController.LoadCongVanListener>();
 	int mCVanRunningPage = -1;
@@ -223,8 +314,6 @@ public class DBController {
 	public static interface LoadCongVanListener {
 		public void onFinished(ArrayList<CongVan> data);
 	}
-
-	
 
 	private class GetCongVan extends AsyncTask<String, Void, String> {
 
@@ -292,8 +381,5 @@ public class DBController {
 			}
 		}
 	}
-//-------------------------------- Get CongViecTheoDoi -------------------------------------------//
-//-------------------------------------------------------------------------------------------------//
-	
-	
+
 }

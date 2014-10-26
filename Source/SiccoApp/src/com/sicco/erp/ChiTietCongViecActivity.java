@@ -35,7 +35,8 @@ public class ChiTietCongViecActivity extends Activity {
 	final String cap_nhat_tien_do[] = { "0%", "20%", "40%", "60%", "80%",
 			"100%" };
 	ProgressDialog pDialog;
-	String url_congviec = "http://apis.mobile.vareco.vn/sicco/congviec_old.php";
+//	String url_congviec = "http://apis.mobile.vareco.vn/sicco/congviec_old.php";
+	String url_congviec = "http://thuchutcoi.tk/sicco/congviec.php";
 	JSONArray thaoluan = null, row = null;
 	ArrayList<HashMap<String, String>> thaoLuanList;
 	ArrayList<ThaoLuan> mThaoLuan;

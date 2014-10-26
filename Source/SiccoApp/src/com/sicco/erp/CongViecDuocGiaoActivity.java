@@ -1,148 +1,107 @@
 package com.sicco.erp;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import com.costum.android.widget.LoadMoreListView;
+import com.costum.android.widget.LoadMoreListView.OnLoadMoreListener;
 import com.sicco.erp.adapter.CongViecDuocGiaoAdapter;
-import com.sicco.erp.http.HTTPHandler;
-import com.sicco.erp.manager.SessionManager;
+import com.sicco.erp.database.DBController;
+import com.sicco.erp.database.DBController.LoadCongViecDuocGiaoListener;
 import com.sicco.erp.model.CongViecDuocGiao;
 
 public class CongViecDuocGiaoActivity extends Activity {
 	ProgressDialog pDialog;
-	String url_congviec = "http://apis.mobile.vareco.vn/sicco/congviec.php";
-	JSONArray congviec = null;
-	ArrayList<HashMap<String, String>> congViecDuocGiaoList;
 	ArrayList<CongViecDuocGiao> mCongViecDuocGiao;
-	ListView mListView;
 	CongViecDuocGiaoAdapter mAdapter;
+	ListView mListView;
 	String idCongViec;
+	public int pnumberCViecDuocGiao = 1;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_cong_viec_duoc_giao);
 
-		SessionManager sessionManager = SessionManager
-				.getInstance(getApplicationContext());
-		String token = sessionManager.getUserDetails().get(
-				SessionManager.KEY_TOKEN);
-		String username = sessionManager.getUserDetails().get(
-				SessionManager.KEY_NAME);
-		String page = "1";
-
-		congViecDuocGiaoList = new ArrayList<HashMap<String, String>>();
-		new GetCongViec().execute(token, username, page);
-		mCongViecDuocGiao = new ArrayList<CongViecDuocGiao>();
+		pDialog = new ProgressDialog(CongViecDuocGiaoActivity.this);
+		pDialog.setMessage(getResources().getString(R.string.vui_long_doi));
+		pDialog.setCancelable(true);
 		mListView = (ListView) findViewById(R.id.lv_cong_viec_duoc_giao);
+		final DBController controller = DBController
+				.getInstance(getApplicationContext());
+		mCongViecDuocGiao = controller.getCongViecDuocGiao(1,
+				new LoadCongViecDuocGiaoListener() {
+
+					@Override
+					public void onFinished(ArrayList<CongViecDuocGiao> data) {
+						if (pDialog.isShowing())
+							pDialog.dismiss();
+						mCongViecDuocGiao.clear();
+						mCongViecDuocGiao.addAll(data);
+						mAdapter.notifyDataSetChanged();
+
+					}
+				});
+		if (mCongViecDuocGiao == null) {
+			pDialog.show();
+			mCongViecDuocGiao = new ArrayList<CongViecDuocGiao>();
+
+		}
 		mAdapter = new CongViecDuocGiaoAdapter(getApplicationContext(),
 				R.layout.item_lv_cong_viec_duoc_giao, mCongViecDuocGiao);
 		mListView.setAdapter(mAdapter);
-		mListView.setOnItemClickListener(new OnItemClickListener() {
+		((LoadMoreListView) mListView)
+				.setOnLoadMoreListener(new OnLoadMoreListener() {
 
+					@Override
+					public void onLoadMore() {
+						pnumberCViecDuocGiao = pnumberCViecDuocGiao + 1;
+						controller.getCongViecDuocGiao(pnumberCViecDuocGiao,
+								new LoadCongViecDuocGiaoListener() {
+
+									@Override
+									public void onFinished(
+											ArrayList<CongViecDuocGiao> data) {
+										mCongViecDuocGiao.clear();
+										mCongViecDuocGiao.addAll(data);
+										Toast.makeText(
+												getApplicationContext(),
+												"OnLoad "
+														+ pnumberCViecDuocGiao,
+												0).show();
+										((LoadMoreListView) mListView)
+												.onLoadMoreComplete();
+
+									}
+								});
+
+					}
+				});
+		mListView.setOnItemClickListener(new OnItemClickListener() {
 			@Override
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) {
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+					long arg3) {
 				Intent intent = new Intent();
 				intent.putExtra("idcongviec", idCongViec);
 				intent.setClass(getApplicationContext(),
 						ChiTietCongViecActivity.class);
 				startActivity(intent);
 				Log.d("LuanDT", "ID Công việc = " + idCongViec);
+				
 			}
 		});
-
-	}
-
-	private class GetCongViec extends AsyncTask<String, Void, String> {
-
-		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-			// Showing progress dialog
-			pDialog = new ProgressDialog(CongViecDuocGiaoActivity.this);
-			pDialog.setMessage(getResources().getString(R.string.vui_long_doi));
-			pDialog.setCancelable(false);
-			pDialog.show();
-
-		}
-
-		@Override
-		protected String doInBackground(String... arg0) {
-			// Creating service handler class instance
-			HTTPHandler handler = new HTTPHandler();
-
-			String token = arg0[0];
-			String username = arg0[1];
-			String page = arg0[2];
-
-			List<NameValuePair> valuePairs = new ArrayList<NameValuePair>();
-			valuePairs.add(new BasicNameValuePair("page", page));
-			valuePairs.add(new BasicNameValuePair("token", token));
-			valuePairs.add(new BasicNameValuePair("username", username));
-			// Making a request to url and getting response
-			String ret = handler.makeHTTPRequest(url_congviec,
-					HTTPHandler.POST, valuePairs);
-
-			Log.d("LuanDT", "POST = " + valuePairs);
-
-			return ret;
-		}
-
-		@Override
-		protected void onPostExecute(String result) {
-			super.onPostExecute(result);
-			// Dismiss the progress dialog
-			if (pDialog.isShowing())
-				pDialog.dismiss();
-			if (result != null) {
-				try {
-					JSONObject jsonObj = new JSONObject(result);
-
-					// Getting JSON Array node
-					congviec = jsonObj.getJSONArray("row");
-
-					// looping through All Contacts
-					for (int i = 0; i < congviec.length(); i++) {
-						JSONObject c = congviec.getJSONObject(i);
-
-						idCongViec = c.getString("id");
-						String tencongviec = c.getString("ten_cong_viec");
-						String nguoigiao = c.getString("nguoi_giao");
-
-						mCongViecDuocGiao.add(new CongViecDuocGiao(idCongViec,
-								tencongviec, nguoigiao));
-						mAdapter.notifyDataSetChanged();
-
-					}
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
-			} else {
-				Log.e("LuanDT", "Khong the lay data tu url nay");
-			}
-		}
-
 	}
 
 	@Override

@@ -40,7 +40,8 @@ public class WidgetCVProvider extends AppWidgetProvider {
 		RemoteViews views = new RemoteViews(context.getPackageName(),
 				R.layout.widget_cong_viec);
 		views.setInt(R.id.widget_cv, "setBackgroundColor", bgColor);
-
+		views.setInt(R.id.widget_header, "setBackgroundColor", bgColor);
+		
 		Intent openApp = new Intent(context, LoginActivity.class);
 		PendingIntent pendingOpenApp = PendingIntent.getActivity(context, 0,
 				openApp, PendingIntent.FLAG_UPDATE_CURRENT);

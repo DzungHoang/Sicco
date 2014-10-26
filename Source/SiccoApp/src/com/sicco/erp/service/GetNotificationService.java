@@ -11,6 +11,8 @@ import org.json.JSONObject;
 
 import android.app.NotificationManager;
 import android.app.Service;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -26,6 +28,7 @@ import com.sicco.erp.manager.SessionManager;
 import com.sicco.erp.model.NotificationModel;
 import com.sicco.erp.utils.Constant;
 import com.sicco.erp.utils.Utils;
+import com.sicco.erp.widget.WidgetCBProvider;
 
 public class GetNotificationService extends Service {
 	Context context = this;
@@ -154,6 +157,18 @@ public class GetNotificationService extends Service {
 						Log.d("DungHV", "already in db");
 					} 
 					else {
+						
+						//TuNT//
+						AppWidgetManager manager = AppWidgetManager.getInstance(context);
+						int[] appWidgetIds = manager.getAppWidgetIds(new ComponentName(context, WidgetCBProvider.class));
+						Intent updateIntent = new  Intent(context, WidgetCBProvider.class);
+						updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+						updateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
+						
+						Log.d("TuNT", "update widget");
+						context.sendBroadcast(updateIntent);
+						//End-TuNT//
+						
 						Log.d("DungHV", "not in db");
 						ContentValues values = new ContentValues();
 						values.put(NotificationDBController.NOTIFI_TYPE_COL, notification_type);

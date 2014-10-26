@@ -62,7 +62,10 @@
             android:name=".ChiTietCongViecActivity"
             android:label="@string/chi_tiet_cong_viec" >
         </activity>
-        
+        <activity
+            android:name=".SuaCongViecActivity"
+            android:label="@string/sua_cong_viec" >
+        </activity>
         <activity
             android:name=".widget.WidgetCVConfigure"
             android:label="@string/app_name"

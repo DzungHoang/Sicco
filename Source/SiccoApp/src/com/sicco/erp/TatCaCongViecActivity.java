@@ -2,7 +2,6 @@ package com.sicco.erp;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -16,36 +15,39 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.costum.android.widget.LoadMoreListView;
 import com.costum.android.widget.LoadMoreListView.OnLoadMoreListener;
+import com.sicco.erp.adapter.PhongBanAdapter;
 import com.sicco.erp.adapter.TatCaCongViecAdapter;
 import com.sicco.erp.database.DBController;
 import com.sicco.erp.database.DBController.LoadCongViecListener;
 import com.sicco.erp.http.HTTPHandler;
+import com.sicco.erp.model.PhongBan;
 import com.sicco.erp.model.TatCaCongViec;
 
 public class TatCaCongViecActivity extends Activity {
 	ProgressDialog pDialog;
+	ArrayList<TatCaCongViec> mCongViecPhongBan; // L
 	ArrayList<TatCaCongViec> mTatCaCongViec;
 	ListView mListView;
 	TatCaCongViecAdapter mAdapter;
-	String idCongViec;
 	ActionBar mActionBar;
 	Spinner sPhongBan;
 	String url_phongban = "http://apis.mobile.vareco.vn/sicco/phongban.php";
+	// String url_phongban = "http://thuchutcoi.tk/sicco/phongban.php";
 	JSONArray phongban = null;
-	ArrayAdapter<String> mAdapterPhongBan;
-	List<String> mListPhongBan;
+	ArrayList<PhongBan> mPhongBan;
+	PhongBanAdapter mPhongBanAdapter;
+	String idPhongBan;
 	static int pnumberCviec = 1;
 
 	@Override
@@ -62,15 +64,49 @@ public class TatCaCongViecActivity extends Activity {
 		mActionBar.setDisplayShowCustomEnabled(true);
 
 		new GetPhongBan().execute();
-		mListPhongBan = new ArrayList<String>();
+		mPhongBan = new ArrayList<PhongBan>();
+		mPhongBan.add(new PhongBan("0", getResources().getString(
+				R.string.tat_ca)));
 		sPhongBan = (Spinner) findViewById(R.id.spinnerphongban);
-		mAdapterPhongBan = new ArrayAdapter<String>(TatCaCongViecActivity.this,
-				android.R.layout.simple_list_item_1, mListPhongBan);
-		sPhongBan.setAdapter(mAdapterPhongBan);
+		mPhongBanAdapter = new PhongBanAdapter(TatCaCongViecActivity.this,
+				android.R.layout.simple_list_item_1, mPhongBan);
+		sPhongBan.setAdapter(mPhongBanAdapter);
+		sPhongBan.setOnItemSelectedListener(new OnItemSelectedListener() {
 
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view,
+					int position, long id) {
+
+				HashMap<String, String> getArray = (HashMap) view.getTag();
+				idPhongBan = getArray.get("id");
+				String TenPhongBan = getArray.get("ten_phong_ban");
+
+				Toast.makeText(getApplicationContext(),
+						"Phong ban : " + TenPhongBan + "..." + idPhongBan,
+						Toast.LENGTH_LONG).show();
+				if (idPhongBan != "0") {
+					congViecPhongBan();
+				} else {
+					tatCaCongViec();
+				}
+
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> arg0) {
+				// TODO Auto-generated method stub
+
+			}
+
+		});
+
+	}
+
+	private void tatCaCongViec() {
 		pDialog = new ProgressDialog(TatCaCongViecActivity.this);
 		pDialog.setMessage(getResources().getString(R.string.vui_long_doi));
 		pDialog.setCancelable(true);
+
 		mListView = (ListView) findViewById(R.id.lv_tat_ca_cong_viec);
 		final DBController controller = DBController
 				.getInstance(getApplicationContext());
@@ -80,10 +116,8 @@ public class TatCaCongViecActivity extends Activity {
 			public void onFinished(ArrayList<TatCaCongViec> data) {
 				if (pDialog.isShowing())
 					pDialog.dismiss();
-				Log.d("TuNT", "onFinished: " + data);
 				mTatCaCongViec.clear();
 				mTatCaCongViec.addAll(data);
-				Log.d("TuNT", "onFinished: " + mTatCaCongViec.size());
 				mAdapter.notifyDataSetChanged();
 			}
 		});
@@ -91,10 +125,6 @@ public class TatCaCongViecActivity extends Activity {
 			pDialog.show();
 			mTatCaCongViec = new ArrayList<TatCaCongViec>();
 		}
-		mAdapter = new TatCaCongViecAdapter(getApplicationContext(),
-				R.layout.item_lv_tat_ca_cong_viec, mTatCaCongViec);
-		mListView.setAdapter(mAdapter);
-
 		((LoadMoreListView) mListView)
 				.setOnLoadMoreListener(new OnLoadMoreListener() {
 					public void onLoadMore() {
@@ -117,20 +147,126 @@ public class TatCaCongViecActivity extends Activity {
 								});
 					}
 				});
+		mAdapter = new TatCaCongViecAdapter(getApplicationContext(),
+				R.layout.item_lv_tat_ca_cong_viec, mTatCaCongViec);
+		mListView.setAdapter(mAdapter);
 		mListView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
+				HashMap<String, String> getArray = (HashMap) view.getTag();
 				Intent intent = new Intent();
-				intent.putExtra("idcongviec", idCongViec);
+				intent.putExtra("id", getArray.get("id"));
+				intent.putExtra("ten_cong_viec", getArray.get("ten_cong_viec"));
+				intent.putExtra("tinh_trang", getArray.get("tinh_trang"));
+				intent.putExtra("tien_do", getArray.get("tien_do"));
+				intent.putExtra("nguoi_thuc_hien",
+						getArray.get("nguoi_thuc_hien"));
+				intent.putExtra("phong_ban", getArray.get("phong_ban"));
+				intent.putExtra("loai_cong_viec",
+						getArray.get("loai_cong_viec"));
+				intent.putExtra("ngay_ket_thuc", getArray.get("ngay_ket_thuc"));
+				intent.putExtra("du_an", getArray.get("du_an"));
+				intent.putExtra("muc_uu_tien", getArray.get("muc_uu_tien"));
+				intent.putExtra("nguoi_duoc_xem",
+						getArray.get("nguoi_duoc_xem"));
+				intent.putExtra("nguoi_giao", getArray.get("nguoi_giao"));
+				intent.putExtra("mo_ta", getArray.get("mo_ta"));
+				intent.putExtra("tong_hop_bao_cao",
+						getArray.get("tong_hop_bao_cao"));
+				intent.putExtra("Url", getArray.get("Url"));
+
 				intent.setClass(getApplicationContext(),
 						ChiTietCongViecActivity.class);
 				startActivity(intent);
-				Log.d("LuanDT", "ID Công việc = " + idCongViec);
 			}
 		});
+	}
 
+	private void congViecPhongBan() {
+		pDialog = new ProgressDialog(TatCaCongViecActivity.this);
+		pDialog.setMessage(getResources().getString(R.string.vui_long_doi));
+		pDialog.setCancelable(true);
+		mListView = (ListView) findViewById(R.id.lv_tat_ca_cong_viec);
+		mCongViecPhongBan = new ArrayList<TatCaCongViec>();
+		final DBController controller = DBController
+				.getInstance(getApplicationContext());
+		mTatCaCongViec = controller.getCongViec(1, new LoadCongViecListener() {
+
+			@Override
+			public void onFinished(ArrayList<TatCaCongViec> data) {
+				if (pDialog.isShowing())
+					pDialog.dismiss();
+				Log.d("TuNT", "onFinished: " + data);
+				mTatCaCongViec.clear();
+				mTatCaCongViec.addAll(data);
+				mAdapter.notifyDataSetChanged();
+			}
+		});
+		if (mTatCaCongViec == null) {
+			pDialog.show();
+			mTatCaCongViec = new ArrayList<TatCaCongViec>();
+		}
+		showList(mTatCaCongViec);
+		((LoadMoreListView) mListView)
+				.setOnLoadMoreListener(new OnLoadMoreListener() {
+					public void onLoadMore() {
+						pnumberCviec = pnumberCviec + 1;
+						controller.getCongViec(pnumberCviec,
+								new LoadCongViecListener() {
+
+									@Override
+									public void onFinished(
+											ArrayList<TatCaCongViec> data) {
+										mTatCaCongViec.clear();
+										mTatCaCongViec.addAll(data);
+										showList(mTatCaCongViec);
+										mAdapter.notifyDataSetChanged();
+										Toast.makeText(getApplicationContext(),
+												"onLoad " + pnumberCviec, 0)
+												.show();
+										((LoadMoreListView) mListView)
+												.onLoadMoreComplete();
+									}
+								});
+					}
+				});
+		mAdapter = new TatCaCongViecAdapter(getApplicationContext(),
+				R.layout.item_lv_tat_ca_cong_viec, mCongViecPhongBan);
+		mListView.setAdapter(mAdapter);
+		mListView.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				HashMap<String, String> getArray = (HashMap) view.getTag();
+				Intent intent = new Intent();
+				intent.putExtra("id", getArray.get("id"));
+				intent.putExtra("ten_cong_viec", getArray.get("ten_cong_viec"));
+				intent.putExtra("tinh_trang", getArray.get("tinh_trang"));
+				intent.putExtra("tien_do", getArray.get("tien_do"));
+				intent.putExtra("nguoi_thuc_hien",
+						getArray.get("nguoi_thuc_hien"));
+				intent.putExtra("phong_ban", getArray.get("phong_ban"));
+				intent.putExtra("loai_cong_viec",
+						getArray.get("loai_cong_viec"));
+				intent.putExtra("ngay_ket_thuc", getArray.get("ngay_ket_thuc"));
+				intent.putExtra("du_an", getArray.get("du_an"));
+				intent.putExtra("muc_uu_tien", getArray.get("muc_uu_tien"));
+				intent.putExtra("nguoi_duoc_xem",
+						getArray.get("nguoi_duoc_xem"));
+				intent.putExtra("nguoi_giao", getArray.get("nguoi_giao"));
+				intent.putExtra("mo_ta", getArray.get("mo_ta"));
+				intent.putExtra("tong_hop_bao_cao",
+						getArray.get("tong_hop_bao_cao"));
+				intent.putExtra("Url", getArray.get("Url"));
+
+				intent.setClass(getApplicationContext(),
+						ChiTietCongViecActivity.class);
+				startActivity(intent);
+			}
+		});
 	}
 
 	// ----------------------phongban---------------------------//
@@ -147,8 +283,8 @@ public class TatCaCongViecActivity extends Activity {
 
 		@Override
 		protected void onPostExecute(String result) {
-			if (pDialog.isShowing())
-				pDialog.dismiss();
+			// if (pDialog.isShowing())
+			// pDialog.dismiss();
 			if (result != null) {
 				try {
 					JSONObject jsonObject = new JSONObject(result);
@@ -157,8 +293,8 @@ public class TatCaCongViecActivity extends Activity {
 						JSONObject object = phongban.getJSONObject(i);
 						String id = object.getString("id_phong_ban");
 						String tenphongban = object.getString("ten_phong_ban");
-						mListPhongBan.add(tenphongban);
-						mAdapterPhongBan.notifyDataSetChanged();
+						mPhongBan.add(new PhongBan(id, tenphongban));
+						mPhongBanAdapter.notifyDataSetChanged();
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
@@ -169,6 +305,16 @@ public class TatCaCongViecActivity extends Activity {
 			super.onPostExecute(result);
 		}
 
+	}
+
+	public void showList(ArrayList<TatCaCongViec> arrayList) {
+		mCongViecPhongBan.clear();
+		for (int i = 0; i < arrayList.size(); i++) {
+			if (arrayList.get(i).getPhongBan().equals(idPhongBan)) {
+				mCongViecPhongBan.add(arrayList.get(i));
+			}
+		}
+		Log.d("LuanDT", "showListIDPBan = " + idPhongBan);
 	}
 
 }

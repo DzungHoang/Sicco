@@ -1,6 +1,7 @@
 package com.sicco.erp;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -11,9 +12,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
 
 import com.costum.android.widget.LoadMoreListView;
 import com.costum.android.widget.LoadMoreListView.OnLoadMoreListener;
@@ -21,15 +22,15 @@ import com.sicco.erp.adapter.CongViecDaGiaoAdapter;
 import com.sicco.erp.database.DBController;
 import com.sicco.erp.database.DBController.LoadCongViecDaGiaoListener;
 import com.sicco.erp.model.CongViecDaGiao;
+import com.sicco.erp.model.TatCaCongViec;
 
 public class CongViecDaGiaoActivity extends Activity {
 
 	ProgressDialog pDialog;
-	ArrayList<CongViecDaGiao> mCongViecDaGiao;
+	ArrayList<TatCaCongViec> mCongViecDaGiao;
 	ListView mListView;
 	CongViecDaGiaoAdapter mAdapter;
-	String idCongViec;
-	static int pnumberCviecDaGiao = 1;
+	static int pnumberCviecDaGiao = TatCaCongViecActivity.pnumberCviec;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +47,7 @@ public class CongViecDaGiaoActivity extends Activity {
 				new LoadCongViecDaGiaoListener() {
 
 					@Override
-					public void onFinished(ArrayList<CongViecDaGiao> data) {
+					public void onFinished(ArrayList<TatCaCongViec> data) {
 						if (pDialog.isShowing())
 							pDialog.dismiss();
 						mCongViecDaGiao.clear();
@@ -57,7 +58,7 @@ public class CongViecDaGiaoActivity extends Activity {
 				});
 		if (mCongViecDaGiao == null) {
 			pDialog.show();
-			mCongViecDaGiao = new ArrayList<CongViecDaGiao>();
+			mCongViecDaGiao = new ArrayList<TatCaCongViec>();
 		}
 		mAdapter = new CongViecDaGiaoAdapter(getApplicationContext(),
 				R.layout.item_lv_cong_viec_da_giao, mCongViecDaGiao);
@@ -71,7 +72,7 @@ public class CongViecDaGiaoActivity extends Activity {
 
 									@Override
 									public void onFinished(
-											ArrayList<CongViecDaGiao> data) {
+											ArrayList<TatCaCongViec> data) {
 										mCongViecDaGiao.clear();
 										mCongViecDaGiao.addAll(data);
 										mAdapter.notifyDataSetChanged();
@@ -90,12 +91,27 @@ public class CongViecDaGiaoActivity extends Activity {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
+				HashMap<String, String> getArray = (HashMap) view.getTag();
 				Intent intent = new Intent();
-				intent.putExtra("idcongviec", idCongViec);
+				intent.putExtra("id", getArray.get("id"));
+				intent.putExtra("ten_cong_viec", getArray.get("ten_cong_viec"));
+				intent.putExtra("tinh_trang", getArray.get("tinh_trang"));
+				intent.putExtra("tien_do", getArray.get("tien_do"));
+				intent.putExtra("nguoi_thuc_hien", getArray.get("nguoi_thuc_hien"));
+				intent.putExtra("phong_ban", getArray.get("phong_ban"));
+				intent.putExtra("loai_cong_viec", getArray.get("loai_cong_viec"));
+				intent.putExtra("ngay_ket_thuc", getArray.get("ngay_ket_thuc"));
+				intent.putExtra("du_an", getArray.get("du_an"));
+				intent.putExtra("muc_uu_tien", getArray.get("muc_uu_tien"));
+				intent.putExtra("nguoi_duoc_xem", getArray.get("nguoi_duoc_xem"));
+				intent.putExtra("nguoi_giao", getArray.get("nguoi_giao"));
+				intent.putExtra("mo_ta", getArray.get("mo_ta"));
+				intent.putExtra("tong_hop_bao_cao", getArray.get("tong_hop_bao_cao"));
+				intent.putExtra("Url", getArray.get("Url"));
+				
 				intent.setClass(getApplicationContext(),
 						ChiTietCongViecActivity.class);
 				startActivity(intent);
-				Log.d("LuanDT", "ID Công việc = " + idCongViec);
 			}
 		});
 
@@ -111,7 +127,7 @@ public class CongViecDaGiaoActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		Intent intent = new Intent();
 		intent.setClass(getApplicationContext(), ThemCongViecActivity.class);
-		startActivityForResult(intent, 1);
+		startActivity(intent);
 		return true;
 	}
 }

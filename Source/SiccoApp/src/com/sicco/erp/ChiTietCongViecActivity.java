@@ -1,5 +1,6 @@
 package com.sicco.erp;
 
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +11,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.sicco.erp.adapter.ThaoLuanAdapter;
+import com.sicco.erp.http.HTTPHandler;
+import com.sicco.erp.model.ThaoLuan;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -17,32 +22,27 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.sicco.erp.adapter.ThaoLuanAdapter;
-import com.sicco.erp.http.HTTPHandler;
-import com.sicco.erp.model.ThaoLuan;
 
 public class ChiTietCongViecActivity extends Activity {
-
-	public static final String urlAvatar = "http://dantri21.vcmedia.vn/zoom/130_100/yT0YJzvK8t63z214dHr/Image/2014/10/russian-president-2a373.jpg";
-	final String cap_nhat_tien_do[] = { "0%", "20%", "40%", "60%", "80%",
-			"100%" };
+	
+	
 	ProgressDialog pDialog;
-//	String url_congviec = "http://apis.mobile.vareco.vn/sicco/congviec_old.php";
-	String url_congviec = "http://thuchutcoi.tk/sicco/congviec.php";
+	String url_congviec = "http://apis.mobile.vareco.vn/sicco/congviec_old.php";
 	JSONArray thaoluan = null, row = null;
 	ArrayList<HashMap<String, String>> thaoLuanList;
 	ArrayList<ThaoLuan> mThaoLuan;
 	ListView mListView;
 	ThaoLuanAdapter mAdapter;
-	String idCongViec;
+	
+	final String cap_nhat_tien_do[] = { "0%", "20%", "40%", "60%", "80%",
+			"100%" };
 	ImageView imgAnhDaiDien;
 	TextView tvTenCongViec;
 	TextView tvNguoiGiao;
@@ -50,47 +50,61 @@ public class ChiTietCongViecActivity extends Activity {
 	TextView tvNgayKetThuc;
 	TextView tvNoiDung;
 	TextView tvTongHopBaoCao;
-	String tenCongViec;
-	String nguoiGiao;
-	String nguoiThucHien;
-	String ngayKetThuc;
-	String noiDung;
-	String tongHopBaoCao;
-	String tienDo;
+	String id, tenCongViec, tinhTrang, tienDo, nguoiThucHien,
+			phongBan, loaiCongViec, ngayKetThuc, duAn, mucUuTien, nguoiDuocXem,
+			nguoiGiao, moTa, tongHopBaoCao, Url;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		// TuNT
-		Intent intent = getIntent();
-		idCongViec = intent.getStringExtra("idcongviec");
-		if (intent.getStringExtra("idcongviec") != null) {
-			if (!intent.getStringExtra("idcongviec").equals("")) {
-				if (intent.getStringExtra("idcongviec").equals("-1")) {
-					finish();
-					Intent intent2 = new Intent(getApplicationContext(),
-							TatCaCongViecActivity.class);
-					startActivity(intent2);
-				} else {
-					new GetThaoLuan().execute(idCongViec);
-				}
-				Toast.makeText(getApplicationContext(),
-						"ID: " + intent.getStringExtra("idcongviec"),
-						Toast.LENGTH_LONG).show();
-			}
-		}
-		// End TuNT
 		setContentView(R.layout.activity_chi_tiet_cong_viec);
 
+		Intent intent = getIntent();
+		id = intent.getStringExtra("id");
+		tenCongViec = intent.getStringExtra("ten_cong_viec");
+		tinhTrang = intent.getStringExtra("tinh_trang");
+		tienDo = intent.getStringExtra("tien_do");
+		nguoiThucHien = intent.getStringExtra("nguoi_thuc_hien");
+		phongBan = intent.getStringExtra("phong_ban");
+		loaiCongViec = intent.getStringExtra("loai_cong_viec");
+		ngayKetThuc = intent.getStringExtra("ngay_ket_thuc");
+		duAn = intent.getStringExtra("du_an");
+		mucUuTien = intent.getStringExtra("muc_uu_tien");
+		nguoiDuocXem = intent.getStringExtra("nguoi_duoc_xem");
+		nguoiGiao = intent.getStringExtra("nguoi_giao");
+		moTa = intent.getStringExtra("mo_ta");
+		tongHopBaoCao = intent.getStringExtra("tong_hop_bao_cao");
+		Url = intent.getStringExtra("Url");
+
+		tvTenCongViec = (TextView) findViewById(R.id.tv_chi_tiet_cv_ten_cong_viec);
+		tvTenCongViec.setText(tenCongViec);
+		tvNguoiGiao = (TextView) findViewById(R.id.tv_chi_tiet_cv_nguoi_giao);
+		tvNguoiGiao.setText(nguoiGiao);
+		tvNguoiThucHien = (TextView) findViewById(R.id.tv_chi_tiet_cv_nguoi_thuc_hien);
+		tvNguoiThucHien.setText(nguoiThucHien);
+		tvNgayKetThuc = (TextView) findViewById(R.id.tv_chi_tiet_cv_ket_thuc);
+		tvNgayKetThuc.setText(ngayKetThuc);
+		tvNoiDung = (TextView) findViewById(R.id.tv_chi_tiet_cv_noi_dung);
+		tvNoiDung.setText(moTa);
+		tvTongHopBaoCao = (TextView) findViewById(R.id.tv_chi_tiet_cv_tong_hop_bao_cao);
+		tvTongHopBaoCao.setText(tongHopBaoCao);
+		
+		
+		DisplayMetrics displayMetrics = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+		int lvWidth = displayMetrics.widthPixels * 10/10;
+		int lvHeight = displayMetrics.heightPixels * 6/10;
+		
+		
 		thaoLuanList = new ArrayList<HashMap<String, String>>();
+		new GetThaoLuan().execute();
 		mThaoLuan = new ArrayList<ThaoLuan>();
 		mListView = (ListView) findViewById(R.id.lv_thao_luan);
 		mAdapter = new ThaoLuanAdapter(getBaseContext(),
 				R.layout.item_lv_thao_luan, mThaoLuan);
 		mListView.setAdapter(mAdapter);
-
 	}
-
+	
 	private class GetThaoLuan extends AsyncTask<String, Void, String> {
 
 		@Override
@@ -111,7 +125,7 @@ public class ChiTietCongViecActivity extends Activity {
 
 			// Making a request to url and getting response
 			List<NameValuePair> valuePairs = new ArrayList<NameValuePair>();
-			valuePairs.add(new BasicNameValuePair("id", idCongViec));
+			valuePairs.add(new BasicNameValuePair("id", id));
 			valuePairs.add(new BasicNameValuePair("tien_do", tienDo));
 			// Making a request to url and getting response
 			String ret = handler.makeHTTPRequest(url_congviec,
@@ -125,7 +139,6 @@ public class ChiTietCongViecActivity extends Activity {
 		@Override
 		protected void onPostExecute(String result) {
 			super.onPostExecute(result);
-			// Dismiss the progress dialog
 			if (pDialog.isShowing())
 				pDialog.dismiss();
 			if (result != null) {
@@ -136,14 +149,6 @@ public class ChiTietCongViecActivity extends Activity {
 
 					for (int i = 0; i < row.length(); i++) {
 						JSONObject o = row.getJSONObject(i);
-						tenCongViec = o.getString("ten_cong_viec");
-						tenCongViec = o.getString("ten_cong_viec");
-						nguoiGiao = o.getString("nguoi_giao");
-						nguoiThucHien = o.getString("nguoi_thuc_hien");
-						ngayKetThuc = o.getString("ngay_ket_thuc");
-						noiDung = o.getString("mo_ta");
-						tongHopBaoCao = o.getString("tong_hop_bao_cao");
-
 						thaoluan = o.getJSONArray("thao_luan");
 
 						for (int j = 0; j < thaoluan.length(); j++) {
@@ -159,25 +164,9 @@ public class ChiTietCongViecActivity extends Activity {
 							mThaoLuan.add(new ThaoLuan(anhdaidien,
 									nguoithaoluan, thoigianthaoluan,
 									noidungthaoluan));
-//							Log.d("LuanDT", "anh_dai_dien: " + anhdaidien);
 
 						}
 						mAdapter.notifyDataSetChanged();
-
-						tvTenCongViec = (TextView) findViewById(R.id.tv_chi_tiet_cv_ten_cong_viec);
-						tvTenCongViec.setText(tenCongViec);
-						tvNguoiGiao = (TextView) findViewById(R.id.tv_chi_tiet_cv_nguoi_giao);
-						tvNguoiGiao.setText(nguoiGiao);
-						tvNguoiThucHien = (TextView) findViewById(R.id.tv_chi_tiet_cv_nguoi_thuc_hien);
-						tvNguoiThucHien.setText(nguoiThucHien);
-						tvNgayKetThuc = (TextView) findViewById(R.id.tv_chi_tiet_cv_ket_thuc);
-						tvNgayKetThuc.setText(ngayKetThuc);
-						tvNoiDung = (TextView) findViewById(R.id.tv_chi_tiet_cv_noi_dung);
-						tvNoiDung.setText(noiDung);
-						tvTongHopBaoCao = (TextView) findViewById(R.id.tv_chi_tiet_cv_tong_hop_bao_cao);
-						tvTongHopBaoCao.setText(tongHopBaoCao);
-
-						// Log.d("LuanDT", "tenCongViec :" + ten CongViec);
 
 					}
 				} catch (JSONException e) {
@@ -220,8 +209,6 @@ public class ChiTietCongViecActivity extends Activity {
 								@Override
 								public void onClick(DialogInterface dialog,
 										int which) {
-									new GetThaoLuan().execute(idCongViec,
-											tienDo);
 
 								}
 							})

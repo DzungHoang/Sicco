@@ -1,6 +1,7 @@
 package com.sicco.erp;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -10,8 +11,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -21,14 +22,15 @@ import com.sicco.erp.adapter.CongViecDuocGiaoAdapter;
 import com.sicco.erp.database.DBController;
 import com.sicco.erp.database.DBController.LoadCongViecDuocGiaoListener;
 import com.sicco.erp.model.CongViecDuocGiao;
+import com.sicco.erp.model.TatCaCongViec;
 
 public class CongViecDuocGiaoActivity extends Activity {
 	ProgressDialog pDialog;
-	ArrayList<CongViecDuocGiao> mCongViecDuocGiao;
+	ArrayList<TatCaCongViec> mCongViecDuocGiao;
 	CongViecDuocGiaoAdapter mAdapter;
 	ListView mListView;
 	String idCongViec;
-	public int pnumberCViecDuocGiao = 1;
+	public int pnumberCViecDuocGiao = TatCaCongViecActivity.pnumberCviec;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +47,7 @@ public class CongViecDuocGiaoActivity extends Activity {
 				new LoadCongViecDuocGiaoListener() {
 
 					@Override
-					public void onFinished(ArrayList<CongViecDuocGiao> data) {
+					public void onFinished(ArrayList<TatCaCongViec> data) {
 						if (pDialog.isShowing())
 							pDialog.dismiss();
 						mCongViecDuocGiao.clear();
@@ -56,7 +58,7 @@ public class CongViecDuocGiaoActivity extends Activity {
 				});
 		if (mCongViecDuocGiao == null) {
 			pDialog.show();
-			mCongViecDuocGiao = new ArrayList<CongViecDuocGiao>();
+			mCongViecDuocGiao = new ArrayList<TatCaCongViec>();
 
 		}
 		mAdapter = new CongViecDuocGiaoAdapter(getApplicationContext(),
@@ -73,7 +75,7 @@ public class CongViecDuocGiaoActivity extends Activity {
 
 									@Override
 									public void onFinished(
-											ArrayList<CongViecDuocGiao> data) {
+											ArrayList<TatCaCongViec> data) {
 										mCongViecDuocGiao.clear();
 										mCongViecDuocGiao.addAll(data);
 										Toast.makeText(
@@ -91,14 +93,30 @@ public class CongViecDuocGiaoActivity extends Activity {
 				});
 		mListView.setOnItemClickListener(new OnItemClickListener() {
 			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+			public void onItemClick(AdapterView<?> arg0, View view, int arg2,
 					long arg3) {
+				HashMap<String, String> getArray = (HashMap) view.getTag();
 				Intent intent = new Intent();
-				intent.putExtra("idcongviec", idCongViec);
+				intent.putExtra("id", getArray.get("id"));
+				intent.putExtra("ten_cong_viec", getArray.get("ten_cong_viec"));
+				intent.putExtra("tinh_trang", getArray.get("tinh_trang"));
+				intent.putExtra("tien_do", getArray.get("tien_do"));
+				intent.putExtra("nguoi_thuc_hien", getArray.get("nguoi_thuc_hien"));
+				intent.putExtra("phong_ban", getArray.get("phong_ban"));
+				intent.putExtra("loai_cong_viec", getArray.get("loai_cong_viec"));
+				intent.putExtra("ngay_ket_thuc", getArray.get("ngay_ket_thuc"));
+				intent.putExtra("du_an", getArray.get("du_an"));
+				intent.putExtra("muc_uu_tien", getArray.get("muc_uu_tien"));
+				intent.putExtra("nguoi_duoc_xem", getArray.get("nguoi_duoc_xem"));
+				intent.putExtra("nguoi_giao", getArray.get("nguoi_giao"));
+				intent.putExtra("mo_ta", getArray.get("mo_ta"));
+				intent.putExtra("tong_hop_bao_cao", getArray.get("tong_hop_bao_cao"));
+				intent.putExtra("Url", getArray.get("Url"));
+				
+				
 				intent.setClass(getApplicationContext(),
 						ChiTietCongViecActivity.class);
 				startActivity(intent);
-				Log.d("LuanDT", "ID Công việc = " + idCongViec);
 				
 			}
 		});

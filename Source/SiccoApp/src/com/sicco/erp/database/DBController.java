@@ -321,7 +321,7 @@ public class DBController {
 									tonghopbaocao, tepdinhkem, url, datathaoluan));
 						}
 						//cong viec theo doi
-						if (nguoiduocxem.equals(username) && !tiendo.equals(cvDaHoanThanh)) {
+						if (nguoiduocxem.contains(username) && !tiendo.equals(cvDaHoanThanh)) {
 							DataCongViecTheoDoi.add(new TatCaCongViec(id, tencongviec,
 									ngaybatdau, tinhtrang, tiendo, nguoithuchien,
 									phongban, loaicongviec, hancuoi, duan,

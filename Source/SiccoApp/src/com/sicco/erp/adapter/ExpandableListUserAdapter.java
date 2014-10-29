@@ -17,7 +17,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sicco.erp.R;
-import com.sicco.erp.ThemCongViecActivity;
 import com.sicco.erp.model.NguoiDung;
 import com.sicco.erp.model.PhongBan;
 
@@ -25,11 +24,12 @@ public class ExpandableListUserAdapter extends BaseExpandableListAdapter {
 	Context mContext;
 	List<PhongBan> mPhongBan;
 	HashMap<String, List<NguoiDung>> mNguoiDung;
-//	ArrayList<NguoiDung> list = ThemCongViecActivity.listActive;
+	// ArrayList<NguoiDung> list = ThemCongViecActivity.listActive;
 	ArrayList<NguoiDung> list;
-	
+
 	public ExpandableListUserAdapter(Context context, List<PhongBan> phongBan,
-			HashMap<String, List<NguoiDung>> nguoiDung, ArrayList<NguoiDung> listChecked) {
+			HashMap<String, List<NguoiDung>> nguoiDung,
+			ArrayList<NguoiDung> listChecked) {
 		mContext = context;
 		mPhongBan = phongBan;
 		mNguoiDung = nguoiDung;
@@ -94,72 +94,86 @@ public class ExpandableListUserAdapter extends BaseExpandableListAdapter {
 	@Override
 	public View getChildView(final int groupPosition, final int childPosition,
 			boolean isLastChild, View convertView, ViewGroup parent) {
-		NguoiDung nguoiDung = getChild(groupPosition, childPosition);
-		if (convertView == null) {
+		final NguoiDung nguoiDung = getChild(groupPosition, childPosition);
+		Log.d("TuNT","=====================  getChildView  ============================");
+		CheckBox tenTaiKhoan;
+		boolean createNew = true;
+		//Check if getChildView is recalled with the same groupPos & childPos => ignore create new view
+		if(convertView != null){
+			tenTaiKhoan = (CheckBox) convertView
+					.findViewById(R.id.tenTaiKhoan);
+			if(tenTaiKhoan != null){
+				NguoiDung tag = (NguoiDung) tenTaiKhoan.getTag();
+				if(tag != null){
+					if(tag.equal(nguoiDung)) createNew = false;
+				}
+			}
+		}
+		//inflate new view
+		if (createNew) {
+			Log.d("TuNT", "inflate new view");
 			LayoutInflater layoutInflater = (LayoutInflater) mContext
 					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			convertView = layoutInflater.inflate(R.layout.child_nguoi_dung,
 					null);
 		}
-		CheckBox tenTaiKhoan = (CheckBox) convertView
+		 
+		tenTaiKhoan = (CheckBox) convertView
 				.findViewById(R.id.tenTaiKhoan);
-//		if(!list.isEmpty()){
-//			for (int i = 0; i < list.size(); i++) {
-//				Log.d("TuNT", "size = "+list.size());
-//				Log.d("TuNT", ""+list);
-//				if (list.get(i).getId().contains(mNguoiDung.get(
-//						mPhongBan.get(groupPosition).getTenPhongBan()).get(
-//						childPosition).getId())) {
-//					tenTaiKhoan.setChecked(true);
-//				}
-//				else{
-//					tenTaiKhoan.setChecked(false);
-//				}
-//			}
-//		}
+		
+		Log.d("TuNT", "getChildView: groupPosition = " + groupPosition + "; childPosition = " + childPosition);
+		Log.d("TuNT", "list.size() = " + list.size());
+		Log.d("TuNT", "nguoiDung = " + nguoiDung.toString());
+		if (!list.isEmpty()) {
+			for (int i = 0; i < list.size(); i++) {
+				Log.d("TuNT", "" + list.get(i).toString());
+				if (list.get(i).equal(nguoiDung)) {
+					Log.d("TuNT","setChecked: true");
+					tenTaiKhoan.setChecked(true);
+					break;
+				} else {
+					tenTaiKhoan.setChecked(false);
+				}
+			}
+		}
 		tenTaiKhoan.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
 			public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
-				Toast.makeText(
-						mContext,
-						"G: " + groupPosition + " / C: " + childPosition
-								+ " / isChecked: " + arg1, 0).show();
-				NguoiDung nguoiDung = mNguoiDung.get(
-						mPhongBan.get(groupPosition).getTenPhongBan()).get(
-						childPosition);
+				Log.d("TuNT","============== onCheckedChanged: " + arg1 +" =================");
+				Log.d("TuNT", "list.size() = " + list.size());
+				Log.d("TuNT", "nguoiDung = " + nguoiDung.toString());
+				Log.d("TuNT", "arg0.getTag() = " + arg0.getTag().toString());
+				Log.d("TuNT", "mNguoiDung = " + mNguoiDung.get(mPhongBan.get(groupPosition).getTenPhongBan()).get(childPosition).toString());
 				if (arg1) {
-					if(list.isEmpty()){
+					if (list.isEmpty()) {
+						Log.d("TuNT", "Add: " + nguoiDung.toString());
 						list.add(nguoiDung);
-					}else{
-						Log.d("TuNT", "else");
+					} else {
 						boolean exist = false;
 						for (int i = 0; i < list.size(); i++) {
-							if (list.get(i).getId()
-									.equals(nguoiDung.getId())) {
+							if (list.get(i).equal(nguoiDung)) {
 								exist = true;
 							}
 						}
-						if(exist == false){
+						if (exist == false) {
+							Log.d("TuNT", "Add: " + nguoiDung.toString());
 							list.add(nguoiDung);
 						}
 					}
 				} else {
 					for (int i = 0; i < list.size(); i++) {
-						if (list.get(i).getId()
-								.contains(nguoiDung.getId())) {
+						Log.d("TuNT", "" + list.get(i).toString());
+						if (list.get(i).equal(nguoiDung)) {
 							list.remove(list.get(i));
 						}
 					}
 				}
+				Log.d("TuNT", "list.size() = " + list.size());
 			}
 		});
 		tenTaiKhoan.setText(nguoiDung.getUsername());
-		HashMap<String, String> hashMap = new HashMap<String, String>();
-		hashMap.put("id", nguoiDung.getId());
-		hashMap.put("username", nguoiDung.getUsername());
-		hashMap.put("phong_ban", nguoiDung.getPhongban());
-		tenTaiKhoan.setTag(hashMap);
+		tenTaiKhoan.setTag(nguoiDung);
 		return convertView;
 	}
 

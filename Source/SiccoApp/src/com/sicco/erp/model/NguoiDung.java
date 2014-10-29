@@ -38,4 +38,16 @@ public class NguoiDung {
 	public int getPostion() {
 		return postion;
 	}
+	
+	public boolean equal(NguoiDung item){
+		boolean ret = false;
+		if(this.id.equals(item.id) && this.username.equals(item.username)) ret = true;
+		return ret;
+	}
+	
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return "id = " + id + "; username = " + username + "; phongban = " + phongban;
+	}
 }

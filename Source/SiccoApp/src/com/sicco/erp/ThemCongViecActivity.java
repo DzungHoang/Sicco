@@ -313,7 +313,11 @@ public class ThemCongViecActivity extends Activity implements OnClickListener {
 								nguoiXuLy = getResources().getString(R.string.nguoi_xu_ly);
 							}else{
 								for (int i = 0; i < listActive.size(); i++) {
-									nguoiXuLy += listActive.get(i).getUsername()+", ";
+									if(i == listActive.size() - 1){
+										nguoiXuLy += listActive.get(i).getUsername();
+									}else{
+										nguoiXuLy += listActive.get(i).getUsername()+", ";
+									}
 									idNguoiXuLy += listActive.get(i).getId();
 								}
 							}

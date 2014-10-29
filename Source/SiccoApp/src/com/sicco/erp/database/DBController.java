@@ -296,13 +296,13 @@ public class DBController {
 						}
 						
 						//tatca cong viec
-						if (!tiendo.equals(cvDaHoanThanh)) {
+//						if (!tiendo.equals(cvDaHoanThanh)) {
 							DataCongViec.add(new TatCaCongViec(id, tencongviec,
 								ngaybatdau, tinhtrang, tiendo, nguoithuchien,
 								phongban, loaicongviec, hancuoi, duan,
 								mucuutien, nguoiduocxem, nguoigiao, mota,
 								tonghopbaocao, tepdinhkem, url, datathaoluan));
-						}
+//						}
 						
 						//cong viec da giao
 						if (nguoigiao.equals(username) && !tiendo.equals(cvDaHoanThanh)) {

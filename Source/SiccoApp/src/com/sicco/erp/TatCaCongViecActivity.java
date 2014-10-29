@@ -16,10 +16,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,6 +32,7 @@ import com.costum.android.widget.LoadMoreListView.OnLoadMoreListener;
 import com.sicco.erp.adapter.PhongBanAdapter;
 import com.sicco.erp.adapter.TatCaCongViecAdapter;
 import com.sicco.erp.database.DBController;
+import com.sicco.erp.database.DBController.LoadCongViecHoanThanhListener;
 import com.sicco.erp.database.DBController.LoadCongViecListener;
 import com.sicco.erp.http.HTTPHandler;
 import com.sicco.erp.model.PhongBan;
@@ -41,6 +45,8 @@ public class TatCaCongViecActivity extends Activity {
 	ListView mListView;
 	TatCaCongViecAdapter mAdapter;
 	ActionBar mActionBar;
+	ProgressBar pLoadmore;
+	Button btn_LoadMore;
 	Spinner sPhongBan;
 	String url_phongban = "http://apis.mobile.vareco.vn/sicco/phongban.php";
 	// String url_phongban = "http://thuchutcoi.tk/sicco/phongban.php";
@@ -100,56 +106,16 @@ public class TatCaCongViecActivity extends Activity {
 
 		});
 
-	}
-
-	private void tatCaCongViec() {
 		pDialog = new ProgressDialog(TatCaCongViecActivity.this);
 		pDialog.setMessage(getResources().getString(R.string.vui_long_doi));
 		pDialog.setCancelable(true);
 
 		mListView = (ListView) findViewById(R.id.lv_tat_ca_cong_viec);
-		final DBController controller = DBController
-				.getInstance(getApplicationContext());
-		mTatCaCongViec = controller.getCongViec(1, new LoadCongViecListener() {
-
-			@Override
-			public void onFinished(ArrayList<TatCaCongViec> data) {
-				if (pDialog.isShowing())
-					pDialog.dismiss();
-				mTatCaCongViec.clear();
-				mTatCaCongViec.addAll(data);
-				mAdapter.notifyDataSetChanged();
-			}
-		});
-		if (mTatCaCongViec == null) {
-			pDialog.show();
-			mTatCaCongViec = new ArrayList<TatCaCongViec>();
-		}
-		((LoadMoreListView) mListView)
-				.setOnLoadMoreListener(new OnLoadMoreListener() {
-					public void onLoadMore() {
-						pnumberCviec = pnumberCviec + 1;
-						controller.getCongViec(pnumberCviec,
-								new LoadCongViecListener() {
-
-									@Override
-									public void onFinished(
-											ArrayList<TatCaCongViec> data) {
-										mTatCaCongViec.clear();
-										mTatCaCongViec.addAll(data);
-										mAdapter.notifyDataSetChanged();
-										Toast.makeText(getApplicationContext(),
-												"onLoad " + pnumberCviec, 0)
-												.show();
-										((LoadMoreListView) mListView)
-												.onLoadMoreComplete();
-									}
-								});
-					}
-				});
-		mAdapter = new TatCaCongViecAdapter(getApplicationContext(),
-				R.layout.item_lv_tat_ca_cong_viec, mTatCaCongViec);
-		mListView.setAdapter(mAdapter);
+		View footerView = ((LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE)).inflate(R.layout.btn_loadmore, null,false);
+		btn_LoadMore = (Button)footerView.findViewById(R.id.LoadMore);
+		mListView.addFooterView(footerView);
+		pLoadmore = (ProgressBar)findViewById(R.id.progressBar1);
+		
 		mListView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
@@ -182,13 +148,52 @@ public class TatCaCongViecActivity extends Activity {
 				startActivity(intent);
 			}
 		});
+		
+	}
+
+	private void tatCaCongViec() {
+		
+		final DBController controller = DBController
+				.getInstance(getApplicationContext());
+		mTatCaCongViec = controller.getCongViec(1, new LoadCongViecListener() {
+
+			@Override
+			public void onFinished(ArrayList<TatCaCongViec> data) {
+				if (pDialog.isShowing())
+					pDialog.dismiss();
+				mTatCaCongViec.clear();
+				mTatCaCongViec.addAll(data);
+				mAdapter.notifyDataSetChanged();
+			}
+		});
+		if (mTatCaCongViec == null) {
+			pDialog.show();
+			mTatCaCongViec = new ArrayList<TatCaCongViec>();
+		}
+		btn_LoadMore.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				pLoadmore.setVisibility(View.VISIBLE);
+				pnumberCviec = pnumberCviec+1;
+				controller.getCongViec(pnumberCviec, new LoadCongViecListener() {
+					
+					@Override
+					public void onFinished(ArrayList<TatCaCongViec> data) {
+						mTatCaCongViec.clear();
+						mTatCaCongViec.addAll(data);
+						mAdapter.notifyDataSetChanged();
+						pLoadmore.setVisibility(View.INVISIBLE);
+					}
+				});
+			}
+		});
+		mAdapter = new TatCaCongViecAdapter(getApplicationContext(),
+				R.layout.item_lv_tat_ca_cong_viec, mTatCaCongViec);
+		mListView.setAdapter(mAdapter);
 	}
 
 	private void congViecPhongBan() {
-		pDialog = new ProgressDialog(TatCaCongViecActivity.this);
-		pDialog.setMessage(getResources().getString(R.string.vui_long_doi));
-		pDialog.setCancelable(true);
-		mListView = (ListView) findViewById(R.id.lv_tat_ca_cong_viec);
 		mCongViecPhongBan = new ArrayList<TatCaCongViec>();
 		final DBController controller = DBController
 				.getInstance(getApplicationContext());
@@ -209,64 +214,28 @@ public class TatCaCongViecActivity extends Activity {
 			mTatCaCongViec = new ArrayList<TatCaCongViec>();
 		}
 		showList(mTatCaCongViec);
-		((LoadMoreListView) mListView)
-				.setOnLoadMoreListener(new OnLoadMoreListener() {
-					public void onLoadMore() {
-						pnumberCviec = pnumberCviec + 1;
-						controller.getCongViec(pnumberCviec,
-								new LoadCongViecListener() {
-
-									@Override
-									public void onFinished(
-											ArrayList<TatCaCongViec> data) {
-										mTatCaCongViec.clear();
-										mTatCaCongViec.addAll(data);
-										showList(mTatCaCongViec);
-										mAdapter.notifyDataSetChanged();
-										Toast.makeText(getApplicationContext(),
-												"onLoad " + pnumberCviec, 0)
-												.show();
-										((LoadMoreListView) mListView)
-												.onLoadMoreComplete();
-									}
-								});
+		btn_LoadMore.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				pLoadmore.setVisibility(View.VISIBLE);
+				pnumberCviec = pnumberCviec+1;
+				controller.getCongViec(pnumberCviec, new LoadCongViecListener() {
+					
+					@Override
+					public void onFinished(ArrayList<TatCaCongViec> data) {
+						mTatCaCongViec.clear();
+						mTatCaCongViec.addAll(data);
+						showList(mTatCaCongViec);
+						mAdapter.notifyDataSetChanged();
+						pLoadmore.setVisibility(View.INVISIBLE);
 					}
 				});
+			}
+		});
 		mAdapter = new TatCaCongViecAdapter(getApplicationContext(),
 				R.layout.item_lv_tat_ca_cong_viec, mCongViecPhongBan);
 		mListView.setAdapter(mAdapter);
-		mListView.setOnItemClickListener(new OnItemClickListener() {
-
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) {
-				HashMap<String, String> getArray = (HashMap) view.getTag();
-				Intent intent = new Intent();
-				intent.putExtra("id", getArray.get("id"));
-				intent.putExtra("ten_cong_viec", getArray.get("ten_cong_viec"));
-				intent.putExtra("tinh_trang", getArray.get("tinh_trang"));
-				intent.putExtra("tien_do", getArray.get("tien_do"));
-				intent.putExtra("nguoi_thuc_hien",
-						getArray.get("nguoi_thuc_hien"));
-				intent.putExtra("phong_ban", getArray.get("phong_ban"));
-				intent.putExtra("loai_cong_viec",
-						getArray.get("loai_cong_viec"));
-				intent.putExtra("ngay_ket_thuc", getArray.get("ngay_ket_thuc"));
-				intent.putExtra("du_an", getArray.get("du_an"));
-				intent.putExtra("muc_uu_tien", getArray.get("muc_uu_tien"));
-				intent.putExtra("nguoi_duoc_xem",
-						getArray.get("nguoi_duoc_xem"));
-				intent.putExtra("nguoi_giao", getArray.get("nguoi_giao"));
-				intent.putExtra("mo_ta", getArray.get("mo_ta"));
-				intent.putExtra("tong_hop_bao_cao",
-						getArray.get("tong_hop_bao_cao"));
-				intent.putExtra("Url", getArray.get("Url"));
-
-				intent.setClass(getApplicationContext(),
-						ChiTietCongViecActivity.class);
-				startActivity(intent);
-			}
-		});
 	}
 
 	// ----------------------phongban---------------------------//

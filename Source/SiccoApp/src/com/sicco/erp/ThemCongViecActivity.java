@@ -4,6 +4,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,6 +20,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.media.ToneGenerator;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -31,14 +33,22 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.DatePicker;
+import android.widget.ExpandableListView;
+import android.widget.ExpandableListView.OnChildClickListener;
+import android.widget.ExpandableListView.OnGroupClickListener;
+import android.widget.ExpandableListView.OnGroupCollapseListener;
+import android.widget.ExpandableListView.OnGroupExpandListener;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sicco.erp.adapter.DuAnAdapter;
+import com.sicco.erp.adapter.ExpandableListUserAdapter;
 import com.sicco.erp.http.HTTPHandler;
 import com.sicco.erp.model.DuAn;
+import com.sicco.erp.model.NguoiDung;
+import com.sicco.erp.model.PhongBan;
 import com.sicco.erp.utils.FileUtils;
 
 public class ThemCongViecActivity extends Activity implements OnClickListener {
@@ -54,15 +64,38 @@ public class ThemCongViecActivity extends Activity implements OnClickListener {
 
 	ProgressDialog pDialog;
 	String url_duan = "http://apis.mobile.vareco.vn/sicco/duan.php";
-	JSONArray duan = null;
+	String url_phongban = "http://apis.mobile.vareco.vn/sicco/phongban.php";
+	String url_nguoidung = "http://apis.mobile.vareco.vn/sicco/nguoidung.php";
+	JSONArray duan = null, phongBan = null, nguoiDung = null;
 	ArrayList<HashMap<String, String>> duAnList;
 	ArrayList<DuAn> mDuAn;
 	ListView mLvDuAn;
 	DuAnAdapter mDuAnAdapter;
 
+	TextView tvChonDuAn;
+	TextView tvChonNguoiXuLy;
+
+	ExpandableListView listView;
+	ExpandableListUserAdapter adapter;
+	LinearLayout loading;
+	ArrayList<NguoiDung> listActive = new ArrayList<NguoiDung>();
+	
+	List<PhongBan> dataPB;
+	HashMap<String, List<NguoiDung>> dataND;
+	HashMap<String, ArrayList<NguoiDung>> hashMap;
+	ArrayList<NguoiDung> dsNguoiDung;
+	
 	private int date;
 	private int months;
 	private int years_now;
+	// /////////////Positon data//////////
+	int positionDuAn;
+	int positionPBNXL;
+	int positionNXL;
+	String nguoiXuLy;
+	// ////////////Post data//////////////
+	String idDuAn;
+	String idNguoiXuLy;
 
 	private static final String TAG = "ThemCongViecActivity";
 	private static final int FILE_SELECT_CODE = 0;
@@ -80,6 +113,9 @@ public class ThemCongViecActivity extends Activity implements OnClickListener {
 		mLayoutNguoiXem = (LinearLayout) findViewById(R.id.layout_nguoi_xem);
 		mLayoutTepDinhKem = (LinearLayout) findViewById(R.id.layout_tep_dinh_kem);
 
+		tvChonDuAn = (TextView) findViewById(R.id.tv_du_an);
+		tvChonNguoiXuLy = (TextView) findViewById(R.id.tv_nguoi_xu_ly);
+
 		tvTepDinhKem = (TextView) findViewById(R.id.tv_tep_dinh_kem);
 		tvTepDinhKem.setText(R.string.choose_file);
 		tvNgayhoanThanh = (TextView) findViewById(R.id.tv_ngay_hoan_thanh);
@@ -92,6 +128,9 @@ public class ThemCongViecActivity extends Activity implements OnClickListener {
 				.append(padding_str(months + 1)).append("-")
 				.append(padding_str(years_now)));
 
+		dataPB = new ArrayList<PhongBan>();
+		dataND = new HashMap<String, List<NguoiDung>>();
+		dsNguoiDung = new ArrayList<NguoiDung>();
 	}
 
 	@Override
@@ -116,7 +155,7 @@ public class ThemCongViecActivity extends Activity implements OnClickListener {
 			View dialogDuAn = inflater.inflate(R.layout.duan_dialog, null);
 
 			duAnList = new ArrayList<HashMap<String, String>>();
-			new GetCongViec().execute();
+			new GetDuAn().execute();
 			mDuAn = new ArrayList<DuAn>();
 			mLvDuAn = (ListView) dialogDuAn.findViewById(R.id.lv_duan);
 			mDuAnAdapter = new DuAnAdapter(ThemCongViecActivity.this,
@@ -127,7 +166,7 @@ public class ThemCongViecActivity extends Activity implements OnClickListener {
 				@Override
 				public void onItemClick(AdapterView<?> arg0, View arg1,
 						int arg2, long arg3) {
-					
+					positionDuAn = arg2;
 				}
 			});
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -148,8 +187,11 @@ public class ThemCongViecActivity extends Activity implements OnClickListener {
 
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							// TODO Auto-generated method stub
-
+							tvChonDuAn.setText(mDuAn.get(positionDuAn)
+									.getTenDuAn());
+							idDuAn = mDuAn.get(positionDuAn).getId();
+							Toast.makeText(getApplicationContext(),
+									"idDuAn: " + idDuAn, 0).show();
 						}
 					});
 			AlertDialog alertDialog = builder.create();
@@ -157,6 +199,131 @@ public class ThemCongViecActivity extends Activity implements OnClickListener {
 
 			break;
 		case R.id.layout_nguoi_xu_ly:
+			new GetNguoiDung().execute();
+
+			LayoutInflater inflaterNXL = LayoutInflater
+					.from(getApplicationContext());
+			View dialogUserList = inflaterNXL.inflate(
+					R.layout.nguoidung_dialog, null);
+
+			listView = (ExpandableListView) dialogUserList
+					.findViewById(R.id.ListExpUser);
+
+			loading = (LinearLayout) dialogUserList
+					.findViewById(R.id.loadingListUser);
+
+			listView.setVisibility(View.INVISIBLE);
+			loading.setVisibility(View.VISIBLE);
+
+			adapter = new ExpandableListUserAdapter(getApplicationContext(),
+					dataPB, dataND, listActive);
+			setLoadingFinishListener(new LoadingNguoiDungFinishListener() {
+
+				@Override
+				public void onFinished() {
+					new GetPhongBan().execute();
+				}
+			});
+
+			setLoadingFinishListener(new LoadingFinishListener() {
+
+				@Override
+				public void onFinished() {
+					listView.setVisibility(View.VISIBLE);
+					loading.setVisibility(View.INVISIBLE);
+					listView.setAdapter(adapter);
+				}
+			});
+
+			listView.setOnGroupClickListener(new OnGroupClickListener() {
+
+				@Override
+				public boolean onGroupClick(ExpandableListView parent, View v,
+						int groupPosition, long id) {
+					return false;
+				}
+			});
+
+			// Listview Group expanded listener
+			listView.setOnGroupExpandListener(new OnGroupExpandListener() {
+
+				@Override
+				public void onGroupExpand(int groupPosition) {
+					Toast.makeText(
+							getApplicationContext(),
+							dataPB.get(groupPosition).getTenPhongBan()
+									+ " Expanded", Toast.LENGTH_SHORT).show();
+				}
+			});
+			// Listview Group collasped listener
+			listView.setOnGroupCollapseListener(new OnGroupCollapseListener() {
+
+				@Override
+				public void onGroupCollapse(int groupPosition) {
+					Toast.makeText(
+							getApplicationContext(),
+							dataPB.get(groupPosition).getTenPhongBan()
+									+ " Collapsed", Toast.LENGTH_SHORT).show();
+
+				}
+			});
+
+			// Listview on child click listener
+			listView.setOnChildClickListener(new OnChildClickListener() {
+
+				@Override
+				public boolean onChildClick(ExpandableListView parent, View v,
+						int groupPosition, int childPosition, long id) {
+					// Toast.makeText(
+					// getApplicationContext(),
+					// dataPB.get(groupPosition).getTenPhongBan()
+					// + " : "
+					// + dataND.get(
+					// dataPB.get(groupPosition)
+					// .getTenPhongBan()).get(
+					// childPosition).getId(), Toast.LENGTH_SHORT)
+					// .show();
+					positionPBNXL = groupPosition;
+					positionNXL = childPosition;
+					return false;
+				}
+			});
+
+			AlertDialog.Builder builderNXL = new AlertDialog.Builder(this);
+			builderNXL.setTitle(getResources().getString(R.string.choose_duan));
+			builderNXL.setView(dialogUserList);
+			builderNXL.setNegativeButton("Cancel",
+					new DialogInterface.OnClickListener() {
+
+						@Override
+						public void onClick(DialogInterface dialogInterface,
+								int arg1) {
+							dialogInterface.dismiss();
+
+						}
+					});
+			builderNXL.setPositiveButton("Ok",
+					new DialogInterface.OnClickListener() {
+
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							idNguoiXuLy = "";
+							nguoiXuLy = "";
+							if(listActive.isEmpty()){
+								nguoiXuLy = getResources().getString(R.string.nguoi_xu_ly);
+							}else{
+								for (int i = 0; i < listActive.size(); i++) {
+									nguoiXuLy += listActive.get(i).getUsername()+", ";
+									idNguoiXuLy += listActive.get(i).getId();
+								}
+							}
+							Toast.makeText(getApplicationContext(), "id: "+idNguoiXuLy, Toast.LENGTH_SHORT).show();
+							tvChonNguoiXuLy.setText(nguoiXuLy);
+							Log.d("TuNT", "List active: "+listActive);
+						}
+					});
+			AlertDialog alertDialogNXL = builderNXL.create();
+			alertDialogNXL.show();
 			break;
 		case R.id.layout_nguoi_xem:
 
@@ -208,7 +375,7 @@ public class ThemCongViecActivity extends Activity implements OnClickListener {
 
 	// ------------choose du an------------------------//
 
-	private class GetCongViec extends AsyncTask<String, Void, String> {
+	private class GetDuAn extends AsyncTask<String, Void, String> {
 
 		@Override
 		protected void onPreExecute() {
@@ -218,7 +385,6 @@ public class ThemCongViecActivity extends Activity implements OnClickListener {
 			pDialog.setMessage(getResources().getString(R.string.vui_long_doi));
 			pDialog.setCancelable(false);
 			pDialog.show();
-
 		}
 
 		@Override
@@ -264,6 +430,117 @@ public class ThemCongViecActivity extends Activity implements OnClickListener {
 
 	}
 
+	private class GetPhongBan extends AsyncTask<String, Void, String> {
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			dataPB.clear();
+		}
+
+		@Override
+		protected String doInBackground(String... arg0) {
+			HTTPHandler handler = new HTTPHandler();
+			String ret = handler.makeHTTPRequest(url_phongban, HTTPHandler.GET);
+			return ret;
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+			if (result != null) {
+				try {
+					JSONObject jsonObj = new JSONObject(result);
+
+					// Getting JSON Array node
+					phongBan = jsonObj.getJSONArray("row");
+					// looping through All Contacts
+					for (int i = 0; i < phongBan.length(); i++) {
+						JSONObject c = phongBan.getJSONObject(i);
+
+						String id = c.getString("id_phong_ban");
+						String tenphongban = c.getString("ten_phong_ban");
+
+						Log.d("TuNT", "tenphongban = " + tenphongban + " - "
+								+ id);
+						dataPB.add(new PhongBan(id, tenphongban));
+						ArrayList<NguoiDung> data = new ArrayList<NguoiDung>();
+						for (int j = 0; j < dsNguoiDung.size(); j++) {
+							if (dsNguoiDung.get(j).getPhongban().equals(id)) {
+								data.add(new NguoiDung(id, dsNguoiDung.get(i)
+										.getUsername(), dsNguoiDung.get(i)
+										.getPhongban()));
+							}
+						}
+						dataND.put(dataPB.get(i).getTenPhongBan(), data);
+						// Toast.makeText(getApplicationContext(),
+						// ""+dataND.get(dataPB.get(i).getTenPhongBan()),
+						// 0).show();
+
+						adapter.notifyDataSetChanged();
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				if (mInterface != null) {
+					mInterface.onFinished();
+				}
+			} else {
+				Log.e("TuNT", "Khong the lay data tu url nay");
+			}
+			super.onPostExecute(result);
+		}
+
+	}
+
+	private class GetNguoiDung extends AsyncTask<String, Void, String> {
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+		}
+
+		@Override
+		protected String doInBackground(String... arg0) {
+			HTTPHandler handler = new HTTPHandler();
+			String ret = handler
+					.makeHTTPRequest(url_nguoidung, HTTPHandler.GET);
+			return ret;
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+			if (result != null) {
+				try {
+					JSONObject jsonObj = new JSONObject(result);
+
+					// Getting JSON Array node
+					nguoiDung = jsonObj.getJSONArray("row");
+					// looping through All Contacts
+					dsNguoiDung.clear();
+					for (int i = 0; i < nguoiDung.length(); i++) {
+						JSONObject c = nguoiDung.getJSONObject(i);
+
+						String id = c.getString("id");
+						String username = c.getString("username");
+						String phong_ban = c.getString("phong_ban");
+
+						dsNguoiDung.add(new NguoiDung(id, username, phong_ban));
+						dsNguoiDung.clone();
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				if (mInterfaceND != null) {
+					mInterfaceND.onFinished();
+				}
+			} else {
+				Log.e("TuNT", "Khong the lay data tu url nay");
+			}
+			super.onPostExecute(result);
+		}
+
+	}
+
 	// ------------choose nguoi xu ly------------------//
 
 	// ------------choose nguoi xem--------------------//
@@ -294,7 +571,7 @@ public class ThemCongViecActivity extends Activity implements OnClickListener {
 				Uri uri = data.getData();
 				Log.d("LuanDT", "File Uri: " + uri.toString());
 				// Get the path
-			path = FileUtils.getPath(this, uri);
+				path = FileUtils.getPath(this, uri);
 				Log.d("LuanDT", "File Path: " + path);
 				Toast.makeText(this, "File Selected: " + path,
 						Toast.LENGTH_SHORT).show();
@@ -344,4 +621,23 @@ public class ThemCongViecActivity extends Activity implements OnClickListener {
 		return super.onOptionsItemSelected(item);
 	}
 
+	private LoadingFinishListener mInterface;
+
+	public void setLoadingFinishListener(LoadingFinishListener listener) {
+		mInterface = listener;
+	}
+
+	public static interface LoadingFinishListener {
+		public void onFinished();
+	}
+
+	private LoadingNguoiDungFinishListener mInterfaceND;
+
+	public void setLoadingFinishListener(LoadingNguoiDungFinishListener listener) {
+		mInterfaceND = listener;
+	}
+
+	public static interface LoadingNguoiDungFinishListener {
+		public void onFinished();
+	}
 }

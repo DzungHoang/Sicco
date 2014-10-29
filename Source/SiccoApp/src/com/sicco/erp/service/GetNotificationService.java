@@ -227,7 +227,6 @@ public class GetNotificationService extends Service {
 						
 //						Log.d("ToanNM", "run congvan:"+ ten + " " +noi_dung +" " + congVan_count+ " i:"+i);
 						MyNotificationManager.notifyType(context, congVan_list, congVan_count, congvan, ten, noi_dung);
-						MyNotificationManager.getNotificationType(congvan);
 //						Log.d("ToanNM", "notification_list.get(i).getNotify():"+notification_list.get(i).getNotify());
 						
 				} 
@@ -242,7 +241,6 @@ public class GetNotificationService extends Service {
 						
 //						Log.d("ToanNM", "run congviec:"+ ten + " " +noi_dung +" " + congViec_count+ " i:"+i);
 						MyNotificationManager.notifyType(context, congViec_list, congViec_count, congviec, ten, noi_dung);
-						MyNotificationManager.getNotificationType(congviec);
 //						Log.d("ToanNM", "notification_list.get(i).getNotify():"+notification_list.get(i).getNotify());
 					}
 				// ArrayList for LichBieu:
@@ -256,7 +254,6 @@ public class GetNotificationService extends Service {
 						
 //						Log.d("ToanNM", "run lichbieu:"+ ten + " " +noi_dung +" " + lichBieu_count+ " i:"+i);
 						MyNotificationManager.notifyType(context, lichBieu_list, lichBieu_count, lichbieu, ten, noi_dung);
-						MyNotificationManager.getNotificationType(lichbieu);
 //						Log.d("ToanNM", "notification_list.get(i).getNotify():"+notification_list.get(i).getNotify());
 					}
 			}

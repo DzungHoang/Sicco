@@ -22,9 +22,9 @@ import com.sicco.erp.service.HandleNotificationService;
 
 public class MyNotificationManager {
 	static Context mContext;
-	public static final int CONGVIEC_NOTIFICATION_ID = 1;
-	public static final int CONGVAN_NOTIFICATION_ID = 2;
-	public static final int LICHBIEU_NOTIFICATION_ID = 3;
+	public static int CONGVAN_NOTIFICATION_ID = 1;
+	public static int CONGVIEC_NOTIFICATION_ID = CONGVAN_NOTIFICATION_ID + 1;
+	public static int LICHBIEU_NOTIFICATION_ID = CONGVIEC_NOTIFICATION_ID + 1;
 	public static int NOTIFICATION_ID = 0;
 	public static int congVan_Count = 0;
 	public static int congViec_Count = 0;
@@ -34,12 +34,15 @@ public class MyNotificationManager {
 	static String lichbieu = "lichbieu";
 	static NotificationModel notificationModel;
 	static String message;
+	static String contentText;
+	static String _ten="";
+	static String congvan_name="";
+	static String congviec_name="";
+	static String lichbieu_name="";
 	static RemoteViews notificationView = null;
-	static String my_package = "com.sicco.erp.manager";
-	static Notification.Builder notificationBuilder = null;
+	static String my_package = "com.sicco.erp";
+	static NotificationCompat.Builder notificationBuilder = null;
 	GetNotificationService getNotificationService;
-	private static String ten = "";
-	private static String content = "";
 	private static ArrayList<NotificationModel> notification_list;
 	static String noti="";
 	static int noti_count=0;
@@ -61,8 +64,6 @@ public class MyNotificationManager {
 	public static void buildNormalNotification(Context context, NotificationModel data){
 	// ============================================== \\
 		
-		ten = data.getName();
-		
 //		getNotificationType();
 //		getNotificationCount();
 //		getMessage();
@@ -80,8 +81,9 @@ public class MyNotificationManager {
 //			congVan_message = "Ban co "+congVan_Count +" cong van" + "\r\n\r";
 //		}
 	}
-	public static void notifyType(Context context,ArrayList<NotificationModel> arrayList,int notification_count,String notification_type){
-		notification_list=arrayList;
+	public static void notifyType(Context context,ArrayList<NotificationModel> arrayList,
+			int notification_count,String notification_type, String ten, String noi_dung){
+		
 		congVan_Count = GetNotificationService.getCongVanCount();
 		congViec_Count = GetNotificationService.getCongViecCount();
 		lichBieu_Count = GetNotificationService.getLichBieuCount();
@@ -93,73 +95,105 @@ public class MyNotificationManager {
 				NOTIFICATION_ID = CONGVAN_NOTIFICATION_ID;
 				noti = " cong van";
 				noti_count = congVan_Count;
+//				Log.d("ToanNM", "count:="+ noti_count +" " +notification_type);
 			}
 			if(notification_type.equalsIgnoreCase(congviec)){
 				NOTIFICATION_ID = CONGVIEC_NOTIFICATION_ID;
 				noti = " cong viec";
 				noti_count = congViec_Count;
+//				Log.d("ToanNM", "count:="+ noti_count +" " +notification_type);
 			}
 			if(notification_type.equalsIgnoreCase(lichbieu)){
 				NOTIFICATION_ID = LICHBIEU_NOTIFICATION_ID;
 				noti = " lich bieu";
 				noti_count = lichBieu_Count;
+//				Log.d("ToanNM", "count:="+ noti_count +" " +notification_type);
 			}
-			message = "Ban co " + noti_count + " " + noti + "\n" + notification_list;
-			notify(context);
+			message = "Ban co " + noti_count + " " + noti + "\n" ;
+			contentText = " " + noi_dung;
+//			Log.d("ToanNM", "At notification_count==1,message: "+message);
+			notify(context,NOTIFICATION_ID);
 		}
-		if(notification_count>=2){
+		if(notification_count>1){
 			if(notification_type.equalsIgnoreCase(congvan)){
 				NOTIFICATION_ID = CONGVAN_NOTIFICATION_ID;
 				noti = " cong van";
 				noti_count = congVan_Count;
+				congvan_name += "\n" + ten + "\n";
+				_ten += "\n" + ten + "\n";
+//				Log.d("ToanNM", "count:="+ noti_count +" " +notification_type);
 			}
 			if(notification_type.equalsIgnoreCase(congviec)){
 				NOTIFICATION_ID = CONGVIEC_NOTIFICATION_ID;
 				noti = " cong viec";
 				noti_count = congViec_Count;
+				congviec_name += "\n" + ten + "\n";
+				_ten += "\n" + ten + "\n";
+//				Log.d("ToanNM", "count:="+ noti_count +" " +notification_type);
 			}
 			if(notification_type.equalsIgnoreCase(lichbieu)){
 				NOTIFICATION_ID = LICHBIEU_NOTIFICATION_ID;
 				noti = " lich bieu";
 				noti_count = lichBieu_Count;
+				lichbieu_name += "\n" + ten + "\n";
+				_ten += "\n" + ten + "\n";
+//				Log.d("ToanNM", "count:="+ noti_count +" " +notification_type);
 			}
 			message = "Ban co " + noti_count + " " + noti + " " + "\n" ;
-			notify(context);
+			if(notification_type.equalsIgnoreCase(congvan)){
+				contentText = congvan_name;
+			}
+			if(notification_type.equalsIgnoreCase(congviec)){
+				contentText = congviec_name;
+			}
+			if(notification_type.equalsIgnoreCase(lichbieu)){
+				contentText = lichbieu_name;
+			}
+//			contentText = _ten;
+			Log.d("ToanNM", "name:---------- "+contentText+" ----------");
+//			Log.d("ToanNM", "At notification_count>1,message: "+message);
+			notify(context,NOTIFICATION_ID);
 		}
+//		Log.d("ToanNM", "message:"+message);
 	}
 	// ======================================================= \\
-	public static void notify(Context context) {
-		//Notification use RemoteViews:
-//		Intent notifyIntent = new Intent(context, MainActivity.class);
-//		notifyIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//		PendingIntent pendingIntent = PendingIntent.getActivity
-//				(context,
-//				 0,
-//				 notifyIntent,
-//				 PendingIntent.FLAG_UPDATE_CURRENT);
-//		notificationView = new RemoteViews(my_package, R.layout.notification_layout);
-//		notificationView.setImageViewResource(R.id.notification_logo, R.drawable.ic_launcher);
-//		notificationView.setTextViewText(R.id.notification_title, "abc" + "\n" +"xyz");
-//		notificationView.setTextViewText(R.id.notification_content, "");
-//		notificationBuilder = new Notification.Builder(context);
+	public static void notify(Context context,int notification_id) {
+		/**
+		 * Notification use RemoteViews:
+		 */
+//			Intent notifyIntent = new Intent(context, MainActivity.class);
+//			notifyIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//			PendingIntent pendingIntent = PendingIntent.getActivity
+//					(context,
+//					 0,
+//					 notifyIntent,
+//					 PendingIntent.FLAG_UPDATE_CURRENT);
+//			notificationView = new RemoteViews(my_package, R.layout.notification_layout);
+//			notificationView.setImageViewResource(R.id.notification_logo, R.drawable.ic_notification_logo);
+//			notificationView.setTextViewText(R.id.notification_title, message);
+//			notificationView.setTextViewText(R.id.notification_content, contentText);
+//			notificationBuilder = new NotificationCompat.Builder(context);
 //
-//		notificationBuilder.setContentIntent(pendingIntent)
-//		                   .setSmallIcon(R.drawable.ic_launcher)
-////		                   .setTicker("Ban co" +  notification_count_local + "' cong van/cong viec/lich bieu '" + "put noi dung here" + "'")
-//		                   .setOngoing(true)
-//		                   .setContentTitle(context.getString(R.string.new_noti))
-//		                   .setContentText(message)
-//		                   .setContent(notificationView);
-//
-//		Notification notification = notificationBuilder.getNotification();
-//		notification.flags |= Notification.FLAG_SHOW_LIGHTS;
-//		NotificationManager notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
-//		notificationManager.notify(CONGVAN_NOTIFICATION_ID, notification);
+//			notificationBuilder.setContentIntent(pendingIntent)
+//			                   .setSmallIcon(R.drawable.ic_launcher)
+////			                   .setTicker("Ban co" +  notification_count_local + "' cong van/cong viec/lich bieu '" + "put noi dung here" + "'")
+////			                   .setOngoing(true)
+//			                   .setContentTitle(message)
+//			                   .setContentText(contentText)
+////			                   .setStyle(new NotificationCompat.BigTextStyle().bigText(contentText))
+//			                   .setContent(notificationView);
+////			notificationView.setOnClickPendingIntent(viewId, pendingIntent)
+//			Notification notification = notificationBuilder.getNotification();
+//			notification.flags |= Notification.FLAG_SHOW_LIGHTS;
+//			NotificationManager notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+//			notificationManager.notify(3, notification);
+		/**
+		 * normal Notification:
+		 * @return 
+		 */
 		
-		
-		// normal Notification:
 			NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-			builder.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher));
+//			builder.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher));
 			// ==============================
 					Intent notIntent = new Intent(context, MainActivity.class);
 				    notIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -169,13 +203,15 @@ public class MyNotificationManager {
 				    // ==============================
 				    builder.setContentIntent(pendInt);
 			builder.setSmallIcon(R.drawable.ic_launcher);
-			builder.setContentTitle(context.getString(R.string.new_noti));
-			builder.setContentText(message);
-//			builder.setContentInfo(GetNotificationService.ten);
+			builder.setContentTitle(message);
+			builder.setStyle(new NotificationCompat.BigTextStyle().bigText(contentText));
+			builder.setContentText(contentText);
 			
-			Intent resultIntent = new Intent();
-			resultIntent.setClass(context, HandleNotificationService.class);
-			resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//			builder.setContentInfo(noidung);
+			
+//			Intent resultIntent = new Intent();
+//			resultIntent.setClass(context, HandleNotificationService.class);
+//			resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //					resultIntent.setAction(Intent.ACTION_VIEW);
 //					resultIntent.setData(Uri.parse("http://google.com.vn"));
 //					TaskStackBuilder stack = TaskStackBuilder.create(context);
@@ -194,8 +230,8 @@ public class MyNotificationManager {
 			notification.flags |= Notification.FLAG_SHOW_LIGHTS;
 			
 			NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-			Log.d("Count", "NOTIFICATION_ID:"+NOTIFICATION_ID);
-			manager.notify(NOTIFICATION_ID, notification);
+			Log.d("Count", "NOTIFICATION_ID:"+notification_id);
+			manager.notify(notification_id, notification);
 		
 		}
 //	}

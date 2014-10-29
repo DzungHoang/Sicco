@@ -21,6 +21,8 @@ import com.sicco.erp.fragment.FragmentCongViec;
 import com.sicco.erp.fragment.NavigationDrawerFragment;
 import com.sicco.erp.manager.SessionManager;
 import com.sicco.erp.service.GetNotificationService;
+import com.sicco.erp.service.HandleNotificationService;
+import com.sicco.erp.service.ServiceStart;
 import com.sicco.erp.utils.Constant;
 
 public class MainActivity extends ActionBarActivity implements
@@ -92,8 +94,9 @@ public class MainActivity extends ActionBarActivity implements
 			FragmentCanhBao canhBao = new FragmentCanhBao();
 			fm.beginTransaction().replace(R.id.container, canhBao).commit();
 			//start Service to get Notification
-			Intent intent = new Intent(this, GetNotificationService.class);
-			startService(intent);
+//			Intent intent = new Intent(this, GetNotificationService.class);
+//			startService(intent);
+			ServiceStart.startGetNotificationService(getApplicationContext());
 			break;
 		case Constant.CONGVAN_POSITION:
 			mTitle = getString(R.string.cong_van);
@@ -115,6 +118,8 @@ public class MainActivity extends ActionBarActivity implements
 //			SharedPrefUtils.savePref(getApplicationContext(), SharedPrefUtils.KEY_CB_REMEMBER, false);
 //			SharedPrefUtils.savePref(getApplicationContext(), SharedPrefUtils.KEY_CB_REMEMBER, false);
 			session.logoutUser();
+			ServiceStart.stopAllService(getApplicationContext());
+			HandleNotificationService.cancelAllNotification(getApplicationContext());
 			finish();
 			break;
 		}

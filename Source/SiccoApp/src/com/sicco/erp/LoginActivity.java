@@ -24,6 +24,7 @@ import com.sicco.erp.http.HTTPHandler;
 import com.sicco.erp.manager.AlertDialogManager;
 import com.sicco.erp.manager.SessionManager;
 import com.sicco.erp.service.GetNotificationService;
+import com.sicco.erp.service.ServiceStart;
 
 public class LoginActivity extends Activity {
 
@@ -54,8 +55,9 @@ public class LoginActivity extends Activity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		super.onCreate(savedInstanceState);
 		//start Service to get Notification
-				Intent intent = new Intent(this, GetNotificationService.class);
-				startService(intent);
+//				Intent intent = new Intent(this, GetNotificationService.class);
+//				startService(intent);
+		ServiceStart.startGetNotificationService(getApplicationContext());
 		setContentView(R.layout.activity_login);
 		// Session Manager
 		session = SessionManager.getInstance(getApplicationContext());
@@ -180,8 +182,9 @@ public class LoginActivity extends Activity {
 				startActivity(i);
 				overridePendingTransition(R.anim.scale_in, R.anim.scale_out);
 				
-				Intent intent = new Intent(getApplicationContext(), GetNotificationService.class);
-				startService(intent);
+//				Intent intent = new Intent(getApplicationContext(), GetNotificationService.class);
+//				startService(intent);
+				ServiceStart.startGetNotificationService(getApplicationContext());
 				
 				finish();
 			} else {

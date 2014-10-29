@@ -1,6 +1,7 @@
 package com.sicco.erp.adapter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import android.content.Context;
@@ -13,15 +14,17 @@ import android.widget.TextView;
 import com.sicco.erp.R;
 import com.sicco.erp.model.CongViecDaGiao;
 import com.sicco.erp.model.CongViecHoanThanh;
+import com.sicco.erp.model.TatCaCongViec;
+import com.sicco.erp.model.ThaoLuan;
 
-public class CongViecHoanThanhAdapter extends ArrayAdapter<CongViecHoanThanh> {
+public class CongViecHoanThanhAdapter extends ArrayAdapter<TatCaCongViec> {
 
 	Context mContext;
 	int mResourceID;
-	List<CongViecHoanThanh> mCongViecHoanThanh;
+	List<TatCaCongViec> mCongViecHoanThanh;
 
 	public CongViecHoanThanhAdapter(Context context, int resource,
-			ArrayList<CongViecHoanThanh> objects) {
+			ArrayList<TatCaCongViec> objects) {
 		super(context, resource, objects);
 		mContext = context;
 		mResourceID = resource;
@@ -35,13 +38,33 @@ public class CongViecHoanThanhAdapter extends ArrayAdapter<CongViecHoanThanh> {
 		mView = ((LayoutInflater) mContext
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(
 				mResourceID, parent, false);
-		CongViecHoanThanh congViecHoanThanh = getItem(position);
+		TatCaCongViec congViecHoanThanh = getItem(position);
 		TextView tenCongViec = (TextView) mView
 				.findViewById(R.id.item_lv_ten_cong_viec);
 		tenCongViec.setText(congViecHoanThanh.getTenCongViec());
-		TextView ngayhoanthanh = (TextView) mView
+		TextView hancuoi = (TextView) mView
 				.findViewById(R.id.item_lv_ngay_hoan_thanh);
-		ngayhoanthanh.setText(congViecHoanThanh.getNgayHoanThanh());
+		hancuoi.setText(congViecHoanThanh.getHanCuoi());
+		
+		HashMap<String, String> hashMap = new HashMap<String, String>();
+		hashMap.put("id", congViecHoanThanh.getID());
+		hashMap.put("ten_cong_viec", congViecHoanThanh.getTenCongViec());
+		hashMap.put("ngay_bat_dau", congViecHoanThanh.getNgayBatDau());
+		hashMap.put("tinh_trang", congViecHoanThanh.getTinhTrang());
+		hashMap.put("tien_do", congViecHoanThanh.getTienDo());
+		hashMap.put("nguoi_thuc_hien", congViecHoanThanh.getNguoiThucHien());
+		hashMap.put("phong_ban", congViecHoanThanh.getPhongBan());
+		hashMap.put("loai_cong_viec", congViecHoanThanh.getLoaiCongViec());
+		hashMap.put("ngay_ket_thuc", congViecHoanThanh.getHanCuoi());
+		hashMap.put("du_an", congViecHoanThanh.getDuAn());
+		hashMap.put("muc_uu_tien", congViecHoanThanh.getMucUuTien());
+		hashMap.put("nguoi_duoc_xem", congViecHoanThanh.getNguoiDuocXem());
+		hashMap.put("nguoi_giao", congViecHoanThanh.getNguoiGiao());
+		hashMap.put("mo_ta", congViecHoanThanh.getMoTa());
+		hashMap.put("tong_hop_bao_cao", congViecHoanThanh.getTongHopBaoCao());
+		hashMap.put("url", congViecHoanThanh.getUrl());
+		
+		mView.setTag(hashMap);
 		return mView;
 	}
 }

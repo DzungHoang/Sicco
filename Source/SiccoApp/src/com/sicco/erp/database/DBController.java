@@ -9,33 +9,27 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.app.PendingIntent.OnFinished;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.text.StaticLayout;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.sicco.erp.http.HTTPHandler;
 import com.sicco.erp.manager.SessionManager;
 import com.sicco.erp.model.CongVan;
-import com.sicco.erp.model.CongViecDaGiao;
-import com.sicco.erp.model.CongViecDuocGiao;
 import com.sicco.erp.model.TatCaCongViec;
 import com.sicco.erp.model.ThaoLuan;
 
 public class DBController {
 	private static DBController instance;
 	public static ArrayList<TatCaCongViec> DataCongViec;
-	private static ArrayList<CongVan> DataCongVan;
-	public static ArrayList<TatCaCongViec> DataCongViecDaGiao; // LuanDT
+	public static ArrayList<TatCaCongViec> DataCongViecDaGiao;
 	public static ArrayList<TatCaCongViec> DataCongViecDuocGiao;
-
-	// public static final int TYPE_CONG_VIEC = 0;
-	// public static final int TYPE_CONG_VIEC_DA_GIAO = TYPE_CONG_VIEC + 1;
-	// public static final int TYPE_CONG_VAN = TYPE_CONG_VIEC + 1;
-	// public static final int TYPE_CONG_VIEC_THEO_DOI = TYPE_CONG_VAN + 1;
-
+	public static ArrayList<TatCaCongViec> DataCongViecTheoDoi;
+	public static ArrayList<TatCaCongViec> DataCongViecHoanThanh;
+	private static ArrayList<CongVan> DataCongVan;
+	
 	public static final int PAGE_SIZE = 20;
 
 	Context mContext;
@@ -43,11 +37,10 @@ public class DBController {
 	ProgressDialog pDialog;
 	String url_congviec = "http://apis.mobile.vareco.vn/sicco/congviec.php";
 	String url_congvan = "http://apis.mobile.vareco.vn/sicco/congvan.php";
-//	 String url_congviec = "http://thuchutcoi.tk/sicco/congviec.php";
-//	 String url_congvan = "http://thuchutcoi.tk/sicco/congvan.php";
 	JSONArray congviec = null, thaoluan = null, congvan = null;
 
 	String token, username;
+	String cvDaHoanThanh = "100";
 
 	public DBController(Context context) {
 		mContext = context;
@@ -55,9 +48,11 @@ public class DBController {
 		token = sessionManager.getUserDetails().get(SessionManager.KEY_TOKEN);
 		username = sessionManager.getUserDetails().get(SessionManager.KEY_NAME);
 		DataCongViec = new ArrayList<TatCaCongViec>();
-		DataCongVan = new ArrayList<CongVan>();
-		DataCongViecDaGiao = new ArrayList<TatCaCongViec>(); // LuanDT
+		DataCongViecDaGiao = new ArrayList<TatCaCongViec>();
 		DataCongViecDuocGiao = new ArrayList<TatCaCongViec>();
+		DataCongViecTheoDoi = new ArrayList<TatCaCongViec>();
+		DataCongViecHoanThanh = new ArrayList<TatCaCongViec>();
+		DataCongVan = new ArrayList<CongVan>();
 	}
 
 	public static DBController getInstance(Context context) {
@@ -65,26 +60,33 @@ public class DBController {
 			Log.d("TuNT", "create DB");
 			instance = new DBController(context);
 		}
-
+		
 		return instance;
 	}
 
-	// -------------------------Cong Viec---------------------------//
+// -------------------------   Cong Viec  --------------------------------------------------------------------//
+//-----------------------------------------------------------------------------------------------------------//
 	GetCongViec mGetCongViecAsync;
 	ArrayList<LoadCongViecListener> mCViecCallback = new ArrayList<DBController.LoadCongViecListener>();
-	ArrayList<LoadCongViecDaGiaoListener> mCViecDaGiaoCallback = new ArrayList<DBController.LoadCongViecDaGiaoListener>(); // LuanDT
+	ArrayList<LoadCongViecDaGiaoListener> mCViecDaGiaoCallback = new ArrayList<DBController.LoadCongViecDaGiaoListener>();
 	ArrayList<LoadCongViecDuocGiaoListener> mCViecDuocGiaoCallback = new ArrayList<DBController.LoadCongViecDuocGiaoListener>();
+	ArrayList<LoadCongViecTheoDoiListener> mCViecTheoDoiCallback = new ArrayList<DBController.LoadCongViecTheoDoiListener>();
+	ArrayList<LoadCongViecHoanThanhListener> mCViecHoanThanhCallback = new ArrayList<DBController.LoadCongViecHoanThanhListener>();
 
 	int mCViecRunningPage = -1;
 	int mCViecDaGiaoRunningPage = -1;
 	int mCViecDuocGiaoRunningPage = -1;
-
-	// -------------------------tat ca cong viec---------------------------//
+	int mCViecTheoDoiRunningPage = -1;
+	int mCViecHoanThanhRunningPage = -1;
 
 	public ArrayList<TatCaCongViec> getCongViec(int page,
 			LoadCongViecListener callback) {
+		Log.d("TuNT",
+				"getCongViec: DataCongViec.size() = " + DataCongViec.size());
+
 		if ((DataCongViec != null && DataCongViec.size() < page * PAGE_SIZE - 1)
 				|| DataCongViec == null) {
+			Log.d("TuNT", "start loading: page = " + page);
 			mCViecCallback.add(callback);
 			if (mCViecRunningPage == -1) {
 				GetCongViec congViec = new GetCongViec();
@@ -98,68 +100,126 @@ public class DBController {
 			temp.addAll(DataCongViec.subList(0, page * PAGE_SIZE));
 			return temp;
 		}
+		
 
 	}
 
 	public static interface LoadCongViecListener {
 		public void onFinished(ArrayList<TatCaCongViec> data);
 	}
-
-	// -------------------------cong viec da giao---------------------------//
-
+	
+	//-------------CVDaGiao----------------------------------------------------------------//
+	
 	public ArrayList<TatCaCongViec> getCongViecDaGiao(int page,
 			LoadCongViecDaGiaoListener loadCongViecDaGiaoListener) {
-		if ((DataCongViecDaGiao != null && DataCongViecDaGiao.size() < page
-				* PAGE_SIZE - 1)
+		Log.d("TuNT",
+				"getCongViec: DataCongViecDaGiao.size() = " + DataCongViecDaGiao.size());
+
+		if ((DataCongViecDaGiao != null && DataCongViecDaGiao.size() < page * PAGE_SIZE - 1)
 				|| DataCongViecDaGiao == null) {
-			mCViecDaGiaoCallback.add(loadCongViecDaGiaoListener);
+			Log.d("TuNT", "start loading: page = " + page);
+			mCViecDaGiaoCallback.add( loadCongViecDaGiaoListener);
 			if (mCViecDaGiaoRunningPage == -1) {
 				GetCongViec congViec = new GetCongViec();
 				congViec.execute(token, username, Integer.toString(page));
-				mCViecDaGiaoRunningPage = page;
+				mCViecRunningPage = page;
 			}
+
 			return null;
 		} else {
 			ArrayList<TatCaCongViec> temp = new ArrayList<TatCaCongViec>();
 			temp.addAll(DataCongViecDaGiao.subList(0, page * PAGE_SIZE));
 			return temp;
 		}
+		
 
 	}
-
 	public static interface LoadCongViecDaGiaoListener {
 		public void onFinished(ArrayList<TatCaCongViec> data);
-
 	}
+	//-------------CVDuocGiao----------------------------------------------------------------//
+	
+		public ArrayList<TatCaCongViec> getCongViecDuocGiao(int page,
+				LoadCongViecDuocGiaoListener loadCongViecDuocGiaoListener) {
+			
+			if ((DataCongViecDuocGiao != null && DataCongViecDuocGiao.size() < page * PAGE_SIZE - 1)
+					|| DataCongViecDuocGiao == null) {
+				mCViecDuocGiaoCallback.add( loadCongViecDuocGiaoListener);
+				if (mCViecDuocGiaoRunningPage == -1) {
+					GetCongViec congViec = new GetCongViec();
+					congViec.execute(token, username, Integer.toString(page));
+					mCViecRunningPage = page;
+				}
 
-	// -------------------------cong viec duoc giao---------------------------//
-
-	public ArrayList<TatCaCongViec> getCongViecDuocGiao(int page,
-			LoadCongViecDuocGiaoListener loadCongViecDuocGiaoListener) {
-		if ((DataCongViecDuocGiao != null && DataCongViecDuocGiao.size() < page
-				* PAGE_SIZE - 1)
-				|| DataCongViecDuocGiao == null) {
-			mCViecDuocGiaoCallback.add(loadCongViecDuocGiaoListener);
-			if (mCViecDuocGiaoRunningPage == -1) {
-				GetCongViec getCongViec = new GetCongViec();
-				getCongViec.execute(token, username, Integer.toString(page));
-				mCViecDuocGiaoRunningPage = page;
+				return null;
+			} else {
+				ArrayList<TatCaCongViec> temp = new ArrayList<TatCaCongViec>();
+				temp.addAll(DataCongViecDuocGiao.subList(0, page * PAGE_SIZE));
+				return temp;
 			}
-			return null;
-		} else {
-			ArrayList<TatCaCongViec> temp = new ArrayList<TatCaCongViec>();
-			temp.addAll(DataCongViecDuocGiao.subList(0, page * PAGE_SIZE));
-			return temp;
+			
+
 		}
+		public static interface LoadCongViecDuocGiaoListener {
+			public void onFinished(ArrayList<TatCaCongViec> data);
+		}
+		//-------------CVTheoDoi----------------------------------------------------------------//
+		
+			public ArrayList<TatCaCongViec> getCongViecTheoDoi(int page,
+					LoadCongViecTheoDoiListener loadCongViecTheoDoiListener) {
+				
+				if ((DataCongViecTheoDoi != null && DataCongViecTheoDoi.size() < page * PAGE_SIZE - 1)
+						|| DataCongViecTheoDoi == null) {
+					mCViecTheoDoiCallback.add( loadCongViecTheoDoiListener);
+					if (mCViecTheoDoiRunningPage == -1) {
+						GetCongViec congViec = new GetCongViec();
+						congViec.execute(token, username, Integer.toString(page));
+						mCViecRunningPage = page;
+					}
 
-	}
+					return null;
+				} else {
+					ArrayList<TatCaCongViec> temp = new ArrayList<TatCaCongViec>();
+					temp.addAll(DataCongViecTheoDoi.subList(0, page * PAGE_SIZE));
+					return temp;
+				}
+				
 
-	public static interface LoadCongViecDuocGiaoListener {
-		public void onFinished(ArrayList<TatCaCongViec> data);
-	}
+			}
+			public static interface LoadCongViecTheoDoiListener {
+				public void onFinished(ArrayList<TatCaCongViec> data);
+			}
+	//-------------CVHoanThanh----------------------------------------------------------------//
+	
+		public ArrayList<TatCaCongViec> getCongViecHoanThanh(int page,
+				LoadCongViecHoanThanhListener loadCongViecHoanThanhListener) {
+			Log.d("TuNT",
+					"getCongViec: DataCongViecHoanThanh.size() = " + DataCongViecHoanThanh.size());
 
-	// -------------------------get cong viec---------------------------//
+			if ((DataCongViecHoanThanh != null && DataCongViecHoanThanh.size() < page * PAGE_SIZE - 1)
+					|| DataCongViecHoanThanh == null) {
+				Log.d("TuNT", "start loading: page = " + page);
+				mCViecHoanThanhCallback.add( loadCongViecHoanThanhListener);
+				if (mCViecHoanThanhRunningPage == -1) {
+					GetCongViec congViec = new GetCongViec();
+					congViec.execute(token, username, Integer.toString(page));
+					mCViecHoanThanhRunningPage = page;
+				}
 
+				return null;
+			} else {
+				ArrayList<TatCaCongViec> temp = new ArrayList<TatCaCongViec>();
+				temp.addAll(DataCongViecHoanThanh.subList(0, page * PAGE_SIZE));
+				return temp;
+			}
+			
+
+		}
+		public static interface LoadCongViecHoanThanhListener {
+			public void onFinished(ArrayList<TatCaCongViec> data);
+		}
+		
+	
 	private class GetCongViec extends AsyncTask<String, Void, String> {
 
 		@Override
@@ -199,7 +259,6 @@ public class DBController {
 
 					for (int i = 0; i < congviec.length(); i++) {
 						JSONObject c = congviec.getJSONObject(i);
-
 						String id = c.getString("id");
 						String tencongviec = c.getString("ten_cong_viec");
 						String ngaybatdau = c.getString("ngay_bat_dau");
@@ -235,21 +294,56 @@ public class DBController {
 									nguoithaoluan, thoigianthaoluan,
 									noidungthaoluan));
 						}
-
-						DataCongViec.add(new TatCaCongViec(id, tencongviec,
+						
+						//tatca cong viec
+						if (!tiendo.equals(cvDaHoanThanh)) {
+							DataCongViec.add(new TatCaCongViec(id, tencongviec,
 								ngaybatdau, tinhtrang, tiendo, nguoithuchien,
 								phongban, loaicongviec, hancuoi, duan,
 								mucuutien, nguoiduocxem, nguoigiao, mota,
 								tonghopbaocao, tepdinhkem, url, datathaoluan));
-						showList(DataCongViec);
+						}
+						
+						//cong viec da giao
+						if (nguoigiao.equals(username) && !tiendo.equals(cvDaHoanThanh)) {
+							DataCongViecDaGiao.add(new TatCaCongViec(id, tencongviec,
+									ngaybatdau, tinhtrang, tiendo, nguoithuchien,
+									phongban, loaicongviec, hancuoi, duan,
+									mucuutien, nguoiduocxem, nguoigiao, mota,
+									tonghopbaocao, tepdinhkem, url, datathaoluan));
+						}
+						//cong viec duoc giao
+						if (nguoithuchien.equals(username) && !tiendo.equals(cvDaHoanThanh)) {
+							DataCongViecDuocGiao.add(new TatCaCongViec(id, tencongviec,
+									ngaybatdau, tinhtrang, tiendo, nguoithuchien,
+									phongban, loaicongviec, hancuoi, duan,
+									mucuutien, nguoiduocxem, nguoigiao, mota,
+									tonghopbaocao, tepdinhkem, url, datathaoluan));
+						}
+						//cong viec theo doi
+						if (nguoiduocxem.equals(username) && !tiendo.equals(cvDaHoanThanh)) {
+							DataCongViecTheoDoi.add(new TatCaCongViec(id, tencongviec,
+									ngaybatdau, tinhtrang, tiendo, nguoithuchien,
+									phongban, loaicongviec, hancuoi, duan,
+									mucuutien, nguoiduocxem, nguoigiao, mota,
+									tonghopbaocao, tepdinhkem, url, datathaoluan));
+						}
+						//cong viec hoan thanh
+						if (tiendo.equals(cvDaHoanThanh)) {
+							DataCongViecHoanThanh.add(new TatCaCongViec(id, tencongviec,
+									ngaybatdau, tinhtrang, tiendo, nguoithuchien,
+									phongban, loaicongviec, hancuoi, duan,
+									mucuutien, nguoiduocxem, nguoigiao, mota,
+									tonghopbaocao, tepdinhkem, url, datathaoluan));
+						}
+						
+						
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
+				//tat ca cong viec
 				mCViecRunningPage = -1;
-				mCViecDaGiaoRunningPage = -1; // LuanDT
-				mCViecDuocGiaoRunningPage = -1;
-
 				if (mCViecCallback != null && mCViecCallback.size() > 0) {
 					Log.d("TuNT",
 							"GetCongViec.onPostExecute: mCallback.onFinished: "
@@ -258,18 +352,36 @@ public class DBController {
 						mCViecCallback.get(i).onFinished(DataCongViec);
 					}
 				}
-				if (mCViecDaGiaoCallback != null
-						&& mCViecDaGiaoCallback.size() > 0) { // LuanDT
+				// cong viec da giao
+				mCViecDaGiaoRunningPage = -1;
+				if (mCViecDaGiaoCallback != null && mCViecDaGiaoCallback.size() > 0) {
+					
 					for (int i = 0; i < mCViecDaGiaoCallback.size(); i++) {
-						mCViecDaGiaoCallback.get(i).onFinished(
-								DataCongViecDaGiao);
+						mCViecDaGiaoCallback.get(i).onFinished(DataCongViecDaGiao);
 					}
 				}
-				if (mCViecDuocGiaoCallback != null
-						&& mCViecDuocGiaoCallback.size() > 0) {
+				//cong viec duoc giao
+				mCViecDuocGiaoRunningPage = -1;
+				if (mCViecDuocGiaoCallback != null && mCViecDuocGiaoCallback.size() > 0) {
+					
 					for (int i = 0; i < mCViecDuocGiaoCallback.size(); i++) {
-						mCViecDuocGiaoCallback.get(i).onFinished(
-								DataCongViecDuocGiao);
+						mCViecDuocGiaoCallback.get(i).onFinished(DataCongViecDuocGiao);
+					}
+				}
+				//cong viec theo doi
+				mCViecTheoDoiRunningPage = -1;
+				if (mCViecTheoDoiCallback != null && mCViecTheoDoiCallback.size() > 0) {
+					
+					for (int i = 0; i < mCViecTheoDoiCallback.size(); i++) {
+						mCViecTheoDoiCallback.get(i).onFinished(DataCongViecTheoDoi);
+					}
+				}
+				//cong viec hoan thanh
+				mCViecHoanThanhRunningPage = -1;
+				if (mCViecHoanThanhCallback != null && mCViecHoanThanhCallback.size() > 0) {
+					
+					for (int i = 0; i < mCViecHoanThanhCallback.size(); i++) {
+						mCViecHoanThanhCallback.get(i).onFinished(DataCongViecHoanThanh);
 					}
 				}
 			} else {
@@ -278,23 +390,11 @@ public class DBController {
 		}
 
 	}
+//---------------------------------------Ket thuc get Cong viec -------------------------------------------------//
 
-	// -------------------------show list--------------------------//
-	public void showList(ArrayList<TatCaCongViec> arrayList) {
-		DataCongViecDaGiao.clear();
-		DataCongViecDuocGiao.clear();
-		for (int i = 0; i < arrayList.size(); i++) {
-			if (arrayList.get(i).getNguoiGiao().equals(username)) {
-				DataCongViecDaGiao.add(arrayList.get(i));
-			}
-			if (arrayList.get(i).getNguoiThucHien().equals(username)) {
-				DataCongViecDuocGiao.add(arrayList.get(i));
-			}
-		}
-	}
-
-	// -------------------------cong van--------------------------//
-
+// ----------------------------------------- Cong Van --------------------------------------------------------//
+// -----------------------------------------------------------------------------------------------------------//
+	
 	GetCongVan mGetCongVan;
 	ArrayList<LoadCongVanListener> mCVanCallback = new ArrayList<DBController.LoadCongVanListener>();
 	int mCVanRunningPage = -1;
@@ -321,6 +421,8 @@ public class DBController {
 	public static interface LoadCongVanListener {
 		public void onFinished(ArrayList<CongVan> data);
 	}
+
+	
 
 	private class GetCongVan extends AsyncTask<String, Void, String> {
 
@@ -388,5 +490,8 @@ public class DBController {
 			}
 		}
 	}
-
+//-------------------------------- Get CongViecTheoDoi -------------------------------------------//
+//-------------------------------------------------------------------------------------------------//
+	
+	
 }

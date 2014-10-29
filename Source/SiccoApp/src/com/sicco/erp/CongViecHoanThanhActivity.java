@@ -1,59 +1,100 @@
 package com.sicco.erp;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
-import com.sicco.erp.adapter.CongViecDaGiaoAdapter;
+import com.androidquery.util.Progress;
 import com.sicco.erp.adapter.CongViecHoanThanhAdapter;
-import com.sicco.erp.http.HTTPHandler;
+import com.sicco.erp.database.DBController;
+import com.sicco.erp.database.DBController.LoadCongViecHoanThanhListener;
+import com.sicco.erp.database.DBController.LoadCongViecListener;
 import com.sicco.erp.manager.SessionManager;
-import com.sicco.erp.model.CongViecDaGiao;
-import com.sicco.erp.model.CongViecHoanThanh;
+import com.sicco.erp.model.TatCaCongViec;
 
 public class CongViecHoanThanhActivity extends Activity {
 	ProgressDialog pDialog;
-	String url_congviec = "http://apis.mobile.vareco.vn/sicco/congviec.php";
-	JSONArray congviec = null;
-	ArrayList<HashMap<String, String>> congViecHoanThanhList;
-	ArrayList<CongViecHoanThanh> mCongViecHoanThanh;
+	ProgressBar pLoadmore;
+	ArrayList<TatCaCongViec> mCongViecHoanThanh;
 	ListView mListView;
 	CongViecHoanThanhAdapter mAdapter;
-	String idCongViec;
-
+	String userName;
+	
+	Button btn_LoadMore;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_cong_viec_hoan_thanh);
 		
-		SessionManager session = SessionManager.getInstance(getApplicationContext());
-		String token = session.getUserDetails().get(SessionManager.KEY_TOKEN);
-		String userName = session.getUserDetails().get(SessionManager.KEY_NAME);
-		String page = "2";
 		
-		congViecHoanThanhList = new ArrayList<HashMap<String, String>>();
-		new GetCongViec().execute(token,userName,page);
-		mCongViecHoanThanh = new ArrayList<CongViecHoanThanh>();
 		mListView = (ListView) findViewById(R.id.lv_cong_viec_hoan_thanh);
+		View footerView = ((LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE)).inflate(R.layout.btn_loadmore, null,false);
+		btn_LoadMore = (Button)footerView.findViewById(R.id.LoadMore);
+		mListView.addFooterView(footerView);
+		
+		pLoadmore = (ProgressBar)findViewById(R.id.progressBar1);
+		
+		pDialog = new ProgressDialog(CongViecHoanThanhActivity.this);
+		pDialog.setMessage(getResources().getString(R.string.vui_long_doi));
+		pDialog.setCancelable(true);
+
+		
+		final DBController controller = DBController.getInstance(getApplicationContext());
+		mCongViecHoanThanh = controller.getCongViecHoanThanh(1, new LoadCongViecHoanThanhListener() {
+			
+			@Override
+			public void onFinished(ArrayList<TatCaCongViec> data) {
+				if (pDialog.isShowing())
+					pDialog.dismiss();
+				
+				
+				mCongViecHoanThanh.clear();
+				mCongViecHoanThanh.addAll(data);
+				mAdapter.notifyDataSetChanged();
+			}
+		}); 
+		if (mCongViecHoanThanh == null) {
+			
+			pDialog.show();
+			mCongViecHoanThanh = new ArrayList<TatCaCongViec>();
+		}
+		
+		btn_LoadMore.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				pLoadmore.setVisibility(View.VISIBLE);
+				TatCaCongViecActivity.pnumberCviec = TatCaCongViecActivity.pnumberCviec+1;
+				Toast.makeText(getApplicationContext(), "LoadMore" + TatCaCongViecActivity.pnumberCviec, 0).show();
+				controller.getCongViecHoanThanh(TatCaCongViecActivity.pnumberCviec, new LoadCongViecHoanThanhListener() {
+					
+					@Override
+					public void onFinished(ArrayList<TatCaCongViec> data) {
+						mCongViecHoanThanh.clear();
+						mCongViecHoanThanh.addAll(data);
+						mAdapter.notifyDataSetChanged();
+						pLoadmore.setVisibility(View.INVISIBLE);
+					}
+				});
+			}
+		});
+		
 		mAdapter = new CongViecHoanThanhAdapter(getApplicationContext(),
 				R.layout.item_lv_cong_viec_hoan_thanh, mCongViecHoanThanh);
 		mListView.setAdapter(mAdapter);
@@ -63,86 +104,16 @@ public class CongViecHoanThanhActivity extends Activity {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				Intent intent = new Intent();
-				intent.putExtra("idcongviec", idCongViec);
+				intent.putExtra("thong_tin", ""+view.getTag());
+				Log.d("NgaDV", ""+view.getTag());
+				Toast.makeText(getApplicationContext(), "gettag: " + view.getTag(), 0).show();
 				intent.setClass(getApplicationContext(), ChiTietCongViecActivity.class);
 				startActivity(intent);
-				Log.d("LuanDT", "ID Công việc = " + idCongViec);
 			}
 		});
 
 	}
 
-	private class GetCongViec extends AsyncTask<String, Void, String> {
-
-		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-			// Showing progress dialog
-			pDialog = new ProgressDialog(CongViecHoanThanhActivity.this);
-			pDialog.setMessage(getResources().getString(R.string.vui_long_doi));
-			pDialog.setCancelable(false);
-			pDialog.show();
-
-		}
-
-		@Override
-		protected String doInBackground(String... arg0) {
-			// Creating service handler class instance
-			HTTPHandler sh = new HTTPHandler();
-
-			// Making a request to url and getting response
-			String token = arg0[0];
-			String userName = arg0[1];
-			String page = arg0[2];
-			
-			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-			nameValuePairs.add(new BasicNameValuePair("token" , token));
-			nameValuePairs.add(new BasicNameValuePair("username", userName));
-			nameValuePairs.add(new BasicNameValuePair("page", page));
-			
-			String jsonStr = sh.makeHTTPRequest(url_congviec, HTTPHandler.POST
-					,nameValuePairs);
-
-			Log.d("LuanDT", "json" + jsonStr);
-
-			return jsonStr;
-		}
-
-		@Override
-		protected void onPostExecute(String result) {
-			super.onPostExecute(result);
-			// Dismiss the progress dialog
-			if (pDialog.isShowing())
-				pDialog.dismiss();
-			if (result != null) {
-				try {
-					JSONObject jsonObj = new JSONObject(result);
-
-					// Getting JSON Array node
-					congviec = jsonObj.getJSONArray("row");
-
-					// looping through All Contacts
-					for (int i = 0; i < congviec.length(); i++) {
-						JSONObject c = congviec.getJSONObject(i);
-
-						idCongViec = c.getString("id");
-						String tencongviec = c.getString("ten_cong_viec");
-						String ngayhoanthanh = c.getString("ngay_ket_thuc");
-
-						mCongViecHoanThanh.add(new CongViecHoanThanh(idCongViec, tencongviec,
-								ngayhoanthanh));
-						mAdapter.notifyDataSetChanged();
-
-					}
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
-			} else {
-				Log.e("LuanDT", "Khong the lay data tu url nay");
-			}
-		}
-
-	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -157,4 +128,5 @@ public class CongViecHoanThanhActivity extends Activity {
 		startActivityForResult(intent, 1);
 		return true;
 	}
+
 }

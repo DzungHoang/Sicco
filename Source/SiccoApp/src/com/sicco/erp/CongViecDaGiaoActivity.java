@@ -8,12 +8,17 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.costum.android.widget.LoadMoreListView;
@@ -21,16 +26,18 @@ import com.costum.android.widget.LoadMoreListView.OnLoadMoreListener;
 import com.sicco.erp.adapter.CongViecDaGiaoAdapter;
 import com.sicco.erp.database.DBController;
 import com.sicco.erp.database.DBController.LoadCongViecDaGiaoListener;
-import com.sicco.erp.model.CongViecDaGiao;
+import com.sicco.erp.database.DBController.LoadCongViecHoanThanhListener;
+import com.sicco.erp.database.DBController.LoadCongViecListener;
 import com.sicco.erp.model.TatCaCongViec;
 
 public class CongViecDaGiaoActivity extends Activity {
-
 	ProgressDialog pDialog;
+	ProgressBar pLoadmore;
 	ArrayList<TatCaCongViec> mCongViecDaGiao;
 	ListView mListView;
 	CongViecDaGiaoAdapter mAdapter;
-	static int pnumberCviecDaGiao = TatCaCongViecActivity.pnumberCviec;
+	Button btn_LoadMore;
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -40,52 +47,61 @@ public class CongViecDaGiaoActivity extends Activity {
 		pDialog = new ProgressDialog(CongViecDaGiaoActivity.this);
 		pDialog.setMessage(getResources().getString(R.string.vui_long_doi));
 		pDialog.setCancelable(true);
+		
 		mListView = (ListView) findViewById(R.id.lv_cong_viec_da_giao);
-		final DBController controller = DBController
-				.getInstance(getApplicationContext());
-		mCongViecDaGiao = controller.getCongViecDaGiao(1,
-				new LoadCongViecDaGiaoListener() {
-
+		View footerView = ((LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE)).inflate(R.layout.btn_loadmore, null,false);
+		btn_LoadMore = (Button)footerView.findViewById(R.id.LoadMore);
+		mListView.addFooterView(footerView);
+		pLoadmore = (ProgressBar)findViewById(R.id.progressBar1);
+		
+		final DBController controller = DBController.getInstance(getApplicationContext());
+		mCongViecDaGiao = controller.getCongViecDaGiao(1, new LoadCongViecDaGiaoListener() {
+			
+			@Override
+			public void onFinished(ArrayList<TatCaCongViec> data) {
+				if (pDialog.isShowing())
+					pDialog.dismiss();
+				
+				mCongViecDaGiao.clear();
+				mCongViecDaGiao.addAll(data);
+				mAdapter.notifyDataSetChanged();
+				Toast.makeText(getApplicationContext(), "CongviecDagiao onFinished", 0).show();
+				Log.d("NgaDV", "CongviecDagiao onFinished"+TatCaCongViecActivity.pnumberCviec);
+			}
+		});
+		if (mCongViecDaGiao == null) {
+			
+			pDialog.show();
+			mCongViecDaGiao = new ArrayList<TatCaCongViec>();
+			if (pDialog.isShowing())
+				pDialog.dismiss();
+			Log.d("NgaDV", "mCongViecDaGiao == null");
+			Toast.makeText(getApplicationContext(), "mCongViecDaGiao == " + mCongViecDaGiao.toString() , 0).show();
+		}
+		btn_LoadMore.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				pLoadmore.setVisibility(View.VISIBLE);
+				TatCaCongViecActivity.pnumberCviec = TatCaCongViecActivity.pnumberCviec+1;
+				Toast.makeText(getApplicationContext(), "LoadMore" + TatCaCongViecActivity.pnumberCviec, 0).show();
+				controller.getCongViecHoanThanh(TatCaCongViecActivity.pnumberCviec, new LoadCongViecHoanThanhListener() {
+					
 					@Override
 					public void onFinished(ArrayList<TatCaCongViec> data) {
-						if (pDialog.isShowing())
-							pDialog.dismiss();
 						mCongViecDaGiao.clear();
 						mCongViecDaGiao.addAll(data);
 						mAdapter.notifyDataSetChanged();
-
+						pLoadmore.setVisibility(View.INVISIBLE);
 					}
 				});
-		if (mCongViecDaGiao == null) {
-			pDialog.show();
-			mCongViecDaGiao = new ArrayList<TatCaCongViec>();
-		}
+			}
+		});
+		
 		mAdapter = new CongViecDaGiaoAdapter(getApplicationContext(),
 				R.layout.item_lv_cong_viec_da_giao, mCongViecDaGiao);
 		mListView.setAdapter(mAdapter);
-		((LoadMoreListView) mListView)
-				.setOnLoadMoreListener(new OnLoadMoreListener() {
-					public void onLoadMore() {
-						pnumberCviecDaGiao = pnumberCviecDaGiao + 1;
-						controller.getCongViecDaGiao(pnumberCviecDaGiao,
-								new LoadCongViecDaGiaoListener() {
 
-									@Override
-									public void onFinished(
-											ArrayList<TatCaCongViec> data) {
-										mCongViecDaGiao.clear();
-										mCongViecDaGiao.addAll(data);
-										mAdapter.notifyDataSetChanged();
-										Toast.makeText(getApplicationContext(),
-												"onLoad " + pnumberCviecDaGiao,
-												0).show();
-										((LoadMoreListView) mListView)
-												.onLoadMoreComplete();
-									}
-								});
-
-					}
-				});
 		mListView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
@@ -109,11 +125,15 @@ public class CongViecDaGiaoActivity extends Activity {
 				intent.putExtra("tong_hop_bao_cao", getArray.get("tong_hop_bao_cao"));
 				intent.putExtra("Url", getArray.get("Url"));
 				
+				
 				intent.setClass(getApplicationContext(),
 						ChiTietCongViecActivity.class);
 				startActivity(intent);
 			}
 		});
+
+		float y = mListView.getY() + mListView.getHeight();
+		Toast.makeText(getApplicationContext(), "toa do x lisview: " + mListView.getWidth(), 0).show();
 
 	}
 
@@ -127,7 +147,7 @@ public class CongViecDaGiaoActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		Intent intent = new Intent();
 		intent.setClass(getApplicationContext(), ThemCongViecActivity.class);
-		startActivity(intent);
+		startActivityForResult(intent, 1);
 		return true;
 	}
 }

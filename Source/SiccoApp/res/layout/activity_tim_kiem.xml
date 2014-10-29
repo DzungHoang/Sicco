@@ -31,10 +31,9 @@
 
     </RelativeLayout>
 
-    <ListView
+    <com.costum.android.widget.LoadMoreListView
         android:id="@+id/lv_tim_kiem"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-    </ListView>
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

@@ -3,14 +3,12 @@ package com.sicco.erp.adapter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-
 import com.sicco.erp.R;
 import com.sicco.erp.model.CongViecDuocGiao;
 import com.sicco.erp.model.TatCaCongViec;
@@ -39,11 +37,11 @@ public class CongViecDuocGiaoAdapter extends ArrayAdapter<TatCaCongViec> {
 		TextView tenCongViec = (TextView) mView
 				.findViewById(R.id.item_lv_ten_cong_viec);
 		tenCongViec.setText(congViecDuocGiao.getTenCongViec());
-		TextView nguoiGiao = (TextView) mView
+		TextView nguoigiao = (TextView) mView
 				.findViewById(R.id.item_lv_nguoi_giao);
-		nguoiGiao.setText(congViecDuocGiao.getNguoiGiao());
+		nguoigiao.setText(congViecDuocGiao.getNguoiGiao());
 		
-		HashMap<String, String> hashMap = new HashMap();
+		HashMap<String, String> hashMap = new HashMap<String, String>();
 		hashMap.put("id", congViecDuocGiao.getID());
 		hashMap.put("ten_cong_viec", congViecDuocGiao.getTenCongViec());
 		hashMap.put("ngay_bat_dau", congViecDuocGiao.getNgayBatDau());
@@ -60,9 +58,8 @@ public class CongViecDuocGiaoAdapter extends ArrayAdapter<TatCaCongViec> {
 		hashMap.put("mo_ta", congViecDuocGiao.getMoTa());
 		hashMap.put("tong_hop_bao_cao", congViecDuocGiao.getTongHopBaoCao());
 		hashMap.put("url", congViecDuocGiao.getUrl());
-		 
-		mView.setTag(hashMap);
 		
+		mView.setTag(hashMap);
 		return mView;
 	}
 }

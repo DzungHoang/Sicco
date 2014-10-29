@@ -294,7 +294,7 @@ public class ThemCongViecActivity extends Activity implements OnClickListener {
 				Uri uri = data.getData();
 				Log.d("LuanDT", "File Uri: " + uri.toString());
 				// Get the path
-				path = FileUtils.getPath(this, uri);
+			path = FileUtils.getPath(this, uri);
 				Log.d("LuanDT", "File Path: " + path);
 				Toast.makeText(this, "File Selected: " + path,
 						Toast.LENGTH_SHORT).show();

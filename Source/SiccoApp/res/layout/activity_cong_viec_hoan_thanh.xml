@@ -30,13 +30,15 @@
             android:text="@string/ngay_hoan_thanh"
             android:textColor="#ffffff"
             android:textStyle="bold" />
-
     </RelativeLayout>
 
     <ListView
         android:id="@+id/lv_cong_viec_hoan_thanh"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:layout_weight="1" >
     </ListView>
+
+    
 
 </LinearLayout>

@@ -33,32 +33,48 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
+import com.costum.android.widget.LoadMoreListView;
+import com.costum.android.widget.LoadMoreListView.OnLoadMoreListener;
+import com.sicco.erp.adapter.CongViecHoanThanhAdapter;
 import com.sicco.erp.adapter.TimKiemAdapter;
+import com.sicco.erp.database.DBController.LoadCongViecListener;
 import com.sicco.erp.http.HTTPHandler;
 import com.sicco.erp.manager.SessionManager;
+import com.sicco.erp.model.TatCaCongViec;
+import com.sicco.erp.model.ThaoLuan;
 import com.sicco.erp.model.TimKiem;
 
 public class TimKiemActivity  extends Activity{
 	ProgressDialog pDialog;
-	String url_congviec = "http://apis.mobile.vareco.vn/sicco/congviec.php";
-	JSONArray congviec = null;
-	ArrayList<HashMap<String, String>> timKiemList;
+	String url_timkiemcongviec = "http://apis.mobile.vareco.vn/sicco/timkiem.php";
+	JSONArray congviec = null, thaoluan = null;
 	ArrayList<TimKiem> mTimKiemCongViec;
 	ListView mListView;
 	TimKiemAdapter mAdapter;
 	String idCongViec;
 	
 	ActionBar mActionBar;
-	EditText edt_KeyWork;
+	EditText edt_KeyWord;
 	Spinner spn_TieuChi;
 	
 	//Cac tieu chi trong spinner
 	 String[] cacTieuChi;
+	 
+	 String tieuChiDuocChon,keyWord;
+	 String tieuchi;
+	 
+	 int pNumberTimkiem = 1;
 
+	 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_tim_kiem);
+		
+		SessionManager session = SessionManager.getInstance(getApplicationContext());
+		 
+		final String token = session.getUserDetails().get(SessionManager.KEY_TOKEN);
+		final String userName = session.getUserDetails().get(SessionManager.KEY_NAME);
 		
 		cacTieuChi = getResources().getStringArray(R.array.cac_tieu_chi); 
 
@@ -71,7 +87,7 @@ public class TimKiemActivity  extends Activity{
 		mActionBar.setCustomView(mCustomView);
 		mActionBar.setDisplayShowCustomEnabled(true);
 		
-		edt_KeyWork = (EditText)findViewById(R.id.editText1);
+		edt_KeyWord = (EditText)findViewById(R.id.editText1);
 		spn_TieuChi = (Spinner)findViewById(R.id.spinner1);
 		
 		ArrayAdapter<String> mSpnAdapter=new ArrayAdapter<String>
@@ -86,41 +102,68 @@ public class TimKiemActivity  extends Activity{
 		 //Thiáº¿t láº­p adapter cho Spinner
 		 spn_TieuChi.setAdapter(mSpnAdapter);
 		 
-		 edt_KeyWork.setOnEditorActionListener(new OnEditorActionListener() {
+		 //--- first show TimKiemActivity-----------------------
+//		 new GetCongViec().execute(token,userName, page, tieuChiDuocChon, keyWord);
+		 //////////////////////////////////////////////////////////////////
+		 
+		 edt_KeyWord.setOnEditorActionListener(new OnEditorActionListener() {
 			
 			@Override
 			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+				tieuChiDuocChon = spn_TieuChi.getSelectedItem().toString();
+				keyWord = edt_KeyWord.getText().toString();
 				
-				Toast.makeText(getApplicationContext(), edt_KeyWork.getText(), 0).show();
-				Log.d("NgaDV", "onEditor : " + edt_KeyWork.getText());
+				Toast.makeText(getApplicationContext(), "keywork: "+ edt_KeyWord.getText() + "---tieu chi: " +tieuChiDuocChon, 0).show();
+				Log.d("NgaDV", "onEditor : " + keyWord);
+				
+				tieuchi = "";
+				if (tieuChiDuocChon.equals(cacTieuChi[0]) && !keyWord.equals("")) {
+					tieuchi = "all";
+				}
+				else if (tieuChiDuocChon.equals(cacTieuChi[1]) && !keyWord.equals("")) {
+					tieuchi = "ten_cong_viec";
+				}
+				else if (tieuChiDuocChon.equals(cacTieuChi[2]) && !keyWord.equals("")) {
+					tieuchi = "nguoi_giao";
+				}
+				else if (tieuChiDuocChon.equals(cacTieuChi[3]) && !keyWord.equals("")) {
+					tieuchi = "nguoi_thuc_hien";
+				}
+				mTimKiemCongViec.clear();
+				pNumberTimkiem = 1;
+				new GetCongViec().execute(token,userName, Integer.toString(pNumberTimkiem), tieuchi, keyWord);
 				InputMethodManager imm = (InputMethodManager)getSystemService(
 					      Context.INPUT_METHOD_SERVICE);
-					imm.hideSoftInputFromWindow(edt_KeyWork.getWindowToken(), 0);
-				return false;
+					imm.hideSoftInputFromWindow(edt_KeyWord.getWindowToken(), 0); 
+				return true;
 			}
 		});
-		 
-		 
-
-		
-		
 		
 //-------------------------And Action bar -----------------------------------------------------------//
-		
-		SessionManager session = SessionManager.getInstance(getApplicationContext());
 		 
-		String token = session.getUserDetails().get(SessionManager.KEY_TOKEN);
-		String userName = session.getUserDetails().get(SessionManager.KEY_NAME);
-		String page = "1";
-		 
-		timKiemList = new ArrayList<HashMap<String, String>>();
-		new GetCongViec().execute(token,userName, page);
 		mTimKiemCongViec = new ArrayList<TimKiem>();
 
 		mListView = (ListView) findViewById(R.id.lv_tim_kiem);
 		mAdapter = new TimKiemAdapter(getApplicationContext(),
 				R.layout.item_lv_tim_kiem, mTimKiemCongViec);
 		mListView.setAdapter(mAdapter);
+		((LoadMoreListView) mListView)
+		.setOnLoadMoreListener(new OnLoadMoreListener() {
+			public void onLoadMore() {
+				pNumberTimkiem = pNumberTimkiem+1;
+				
+				String page = Integer.toString(pNumberTimkiem);
+				Toast.makeText(getApplicationContext(), "pnumber timkiem: " + page, 0).show();
+				new GetCongViec().execute(token,userName, page, tieuchi, keyWord);
+				if (pDialog.isShowing())
+					pDialog.dismiss();
+				
+				mAdapter.notifyDataSetChanged();
+				((LoadMoreListView) mListView).onLoadMoreComplete();
+				
+			}
+		});
+
 		mListView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
@@ -143,7 +186,7 @@ public class TimKiemActivity  extends Activity{
 			// Showing progress dialog
 			pDialog = new ProgressDialog(TimKiemActivity.this);
 			pDialog.setMessage(getResources().getString(R.string.vui_long_doi));
-			pDialog.setCancelable(false);
+			pDialog.setCancelable(true);
 			pDialog.show();
 
 		}
@@ -152,19 +195,23 @@ public class TimKiemActivity  extends Activity{
 		protected String doInBackground(String... arg0) {
 			// Creating service handler class instance
 			HTTPHandler sh = new HTTPHandler();
-
+			
 			
 			// Making a request to url and getting response
 			String token = arg0[0];
 			String userName = arg0[1];
 			String page = arg0[2];
+			String tieuchi = arg0[3];
+			String keywork = arg0[4];
 			
 			List<NameValuePair> nameValuePairs = new  ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair("token" , token));
 			nameValuePairs.add(new BasicNameValuePair("username", userName));
 			nameValuePairs.add(new BasicNameValuePair("page" , page));
+			nameValuePairs.add(new BasicNameValuePair("tieu_chi" , tieuchi));
+			nameValuePairs.add(new BasicNameValuePair("keyword" , keywork));
 			
-			String jsonStr = sh.makeHTTPRequest(url_congviec, HTTPHandler.POST,nameValuePairs);
+			String jsonStr = sh.makeHTTPRequest(url_timkiemcongviec, HTTPHandler.GET, nameValuePairs);
 			Log.d("LuanDT", "json" + jsonStr);
 
 			return jsonStr;
@@ -174,6 +221,8 @@ public class TimKiemActivity  extends Activity{
 		@Override
 		protected void onPostExecute(String result) {
 			super.onPostExecute(result);
+			
+			Toast.makeText(getApplicationContext(), "onpostexecute cho tu", 0).show();
 			// Dismiss the progress dialog
 			if (pDialog.isShowing())
 				pDialog.dismiss();
@@ -188,14 +237,48 @@ public class TimKiemActivity  extends Activity{
 					for (int i = 0; i < congviec.length(); i++) {
 						JSONObject c = congviec.getJSONObject(i);
 
-						idCongViec = c.getString("id");
+						String id = c.getString("id");
 						String tencongviec = c.getString("ten_cong_viec");
+						String ngaybatdau = c.getString("ngay_bat_dau");
+						String tinhtrang = c.getString("tinh_trang");
+						String tiendo = c.getString("tien_do");
+						String nguoithuchien = c.getString("nguoi_thuc_hien");
+						String phongban = c.getString("phong_ban");
+						String loaicongviec = c.getString("loai_cong_viec");
 						String hancuoi = c.getString("ngay_ket_thuc");
+						String duan = c.getString("du_an");
+						String mucuutien = c.getString("muc_uu_tien");
+						String nguoiduocxem = c.getString("nguoi_duoc_xem");
+						String nguoigiao = c.getString("nguoi_giao");
+						String mota = c.getString("mo_ta");
+						String tonghopbaocao = c.getString("tong_hop_bao_cao");
+						String tepdinhkem = c.getString("tep_dinh_kem");
+						String url = c.getString("url");
+						ArrayList<ThaoLuan> datathaoluan = new ArrayList<ThaoLuan>();
 
-						mTimKiemCongViec.add(new TimKiem(idCongViec, tencongviec,
-								hancuoi));
+						thaoluan = c.getJSONArray("thao_luan");
+
+						for (int j = 0; j < thaoluan.length(); j++) {
+							JSONObject thao_luan = thaoluan.getJSONObject(j);
+							String nguoithaoluan = thao_luan
+									.getString("nguoi_thao_luan");
+							String thoigianthaoluan = thao_luan
+									.getString("thoi_gian_thao_luan");
+							String noidungthaoluan = thao_luan
+									.getString("noi_dung_thao_luan");
+							String anhdaidien = thao_luan
+									.getString("anh_dai_dien");
+							datathaoluan.add(new ThaoLuan(anhdaidien,
+									nguoithaoluan, thoigianthaoluan,
+									noidungthaoluan));
+						}
+
+						mTimKiemCongViec.add(new TimKiem(id, tencongviec,
+								ngaybatdau, tinhtrang, tiendo, nguoithuchien,
+								phongban, loaicongviec, hancuoi, duan,
+								mucuutien, nguoiduocxem, nguoigiao, mota,
+								tonghopbaocao, tepdinhkem, url, datathaoluan));
 						mAdapter.notifyDataSetChanged();
-
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();

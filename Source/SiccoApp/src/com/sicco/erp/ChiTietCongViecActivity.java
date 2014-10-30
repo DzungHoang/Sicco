@@ -38,9 +38,9 @@ import com.sicco.erp.model.ThaoLuan;
 public class ChiTietCongViecActivity extends Activity {
 
 	ProgressDialog pDialog;
-	String url_congviec = "http://apis.mobile.vareco.vn/sicco/congviec_old.php";
+	String url_congviec = "http://apis.mobile.vareco.vn/sicco/congviec.php";
 	String url_thaoluan = "http://apis.mobile.vareco.vn/sicco/thaoluan.php";
-	JSONArray thaoluan = null, row = null, success = null;
+	JSONArray thaoluan = null, success = null;
 	ArrayList<HashMap<String, String>> thaoLuanList;
 	ArrayList<ThaoLuan> mThaoLuan;
 	ListView mListView;
@@ -60,8 +60,9 @@ public class ChiTietCongViecActivity extends Activity {
 	String id, tenCongViec, tinhTrang, tienDo, nguoiThucHien, phongBan,
 			loaiCongViec, ngayKetThuc, duAn, mucUuTien, nguoiDuocXem,
 			nguoiGiao, moTa, tongHopBaoCao, Url, token, username, thoigian,
-			noidungthaoluan, updateTienDo, kqUpdateTienDo;
+			noidungthaoluan, updateTienDo, kqUpdateTienDo, id_cong_viec;
 	StringBuilder timeThaoLuan;
+	String page = "2";
 
 	private int minute;
 	private int hour;
@@ -102,9 +103,6 @@ public class ChiTietCongViecActivity extends Activity {
 							TatCaCongViecActivity.class);
 					startActivity(intent2);
 				}
-//				Toast.makeText(getApplicationContext(),
-//						"ID: " + intent.getStringExtra("id"), Toast.LENGTH_LONG)
-//						.show();
 			}
 		}
 		tenCongViec = intent.getStringExtra("ten_cong_viec");
@@ -158,7 +156,8 @@ public class ChiTietCongViecActivity extends Activity {
 		// //////////
 
 		thaoLuanList = new ArrayList<HashMap<String, String>>();
-		new GetThaoLuan().execute(token, username);
+		id_cong_viec = id;
+		new GetThaoLuan().execute(token, id_cong_viec, page);
 		mThaoLuan = new ArrayList<ThaoLuan>();
 		mListView = (ListView) findViewById(R.id.lv_thao_luan);
 		mAdapter = new ThaoLuanAdapter(getBaseContext(),
@@ -189,18 +188,15 @@ public class ChiTietCongViecActivity extends Activity {
 		@Override
 		protected String doInBackground(String... arg0) {
 			HTTPHandler handler = new HTTPHandler();
-
+			
 			List<NameValuePair> valuePairs = new ArrayList<NameValuePair>();
 			valuePairs.add(new BasicNameValuePair("token", token));
-			valuePairs.add(new BasicNameValuePair("ten_nguoi_thao_luan",
-					username));
 			valuePairs.add(new BasicNameValuePair("id_cong_viec", id));
-			valuePairs.add(new BasicNameValuePair("thoi_gian", thoigian));
-			valuePairs.add(new BasicNameValuePair("noi_dung", noidungthaoluan));
-			String ret = handler.makeHTTPRequest(url_congviec,
+			valuePairs.add(new BasicNameValuePair("page", page));
+			
+			String ret = handler.makeHTTPRequest(url_thaoluan,
 					HTTPHandler.POST, valuePairs);
 
-			Log.d("LuanDT", "POST-ThaoLuan : " + valuePairs);
 			return ret;
 		}
 
@@ -213,29 +209,19 @@ public class ChiTietCongViecActivity extends Activity {
 				try {
 
 					JSONObject jsonObj = new JSONObject(result);
-					row = jsonObj.getJSONArray("row");
+					thaoluan = jsonObj.getJSONArray("thao_luan");
 
-					for (int i = 0; i < row.length(); i++) {
-						JSONObject o = row.getJSONObject(i);
-						thaoluan = o.getJSONArray("thao_luan");
-
-						for (int j = 0; j < thaoluan.length(); j++) {
-							JSONObject thao_luan = thaoluan.getJSONObject(i);
-							String nguoithaoluan = thao_luan
-									.getString("nguoi_thao_luan");
-							String thoigianthaoluan = thao_luan
-									.getString("thoi_gian_thao_luan");
-							String noidungthaoluan = thao_luan
-									.getString("noi_dung_thao_luan");
-							String anhdaidien = thao_luan
-									.getString("anh_dai_dien");
-							mThaoLuan.add(new ThaoLuan(anhdaidien,
-									nguoithaoluan, thoigianthaoluan,
-									noidungthaoluan));
-
-						}
+					for (int i = 0; i < thaoluan.length(); i++) {
+						JSONObject o = thaoluan.getJSONObject(i);
+						String nguoithaoluan = o.getString("nguoi_thao_luan");
+						String thoigianthaoluan = o.getString("thoi_gian_thao_luan");
+						String noidungthaoluan = o.getString("noi_dung_thao_luan");
+						String anhdaidien = o.getString("anh_dai_dien");
+						mThaoLuan.add(new ThaoLuan(anhdaidien,
+								nguoithaoluan, thoigianthaoluan,
+								noidungthaoluan));
+						
 						mAdapter.notifyDataSetChanged();
-
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();

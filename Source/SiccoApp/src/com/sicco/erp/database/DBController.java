@@ -313,7 +313,7 @@ public class DBController {
 									tonghopbaocao, tepdinhkem, url, datathaoluan));
 						}
 						//cong viec duoc giao
-						if (nguoithuchien.equals(username) && !tiendo.equals(cvDaHoanThanh)) {
+						if (nguoithuchien.contains(username) && !tiendo.equals(cvDaHoanThanh)) {
 							DataCongViecDuocGiao.add(new TatCaCongViec(id, tencongviec,
 									ngaybatdau, tinhtrang, tiendo, nguoithuchien,
 									phongban, loaicongviec, hancuoi, duan,

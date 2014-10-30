@@ -132,6 +132,12 @@ public class ChiTietCongViecActivity extends Activity {
 							R.string.thong_bao_rong));
 					return;
 				} else {
+					Toast.makeText(getApplicationContext(), "" 
+							+ "   token : " + token 
+							+ "   username : " + username 
+							+ "   idCongViec : " + id
+							+ "   Time : " + timeThaoLuan
+							+ "   NDTL : " + edtThaoLuan.getText() , 0).show();
 					Log.d("LuanDT", "" 
 							+ "   token : " + token 
 							+ "   username : " + username 
@@ -286,6 +292,25 @@ public class ChiTietCongViecActivity extends Activity {
 		case R.id.action_edit:
 			Intent intent = getIntent();
 			intent.setClass(getApplicationContext(), SuaCongViecActivity.class);
+			
+			intent.putExtra("id", id);
+			intent.putExtra("ten_cong_viec", tenCongViec);
+			intent.putExtra("tinh_trang", tinhTrang);
+			intent.putExtra("tien_do", tienDo);
+			intent.putExtra("nguoi_thuc_hien", nguoiThucHien);
+			intent.putExtra("phong_ban", phongBan);
+			intent.putExtra("loai_cong_viec", loaiCongViec);
+			intent.putExtra("ngay_ket_thuc", ngayKetThuc);
+			intent.putExtra("du_an", duAn);
+			intent.putExtra("muc_uu_tien", mucUuTien);
+			intent.putExtra("nguoi_duoc_xem", nguoiDuocXem);
+			intent.putExtra("nguoi_giao", nguoiGiao);
+			intent.putExtra("mo_ta", moTa);
+			intent.putExtra("tong_hop_bao_cao", tongHopBaoCao);
+			intent.putExtra("Url", Url);
+			
+			Toast.makeText(getApplicationContext(), "id:" + intent.getStringExtra("id").toString() + 
+					"ten_cong_viec:" + intent.getStringExtra("ten_cong_viec").toString() ,0).show();
 			startActivity(intent);
 			break;
 

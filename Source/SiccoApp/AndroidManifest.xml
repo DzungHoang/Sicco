@@ -57,6 +57,9 @@
             android:label="@string/them_cong_viec" >
         </activity>
         <activity 
+            android:name=".SuaCongViecActivity" >
+        </activity>
+        <activity 
             android:name=".TimKiemActivity">
         </activity>
         <activity 

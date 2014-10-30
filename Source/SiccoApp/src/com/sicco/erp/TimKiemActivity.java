@@ -22,12 +22,15 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
@@ -37,6 +40,7 @@ import com.costum.android.widget.LoadMoreListView;
 import com.costum.android.widget.LoadMoreListView.OnLoadMoreListener;
 import com.sicco.erp.adapter.CongViecHoanThanhAdapter;
 import com.sicco.erp.adapter.TimKiemAdapter;
+import com.sicco.erp.database.DBController.LoadCongViecHoanThanhListener;
 import com.sicco.erp.database.DBController.LoadCongViecListener;
 import com.sicco.erp.http.HTTPHandler;
 import com.sicco.erp.manager.SessionManager;
@@ -46,6 +50,8 @@ import com.sicco.erp.model.TimKiem;
 
 public class TimKiemActivity  extends Activity{
 	ProgressDialog pDialog;
+	Button btn_LoadMore;
+	ProgressBar pLoadmore;
 	String url_timkiemcongviec = "http://apis.mobile.vareco.vn/sicco/timkiem.php";
 	JSONArray congviec = null, thaoluan = null;
 	ArrayList<TimKiem> mTimKiemCongViec;
@@ -144,14 +150,22 @@ public class TimKiemActivity  extends Activity{
 		mTimKiemCongViec = new ArrayList<TimKiem>();
 
 		mListView = (ListView) findViewById(R.id.lv_tim_kiem);
+		
+		View footerView = ((LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE)).inflate(R.layout.btn_loadmore, null,false);
+		btn_LoadMore = (Button)footerView.findViewById(R.id.LoadMore);
+		mListView.addFooterView(footerView);
+		pLoadmore = (ProgressBar)findViewById(R.id.progressBar1);
+		
 		mAdapter = new TimKiemAdapter(getApplicationContext(),
 				R.layout.item_lv_tim_kiem, mTimKiemCongViec);
 		mListView.setAdapter(mAdapter);
-		((LoadMoreListView) mListView)
-		.setOnLoadMoreListener(new OnLoadMoreListener() {
-			public void onLoadMore() {
+		
+btn_LoadMore.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				pLoadmore.setVisibility(View.VISIBLE);
 				pNumberTimkiem = pNumberTimkiem+1;
-				
 				String page = Integer.toString(pNumberTimkiem);
 				Toast.makeText(getApplicationContext(), "pnumber timkiem: " + page, 0).show();
 				new GetCongViec().execute(token,userName, page, tieuchi, keyWord);
@@ -159,8 +173,6 @@ public class TimKiemActivity  extends Activity{
 					pDialog.dismiss();
 				
 				mAdapter.notifyDataSetChanged();
-				((LoadMoreListView) mListView).onLoadMoreComplete();
-				
 			}
 		});
 
@@ -226,6 +238,7 @@ public class TimKiemActivity  extends Activity{
 			// Dismiss the progress dialog
 			if (pDialog.isShowing())
 				pDialog.dismiss();
+			pLoadmore.setVisibility(View.INVISIBLE);
 			if (result != null) {
 				try {
 					JSONObject jsonObj = new JSONObject(result);

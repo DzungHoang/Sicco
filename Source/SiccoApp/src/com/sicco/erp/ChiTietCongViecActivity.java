@@ -1,7 +1,6 @@
 package com.sicco.erp;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -11,6 +10,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.sicco.erp.adapter.ThaoLuanAdapter;
+import com.sicco.erp.http.HTTPHandler;
+import com.sicco.erp.model.ThaoLuan;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -18,22 +21,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.sicco.erp.adapter.ThaoLuanAdapter;
-import com.sicco.erp.http.HTTPHandler;
-import com.sicco.erp.manager.SessionManager;
-import com.sicco.erp.model.ThaoLuan;
 
 public class ChiTietCongViecActivity extends Activity {
 
@@ -48,8 +43,6 @@ public class ChiTietCongViecActivity extends Activity {
 	final String cap_nhat_tien_do[] = { "0%", "20%", "40%", "60%", "80%",
 			"100%" };
 	ImageView imgAnhDaiDien;
-	ImageView imgSend;
-	EditText edtThaoLuan;
 	TextView tvTenCongViec;
 	TextView tvNguoiGiao;
 	TextView tvNguoiThucHien;
@@ -58,40 +51,30 @@ public class ChiTietCongViecActivity extends Activity {
 	TextView tvTongHopBaoCao;
 	String id, tenCongViec, tinhTrang, tienDo, nguoiThucHien, phongBan,
 			loaiCongViec, ngayKetThuc, duAn, mucUuTien, nguoiDuocXem,
-			nguoiGiao, moTa, tongHopBaoCao, Url, token, username;
-	StringBuilder timeThaoLuan;
-
-	private int minute;
-	private int hour;
-	private int date;
-	private int months;
-	private int years_now;
+			nguoiGiao, moTa, tongHopBaoCao, Url;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_chi_tiet_cong_viec);
-
-		SessionManager sessionManager = SessionManager
-				.getInstance(ChiTietCongViecActivity.this);
-		token = sessionManager.getUserDetails().get(SessionManager.KEY_TOKEN);
-		username = sessionManager.getUserDetails().get(SessionManager.KEY_NAME);
-
-		final Calendar c = Calendar.getInstance();
-		minute = c.get(Calendar.MINUTE);
-		hour = c.get(Calendar.HOUR_OF_DAY);
-		date = c.get(Calendar.DATE);
-		months = c.get(Calendar.MONTH);
-		years_now = c.get(Calendar.YEAR);
-
-		timeThaoLuan = new StringBuilder().append(padding_str(hour))
-				.append(":").append(padding_str(minute)).append("  ")
-				.append(padding_str(date)).append("-")
-				.append(padding_str(months)).append("-")
-				.append(padding_str(years_now));
-
+		// TuNT
 		Intent intent = getIntent();
 		id = intent.getStringExtra("id");
+		if (id != null) {
+			if (!id.equals("")) {
+				if (id.equals("-1")) {
+					finish();
+					Intent intent2 = new Intent(getApplicationContext(),
+							TatCaCongViecActivity.class);
+					startActivity(intent2);
+				}
+				Toast.makeText(getApplicationContext(),
+						"ID: " + intent.getStringExtra("id"),
+						Toast.LENGTH_LONG).show();
+			}
+		}
+		// End TuNT
+		setContentView(R.layout.activity_chi_tiet_cong_viec);
+
 		tenCongViec = intent.getStringExtra("ten_cong_viec");
 		tinhTrang = intent.getStringExtra("tinh_trang");
 		tienDo = intent.getStringExtra("tien_do");
@@ -120,35 +103,10 @@ public class ChiTietCongViecActivity extends Activity {
 		tvTongHopBaoCao = (TextView) findViewById(R.id.tv_chi_tiet_cv_tong_hop_bao_cao);
 		tvTongHopBaoCao.setText(tongHopBaoCao);
 
-		// //////////
-		imgSend = (ImageView) findViewById(R.id.img_send);
-		edtThaoLuan = (EditText) findViewById(R.id.edt_thao_luan);
-		imgSend.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View arg0) {
-				if (TextUtils.isEmpty(edtThaoLuan.getText())) {
-					edtThaoLuan.setError(getResources().getString(
-							R.string.thong_bao_rong));
-					return;
-				} else {
-					Toast.makeText(getApplicationContext(), "" 
-							+ "   token : " + token 
-							+ "   username : " + username 
-							+ "   idCongViec : " + id
-							+ "   Time : " + timeThaoLuan
-							+ "   NDTL : " + edtThaoLuan.getText() , 0).show();
-					Log.d("LuanDT", "" 
-							+ "   token : " + token 
-							+ "   username : " + username 
-							+ "   idCongViec : " + id
-							+ "   Time : " + timeThaoLuan
-							+ "   NDTL : " + edtThaoLuan.getText()  );
-				}
-
-			}
-		});
-		// //////////
+		DisplayMetrics displayMetrics = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+		int lvWidth = displayMetrics.widthPixels * 10 / 10;
+		int lvHeight = displayMetrics.heightPixels * 6 / 10;
 
 		thaoLuanList = new ArrayList<HashMap<String, String>>();
 		new GetThaoLuan().execute();
@@ -157,13 +115,6 @@ public class ChiTietCongViecActivity extends Activity {
 		mAdapter = new ThaoLuanAdapter(getBaseContext(),
 				R.layout.item_lv_thao_luan, mThaoLuan);
 		mListView.setAdapter(mAdapter);
-	}
-
-	private static String padding_str(int c) {
-		if (c >= 10)
-			return String.valueOf(c);
-		else
-			return "0" + String.valueOf(c);
 	}
 
 	private class GetThaoLuan extends AsyncTask<String, Void, String> {
@@ -270,9 +221,7 @@ public class ChiTietCongViecActivity extends Activity {
 								@Override
 								public void onClick(DialogInterface dialog,
 										int which) {
-									Toast.makeText(getApplicationContext(),
-											"NDTL = " + edtThaoLuan.getText(),
-											4).show();
+
 								}
 							})
 					.setNegativeButton(
@@ -292,25 +241,6 @@ public class ChiTietCongViecActivity extends Activity {
 		case R.id.action_edit:
 			Intent intent = getIntent();
 			intent.setClass(getApplicationContext(), SuaCongViecActivity.class);
-			
-			intent.putExtra("id", id);
-			intent.putExtra("ten_cong_viec", tenCongViec);
-			intent.putExtra("tinh_trang", tinhTrang);
-			intent.putExtra("tien_do", tienDo);
-			intent.putExtra("nguoi_thuc_hien", nguoiThucHien);
-			intent.putExtra("phong_ban", phongBan);
-			intent.putExtra("loai_cong_viec", loaiCongViec);
-			intent.putExtra("ngay_ket_thuc", ngayKetThuc);
-			intent.putExtra("du_an", duAn);
-			intent.putExtra("muc_uu_tien", mucUuTien);
-			intent.putExtra("nguoi_duoc_xem", nguoiDuocXem);
-			intent.putExtra("nguoi_giao", nguoiGiao);
-			intent.putExtra("mo_ta", moTa);
-			intent.putExtra("tong_hop_bao_cao", tongHopBaoCao);
-			intent.putExtra("Url", Url);
-			
-			Toast.makeText(getApplicationContext(), "id:" + intent.getStringExtra("id").toString() + 
-					"ten_cong_viec:" + intent.getStringExtra("ten_cong_viec").toString() ,0).show();
 			startActivity(intent);
 			break;
 

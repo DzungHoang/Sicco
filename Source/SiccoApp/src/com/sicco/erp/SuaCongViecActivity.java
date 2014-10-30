@@ -150,7 +150,7 @@ public class SuaCongViecActivity extends Activity implements OnClickListener {
 		edtTenCongViec = (EditText) findViewById(R.id.edt_ten_cong_viec);
 		edtNoiDungCongViec = (EditText) findViewById(R.id.edt_noi_dung);
 		
-		tvTepDinhKem.setText(R.string.choose_file);
+		tvTepDinhKem.setText(R.string.chon_tep_dinh_kem);
 		edtTenCongViec.setText(tenCongViec);
 		edtNoiDungCongViec.setText(moTa);
 		tvChonDuAn.setText(duAn);
@@ -208,7 +208,7 @@ public class SuaCongViecActivity extends Activity implements OnClickListener {
 				}
 			});
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setTitle(getResources().getString(R.string.choose_duan));
+			builder.setTitle(getResources().getString(R.string.chon_du_an));
 			builder.setView(dialogDuAn);
 			builder.setNegativeButton("Cancel",
 					new DialogInterface.OnClickListener() {
@@ -328,7 +328,7 @@ public class SuaCongViecActivity extends Activity implements OnClickListener {
 			});
 
 			AlertDialog.Builder builderNXL = new AlertDialog.Builder(this);
-			builderNXL.setTitle(getResources().getString(R.string.choose_duan));
+			builderNXL.setTitle(getResources().getString(R.string.chon_nguoi_xu_ly));
 			builderNXL.setView(dialogUserList);
 			builderNXL.setNegativeButton("Cancel",
 					new DialogInterface.OnClickListener() {
@@ -596,7 +596,7 @@ public class SuaCongViecActivity extends Activity implements OnClickListener {
 
 		try {
 			startActivityForResult(Intent.createChooser(intent,
-					getString(R.string.choose_file)), FILE_SELECT_CODE);
+					getString(R.string.chon_tep_dinh_kem)), FILE_SELECT_CODE);
 		} catch (android.content.ActivityNotFoundException ex) {
 			// Potentially direct the user to the Market with a Dialog
 			Toast.makeText(this, "Please install a File Manager.",

@@ -3,7 +3,6 @@
 
     <string name="vui_long_doi">Vui lòng đợi ... !</string>
     <string name="app_name">Sicco</string>
-    <string name="thong_bao_rong"> Bạn phải nhập nội dung thảo luận!</string>
     <string name="trang_chu">Trang chủ</string>
     <string name="canh_bao">Cảnh báo</string>
     <string name="tat_ca">Tất cả</string>
@@ -16,7 +15,7 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_example">Example action</string>
     <string name="action_settings">Settings</string>
-    <string name="xem_them">Xem Thêm</string>
+    <string name="xem_them">Xem Them </string>
     <!-- menu -->
     <string name="action_add_congviec">Thêm công việc</string>
     <string name="action_search">Tìm kiếm</string>
@@ -32,8 +31,6 @@
 	<string name="duy_tri_dang_nhap">Duy trì đăng nhập</string>
 	<string name="progress_msg">Đang đăng nhập...</string>
 	<!-- Công việc -->
-	<string name="choose_file">Chọn tệp đính kèm</string>
-	<string name="choose_duan">Chọn dự án</string>
 	<string name="du_an">Dự án</string>
 	<string name="nguoi_xem">Người xem</string>
 	<string name="tep_dinh_kem">Tệp đính kèm</string>
@@ -75,5 +72,11 @@
 	    <item name="tieu_chi_nguoigiao">Người giao</item>
 	    <item name="tieu_chi_nguoiduocgiao">Người được giao</item>
 	</string-array>
+	
+	<!-- Dialog màn hình thêm công việc -->
+	<string name="chon_du_an">Chọn dự án</string>
+	<string name="chon_nguoi_xu_ly">Chọn người xử lý</string>
+	<string name="chon_nguoi_xem">Chọn người xem</string>
+	<string name="chon_tep_dinh_kem">Chọn tệp đính kèm</string>
 </resources>
 

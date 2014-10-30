@@ -71,6 +71,23 @@ public class ListProvider implements RemoteViewsFactory {
 		final Intent intent = new Intent();
 		final Bundle bundle = new Bundle();
 		bundle.putString("idcongviec", listItem.getID());
+		
+		intent.putExtra("id", listItem.getID());
+		intent.putExtra("ten_cong_viec", listItem.getTenCongViec());
+		intent.putExtra("tinh_trang", listItem.getTinhTrang());
+		intent.putExtra("tien_do", listItem.getTienDo());
+		intent.putExtra("nguoi_thuc_hien", listItem.getNguoiThucHien());
+		intent.putExtra("phong_ban", listItem.getPhongBan());
+		intent.putExtra("loai_cong_viec", listItem.getLoaiCongViec());
+		intent.putExtra("ngay_ket_thuc", listItem.getHanCuoi());
+		intent.putExtra("du_an", listItem.getDuAn());
+		intent.putExtra("muc_uu_tien", listItem.getMucUuTien());
+		intent.putExtra("nguoi_duoc_xem", listItem.getNguoiDuocXem());
+		intent.putExtra("nguoi_giao", listItem.getNguoiGiao());
+		intent.putExtra("mo_ta", listItem.getMoTa());
+		intent.putExtra("tong_hop_bao_cao", listItem.getTongHopBaoCao());
+		intent.putExtra("Url", listItem.getUrl());
+		
 		intent.putExtras(bundle);
 		remoteView.setOnClickFillInIntent(R.id.item_cong_viec, intent);
 

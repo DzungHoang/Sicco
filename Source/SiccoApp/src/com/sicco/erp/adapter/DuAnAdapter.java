@@ -3,15 +3,16 @@ package com.sicco.erp.adapter;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.sicco.erp.R;
-import com.sicco.erp.model.DuAn;
-
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.TextView;
+import android.widget.CheckedTextView;
+
+import com.sicco.erp.R;
+import com.sicco.erp.model.DuAn;
 
 public class DuAnAdapter extends ArrayAdapter<DuAn> {
 	Context mContext;
@@ -22,19 +23,20 @@ public class DuAnAdapter extends ArrayAdapter<DuAn> {
 		super(context, resource, mDuAn);
 		mContext = context;
 		mResourceID = resource;
-		mDuAn = mDuAn;
+		this.mDuAn = mDuAn;
 	}
-
+	
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
+	public View getView(final int position, View convertView, ViewGroup parent) {
 		View mView;
 		mView = ((LayoutInflater) mContext
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(
 				mResourceID, parent, false);
+		CheckedTextView item = (CheckedTextView) mView
+				.findViewById(R.id.lvItem);
 		DuAn duAn = getItem(position);
-		TextView tenDuAn = (TextView) mView
-				.findViewById(android.R.id.text1);
-		tenDuAn.setText(duAn.getTenDuAn());
+		item.setText(duAn.getTenDuAn());
+
 		return mView;
 	}
 

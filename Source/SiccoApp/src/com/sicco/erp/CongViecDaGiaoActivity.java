@@ -73,8 +73,6 @@ public class CongViecDaGiaoActivity extends Activity {
 			
 			pDialog.show();
 			mCongViecDaGiao = new ArrayList<TatCaCongViec>();
-			if (pDialog.isShowing())
-				pDialog.dismiss();
 			Log.d("NgaDV", "mCongViecDaGiao == null");
 			Toast.makeText(getApplicationContext(), "mCongViecDaGiao == " + mCongViecDaGiao.toString() , 0).show();
 		}

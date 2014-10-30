@@ -11,6 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
+import com.sicco.erp.ThemCongViecActivity.LoadingDuAnFinishListener;
 import com.sicco.erp.adapter.DuAnAdapter;
 import com.sicco.erp.adapter.ExpandableListUserAdapter;
 import com.sicco.erp.http.HTTPHandler;
@@ -187,13 +188,29 @@ public class SuaCongViecActivity extends Activity implements OnClickListener {
 			LayoutInflater inflater = LayoutInflater
 					.from(getApplicationContext());
 			View dialogDuAn = inflater.inflate(R.layout.duan_dialog, null);
-
+			loading = (LinearLayout) dialogDuAn
+					.findViewById(R.id.loadingListDuAn);
 			duAnList = new ArrayList<HashMap<String, String>>();
 			new GetDuAn().execute();
 			mDuAn = new ArrayList<DuAn>();
 			mLvDuAn = (ListView) dialogDuAn.findViewById(R.id.lv_duan);
 			mDuAnAdapter = new DuAnAdapter(SuaCongViecActivity.this,R.layout.item_dialog_du_an, mDuAn);
-			mLvDuAn.setAdapter(mDuAnAdapter);
+			
+			setLoadingFinishListener(new LoadingDuAnFinishListener() {
+
+				@Override
+				public void onFinished() {
+					mLvDuAn.setVisibility(View.VISIBLE);
+					loading.setVisibility(View.INVISIBLE);
+					mLvDuAn.setAdapter(mDuAnAdapter);
+					for (int i = 0; i < mDuAn.size(); i++) {
+						Toast.makeText(getApplicationContext(), mDuAn.get(i).getTenDuAn()+"/"+duAn, 0).show();
+						if (mDuAn.get(i).getTenDuAn().equals(duAn)) {
+							mLvDuAn.setItemChecked(i, true);
+						}
+					}
+				}
+			});
 			mLvDuAn.setOnItemClickListener(new OnItemClickListener() {
 
 				@Override
@@ -418,10 +435,6 @@ public class SuaCongViecActivity extends Activity implements OnClickListener {
 		protected void onPreExecute() {
 			super.onPreExecute();
 			// Showing progress dialog
-			pDialog = new ProgressDialog(SuaCongViecActivity.this);
-			pDialog.setMessage(getResources().getString(R.string.vui_long_doi));
-			pDialog.setCancelable(false);
-			pDialog.show();
 		}
 
 		@Override
@@ -434,8 +447,6 @@ public class SuaCongViecActivity extends Activity implements OnClickListener {
 		@Override
 		protected void onPostExecute(String result) {
 			// Dismiss the progress dialog
-			if (pDialog.isShowing())
-				pDialog.dismiss();
 			if (result != null) {
 				try {
 					JSONObject jsonObj = new JSONObject(result);
@@ -457,6 +468,9 @@ public class SuaCongViecActivity extends Activity implements OnClickListener {
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
+				}
+				if (mInterfaceDA != null) {
+					mInterfaceDA.onFinished();
 				}
 			} else {
 				Log.e("LuanDT", "Khong the lay data tu url nay");
@@ -693,6 +707,15 @@ public class SuaCongViecActivity extends Activity implements OnClickListener {
 	}
 
 	public static interface LoadingNguoiDungFinishListener {
+		public void onFinished();
+	}
+	private LoadingDuAnFinishListener mInterfaceDA;
+
+	public void setLoadingFinishListener(LoadingDuAnFinishListener listener) {
+		mInterfaceDA = listener;
+	}
+
+	public static interface LoadingDuAnFinishListener {
 		public void onFinished();
 	}
 }

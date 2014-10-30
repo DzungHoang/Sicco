@@ -60,9 +60,9 @@ public class ChiTietCongViecActivity extends Activity {
 	String id, tenCongViec, tinhTrang, tienDo, nguoiThucHien, phongBan,
 			loaiCongViec, ngayKetThuc, duAn, mucUuTien, nguoiDuocXem,
 			nguoiGiao, moTa, tongHopBaoCao, Url, token, username, thoigian,
-			noidungthaoluan, updateTienDo, kqUpdateTienDo, id_cong_viec;
+			noidungthaoluan, updateTienDo, kqUpdateTienDo, id_cong_viec, nguoi_thao_luan;
 	StringBuilder timeThaoLuan;
-	String page = "2";
+	String page = "1";
 
 	private int minute;
 	private int hour;
@@ -145,9 +145,9 @@ public class ChiTietCongViecActivity extends Activity {
 							R.string.thong_bao_rong));
 					return;
 				} else {
+					nguoi_thao_luan = username;
 					noidungthaoluan = edtThaoLuan.getText().toString();
-					Log.d("LuanDT", "noidungthaoluan : " + noidungthaoluan);
-					new GetThaoLuan().execute(token, username, id, thoigian,
+					new PostThaoLuan().execute(token, nguoi_thao_luan, id_cong_viec, thoigian,
 							noidungthaoluan);
 				}
 
@@ -172,6 +172,8 @@ public class ChiTietCongViecActivity extends Activity {
 			return "0" + String.valueOf(c);
 	}
 
+	// ----------------------GetThaoLuan------------------------------//
+
 	private class GetThaoLuan extends AsyncTask<String, Void, String> {
 
 		@Override
@@ -188,12 +190,12 @@ public class ChiTietCongViecActivity extends Activity {
 		@Override
 		protected String doInBackground(String... arg0) {
 			HTTPHandler handler = new HTTPHandler();
-			
+
 			List<NameValuePair> valuePairs = new ArrayList<NameValuePair>();
 			valuePairs.add(new BasicNameValuePair("token", token));
 			valuePairs.add(new BasicNameValuePair("id_cong_viec", id));
 			valuePairs.add(new BasicNameValuePair("page", page));
-			
+
 			String ret = handler.makeHTTPRequest(url_thaoluan,
 					HTTPHandler.POST, valuePairs);
 
@@ -214,13 +216,14 @@ public class ChiTietCongViecActivity extends Activity {
 					for (int i = 0; i < thaoluan.length(); i++) {
 						JSONObject o = thaoluan.getJSONObject(i);
 						String nguoithaoluan = o.getString("nguoi_thao_luan");
-						String thoigianthaoluan = o.getString("thoi_gian_thao_luan");
-						String noidungthaoluan = o.getString("noi_dung_thao_luan");
+						String thoigianthaoluan = o
+								.getString("thoi_gian_thao_luan");
+						String noidungthaoluan = o
+								.getString("noi_dung_thao_luan");
 						String anhdaidien = o.getString("anh_dai_dien");
-						mThaoLuan.add(new ThaoLuan(anhdaidien,
-								nguoithaoluan, thoigianthaoluan,
-								noidungthaoluan));
-						
+						mThaoLuan.add(new ThaoLuan(anhdaidien, nguoithaoluan,
+								thoigianthaoluan, noidungthaoluan));
+
 						mAdapter.notifyDataSetChanged();
 					}
 				} catch (JSONException e) {
@@ -232,6 +235,103 @@ public class ChiTietCongViecActivity extends Activity {
 		}
 
 	}
+	
+	//-------------------------Post Thao Luan-----------------------//
+	
+	private class PostThaoLuan extends AsyncTask<String, Void, String> {
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			pDialog = new ProgressDialog(ChiTietCongViecActivity.this);
+			pDialog.setMessage(getResources().getString(R.string.vui_long_doi));
+			pDialog.setCancelable(false);
+			pDialog.show();
+		}
+
+		@Override
+		protected String doInBackground(String... arg0) {
+			HTTPHandler handler = new HTTPHandler();
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			nameValuePairs.add(new BasicNameValuePair("token", token));
+			nameValuePairs.add(new BasicNameValuePair("nguoi_thao_luan", username));
+			nameValuePairs.add(new BasicNameValuePair("id_cong_viec", id));
+			nameValuePairs.add(new BasicNameValuePair("thoi_gian", thoigian));
+			nameValuePairs.add(new BasicNameValuePair("noi_dung", noidungthaoluan));
+			String ret = handler.makeHTTPRequest(url_congviec,
+					HTTPHandler.POST, nameValuePairs);
+			Log.d("LuanDT", "PostThaoLuan : " + nameValuePairs);
+			return ret;
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+			super.onPostExecute(result);
+			if (pDialog.isShowing())
+				pDialog.dismiss();
+			if (result != null) {
+				try {
+					JSONObject jsonObject = new JSONObject(result);
+					
+					
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			} else {
+				Log.e("LuanDT", "Error!");
+			}
+		}
+	}
+
+	// -------------------------cap nhat tien do-------------------//
+
+	private class UpdateTienDoCV extends AsyncTask<String, Void, String> {
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			pDialog = new ProgressDialog(ChiTietCongViecActivity.this);
+			pDialog.setMessage(getResources().getString(R.string.vui_long_doi));
+			pDialog.setCancelable(false);
+			pDialog.show();
+		}
+
+		@Override
+		protected String doInBackground(String... arg0) {
+			HTTPHandler handler = new HTTPHandler();
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			nameValuePairs.add(new BasicNameValuePair("token", token));
+			nameValuePairs.add(new BasicNameValuePair("username", username));
+			nameValuePairs.add(new BasicNameValuePair("id_cong_viec", id));
+			nameValuePairs.add(new BasicNameValuePair("tien_do", updateTienDo));
+			String ret = handler.makeHTTPRequest(url_congviec,
+					HTTPHandler.POST, nameValuePairs);
+			Log.d("LuanDT", "POST-GetTienDoCV : " + nameValuePairs);
+			return ret;
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+			super.onPostExecute(result);
+			if (pDialog.isShowing())
+				pDialog.dismiss();
+			if (result != null) {
+				try {
+					JSONObject jsonObject = new JSONObject(result);
+					// success = jsonObject.getJSONArray("success");
+					// for (int i = 0; i < success.length(); i++) {
+					// JSONObject kq = success.getJSONObject(i);
+					// kqUpdateTienDo = kq.getString("success");
+					// }
+					// Log.d("LuanDT", "kqUpdateTienDo : " + kqUpdateTienDo);
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			} else {
+				Log.e("LuanDT", "Error!");
+			}
+		}
+	}
+
+	// ---------------------Option Menu-----------------------//
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -245,9 +345,15 @@ public class ChiTietCongViecActivity extends Activity {
 		case R.id.action_update:
 			final AlertDialog.Builder capNhatTienDo = new AlertDialog.Builder(
 					this);
+			int postionArray = -1;
+			for (int i = 0; i < cap_nhat_tien_do.length; i++) {
+				if(cap_nhat_tien_do[i].equals(tienDo+"%")){
+					postionArray = i;
+				}
+			}
 			capNhatTienDo
 					.setTitle(R.string.action_update)
-					.setSingleChoiceItems(cap_nhat_tien_do, -1,
+					.setSingleChoiceItems(cap_nhat_tien_do, postionArray,
 							new DialogInterface.OnClickListener() {
 
 								@Override
@@ -263,7 +369,7 @@ public class ChiTietCongViecActivity extends Activity {
 								@Override
 								public void onClick(DialogInterface dialog,
 										int which) {
-									new GetTienDoCV().execute(token, username,
+									new UpdateTienDoCV().execute(token, username,
 											id, updateTienDo);
 								}
 							})
@@ -316,52 +422,4 @@ public class ChiTietCongViecActivity extends Activity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	// -------------------------cap nhat tien do-------------------//
-
-	private class GetTienDoCV extends AsyncTask<String, Void, String> {
-		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-			pDialog = new ProgressDialog(ChiTietCongViecActivity.this);
-			pDialog.setMessage(getResources().getString(R.string.vui_long_doi));
-			pDialog.setCancelable(false);
-			pDialog.show();
-		}
-
-		@Override
-		protected String doInBackground(String... arg0) {
-			HTTPHandler handler = new HTTPHandler();
-			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-			nameValuePairs.add(new BasicNameValuePair("token", token));
-			nameValuePairs.add(new BasicNameValuePair("username", username));
-			nameValuePairs.add(new BasicNameValuePair("id_cong_viec", id));
-			nameValuePairs.add(new BasicNameValuePair("tien_do", updateTienDo));
-			String ret = handler.makeHTTPRequest(url_congviec,
-					HTTPHandler.POST, nameValuePairs);
-			Log.d("LuanDT", "POST-GetTienDoCV : " + nameValuePairs);
-			return ret;
-		}
-
-		@Override
-		protected void onPostExecute(String result) {
-			super.onPostExecute(result);
-			if (pDialog.isShowing())
-				pDialog.dismiss();
-			if (result != null) {
-				try {
-					JSONObject jsonObject = new JSONObject(result);
-//					success = jsonObject.getJSONArray("success");
-//					for (int i = 0; i < success.length(); i++) {
-//						JSONObject kq = success.getJSONObject(i);
-//						kqUpdateTienDo = kq.getString("success");
-//					}
-//					Log.d("LuanDT", "kqUpdateTienDo : " + kqUpdateTienDo);
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
-			} else {
-				Log.e("LuanDT", "Error!");
-			}
-		}
-	}
 }

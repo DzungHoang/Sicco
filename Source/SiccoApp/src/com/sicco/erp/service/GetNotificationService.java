@@ -128,7 +128,6 @@ public class GetNotificationService extends Service {
 								notification_type, msg_type, ten, content, url, "new");
 						// ArrayList:
 						notification_list.add(temp);
-						Log.d("ToanNM", "notification_list:"+notification_list.size());
 						db = NotificationDBController
 								.getInstance(mContext);
 						SessionManager session = SessionManager.getInstance(mContext);
@@ -147,13 +146,23 @@ public class GetNotificationService extends Service {
 						cursor = db.query(NotificationDBController.TABLE_NAME,
 								null, selection, selectionArgs, null, null, null);
 						db.checkedNotification(temp);
+						if (cursor != null && cursor.getCount() > 0) {
+						} 
+						else {
+							ContentValues values = new ContentValues();
+							values.put(NotificationDBController.NOTIFI_TYPE_COL, notification_type);
+							values.put(NotificationDBController.MSG_TYPE_COL, msg_type);
+							values.put(NotificationDBController.NAME_COL, ten);
+							values.put(NotificationDBController.CONTENT_COL, content);
+							values.put(NotificationDBController.URL_COL, url);
+							values.put(NotificationDBController.STATE_COL, Constant.NOTIFICATION_STATE_NEW);
+							db.insert(NotificationDBController.TABLE_NAME, null, values);
+						}
 						
 					}
 					if (cursor != null && cursor.getCount() > 0) {
-						Log.d("DungHV", "already in db");
 					} 
 					else {
-						Log.d("DungHV", "not in db");
 						//TuNT//
 						AppWidgetManager manager = AppWidgetManager.getInstance(context);
 						int[] appWidgetIds = manager.getAppWidgetIds(new ComponentName(context, WidgetCBProvider.class));
@@ -164,24 +173,9 @@ public class GetNotificationService extends Service {
 						Log.d("TuNT", "update widget");
 						context.sendBroadcast(updateIntent);
 						//End-TuNT//
-						ContentValues values = new ContentValues();
-						values.put(NotificationDBController.NOTIFI_TYPE_COL, notification_type);
-						values.put(NotificationDBController.MSG_TYPE_COL, msg_type);
-						values.put(NotificationDBController.NAME_COL, ten);
-						values.put(NotificationDBController.CONTENT_COL, content);
-						values.put(NotificationDBController.URL_COL, url);
-						values.put(NotificationDBController.STATE_COL, Constant.NOTIFICATION_STATE_NEW);
-						db.insert(NotificationDBController.TABLE_NAME, null, values);
-						check_Notification_Count = true;
-						MyNotificationManager.buildNormalNotification(mContext, temp);
 						origanizeNoti();
-//						Log.d("ToanNM", "start buildNormalNotification");
 					}
 				}
-//				for (int i = 0; i < notification_list.size(); i++) {
-//					
-//				}
-				
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -200,7 +194,8 @@ public class GetNotificationService extends Service {
 //		int congvanmoi = 0;
 //		int lichcanhan = 0;
 //		Log.d("ToanNM", "origanizeNoti():notification_list.size()"+notification_list.size());
-		for (int i = 0; i < notification_list.size(); i++) {
+		int max = notification_list.size();
+		for (int i = 0; i < max; i++) {
 			// Set congvan/congviec/lichbieu(count) only
 //			if(notification_list.get(i).getMsg().contains("congviecmoi")){
 //				congviecmoi++;
@@ -225,7 +220,7 @@ public class GetNotificationService extends Service {
 						String ten = notification_list.get(i).getName();
 						String noi_dung = notification_list.get(i).getContent();
 						
-//						Log.d("ToanNM", "run congvan:"+ ten + " " +noi_dung +" " + congVan_count+ " i:"+i);
+						Log.d("ToanNM", "run congvan:"+ ten + " " +noi_dung +" " + congVan_count+ " i:" + i + "\n" +"----------------");
 						MyNotificationManager.notifyType(context, congVan_list, congVan_count, congvan, ten, noi_dung);
 //						Log.d("ToanNM", "notification_list.get(i).getNotify():"+notification_list.get(i).getNotify());
 						
@@ -239,7 +234,7 @@ public class GetNotificationService extends Service {
 						String ten = notification_list.get(i).getName();
 						String noi_dung = notification_list.get(i).getContent();
 						
-//						Log.d("ToanNM", "run congviec:"+ ten + " " +noi_dung +" " + congViec_count+ " i:"+i);
+						Log.d("ToanNM", "run congviec:"+ ten + " " +noi_dung +" " + congViec_count+ " i:"+i + "\n" +"----------------");
 						MyNotificationManager.notifyType(context, congViec_list, congViec_count, congviec, ten, noi_dung);
 //						Log.d("ToanNM", "notification_list.get(i).getNotify():"+notification_list.get(i).getNotify());
 					}
@@ -252,20 +247,20 @@ public class GetNotificationService extends Service {
 						String ten = notification_list.get(i).getName();
 						String noi_dung = notification_list.get(i).getContent();
 						
-//						Log.d("ToanNM", "run lichbieu:"+ ten + " " +noi_dung +" " + lichBieu_count+ " i:"+i);
+						Log.d("ToanNM", "run lichbieu:"+ ten + " " +noi_dung +" " + lichBieu_count+ " i:" + i + "\n" +"----------------");
 						MyNotificationManager.notifyType(context, lichBieu_list, lichBieu_count, lichbieu, ten, noi_dung);
 //						Log.d("ToanNM", "notification_list.get(i).getNotify():"+notification_list.get(i).getNotify());
 					}
 			}
 		}
 	}
-	public static int getCongVanCount(){
+	public int getCongVanCount(){
 		return congVan_count;
 	}
-	public static int getCongViecCount(){
+	public int getCongViecCount(){
 		return congViec_count;
 	}
-	public static int getLichBieuCount(){
+	public int getLichBieuCount(){
 		return lichBieu_count;
 	}
 	public static void resetCount(){

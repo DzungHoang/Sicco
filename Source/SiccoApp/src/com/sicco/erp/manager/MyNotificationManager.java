@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationCompat.BigTextStyle;
 import android.util.Log;
 import android.widget.RemoteViews;
 
@@ -23,8 +24,8 @@ import com.sicco.erp.service.HandleNotificationService;
 public class MyNotificationManager {
 	static Context mContext;
 	public static int CONGVAN_NOTIFICATION_ID = 1;
-	public static int CONGVIEC_NOTIFICATION_ID = CONGVAN_NOTIFICATION_ID + 1;
-	public static int LICHBIEU_NOTIFICATION_ID = CONGVIEC_NOTIFICATION_ID + 1;
+	public static int CONGVIEC_NOTIFICATION_ID = 2;
+	public static int LICHBIEU_NOTIFICATION_ID = 3;
 	public static int NOTIFICATION_ID = 0;
 	public static int congVan_Count = 0;
 	public static int congViec_Count = 0;
@@ -39,27 +40,15 @@ public class MyNotificationManager {
 	static String congvan_name="";
 	static String congviec_name="";
 	static String lichbieu_name="";
+	static String congvan_content="";
+	static String congviec_content="";
+	static String lichbieu_content="";
 	static RemoteViews notificationView = null;
 	static String my_package = "com.sicco.erp";
 	static NotificationCompat.Builder notificationBuilder = null;
-	GetNotificationService getNotificationService;
-	private static ArrayList<NotificationModel> notification_list;
+	static GetNotificationService getNotificationService = new GetNotificationService();
 	static String noti="";
 	static int noti_count=0;
-	public static void resetCount(){
-		congVan_Count = 0;
-		congViec_Count = 0;
-		lichBieu_Count = 0;
-	}
-	public static int getcongVan_Count(){
-		return congVan_Count;
-	}
-	public static int getcongViec_Count(){
-		return congViec_Count;
-	}
-	public static int getlichBieu_Count(){
-		return lichBieu_Count;
-	}
 	
 	public static void buildNormalNotification(Context context, NotificationModel data){
 	// ============================================== \\
@@ -84,142 +73,231 @@ public class MyNotificationManager {
 	public static void notifyType(Context context,ArrayList<NotificationModel> arrayList,
 			int notification_count,String notification_type, String ten, String noi_dung){
 		
-		congVan_Count = GetNotificationService.getCongVanCount();
-		congViec_Count = GetNotificationService.getCongViecCount();
-		lichBieu_Count = GetNotificationService.getLichBieuCount();
+		congVan_Count = getNotificationService.getCongVanCount();
+		congViec_Count = getNotificationService.getCongViecCount();
+		lichBieu_Count = getNotificationService.getLichBieuCount();
+		
 //		ten = notification_list.;
 //		content = notificationModel.getContent();
 //		Log.d("ToanNM", "ten:"+ ten +"content:"+content);
+		//============================================================\\
+		
+//		if(notification_count==1){
+//			if(notification_type.equalsIgnoreCase(congvan)){
+//				NOTIFICATION_ID = CONGVAN_NOTIFICATION_ID;
+//				noti = " cong van";
+//				noti_count = congVan_Count;
+//				notifyCongVan(context);
+////				Log.d("ToanNM", "count:="+ noti_count +" " +notification_type);
+//			}
+//			if(notification_type.equalsIgnoreCase(congviec)){
+//				NOTIFICATION_ID = CONGVIEC_NOTIFICATION_ID;
+//				noti = " cong viec";
+//				noti_count = congViec_Count;
+//				notifyCongViec(context);
+////				Log.d("ToanNM", "count:="+ noti_count +" " +notification_type);
+//			}
+//			if(notification_type.equalsIgnoreCase(lichbieu)){
+//				NOTIFICATION_ID = LICHBIEU_NOTIFICATION_ID;
+//				noti = " lich bieu";
+//				noti_count = lichBieu_Count;
+//				notifyLichBieu(context);
+////				Log.d("ToanNM", "count:="+ noti_count +" " +notification_type);
+//			}
+//			message = "Ban co " + noti_count + " " + noti + "\n" ;
+//			contentText = " " + noi_dung;
+////			Log.d("ToanNM", "At notification_count==1,message: "+message);
+////			notify(context,NOTIFICATION_ID);
+//		}
+//		if(notification_count>1){
+//			if(notification_type.equalsIgnoreCase(congvan)){
+//				NOTIFICATION_ID = CONGVAN_NOTIFICATION_ID;
+//				noti = " cong van";
+//				noti_count = congVan_Count;
+//				congvan_name += "" + ten + "\n";
+//				_ten += "" + ten + "\n";
+////				Log.d("ToanNM", "count:="+ noti_count +" " +notification_type);
+//			}
+//			if(notification_type.equalsIgnoreCase(congviec)){
+//				NOTIFICATION_ID = CONGVIEC_NOTIFICATION_ID;
+//				noti = " cong viec";
+//				noti_count = congViec_Count;
+//				congviec_name += "" + ten + "\n";
+//				_ten += "" + ten + "\n";
+////				Log.d("ToanNM", "count:="+ noti_count +" " +notification_type);
+//			}
+//			if(notification_type.equalsIgnoreCase(lichbieu)){
+//				NOTIFICATION_ID = LICHBIEU_NOTIFICATION_ID;
+//				noti = " lich bieu";
+//				noti_count = lichBieu_Count;
+//				lichbieu_name += "" + ten + "\n";
+//				_ten += "" + ten + "\n";
+////				Log.d("ToanNM", "count:="+ noti_count +" " +notification_type);
+//			}
+//			message = "Ban co " + noti_count + " " + noti + " " + "\n" ;
+//			if(notification_type.equalsIgnoreCase(congvan)){
+//				contentText = congvan_name;
+//				notifyCongVan(context);
+////				notify(context,NOTIFICATION_ID);
+//			}
+//			if(notification_type.equalsIgnoreCase(congviec)){
+//				contentText = congviec_name;
+//				notifyCongViec(context);
+////				notify(context,NOTIFICATION_ID);
+//			}
+//			if(notification_type.equalsIgnoreCase(lichbieu)){
+//				contentText = lichbieu_name;
+//				notifyLichBieu(context);
+////				notify(context,NOTIFICATION_ID);
+//			}
+//			contentText = _ten;
+//			Log.d("ToanNM", "name:---------- "+contentText+" ----------");
+////			Log.d("ToanNM", "At notification_count>1,message: "+message);
+//			
+//		}
+//		Log.d("ToanNM", "message:"+message);
+		
+		// ==================================== \\
+		/**
+		 * Test other way to display Notification:
+		 */
 		if(notification_count==1){
 			if(notification_type.equalsIgnoreCase(congvan)){
-				NOTIFICATION_ID = CONGVAN_NOTIFICATION_ID;
 				noti = " cong van";
 				noti_count = congVan_Count;
-//				Log.d("ToanNM", "count:="+ noti_count +" " +notification_type);
+				congvan_content = noi_dung;
 			}
 			if(notification_type.equalsIgnoreCase(congviec)){
-				NOTIFICATION_ID = CONGVIEC_NOTIFICATION_ID;
 				noti = " cong viec";
 				noti_count = congViec_Count;
-//				Log.d("ToanNM", "count:="+ noti_count +" " +notification_type);
+				congviec_content = noi_dung;
 			}
 			if(notification_type.equalsIgnoreCase(lichbieu)){
-				NOTIFICATION_ID = LICHBIEU_NOTIFICATION_ID;
 				noti = " lich bieu";
 				noti_count = lichBieu_Count;
-//				Log.d("ToanNM", "count:="+ noti_count +" " +notification_type);
+				lichbieu_content = noi_dung;
 			}
 			message = "Ban co " + noti_count + " " + noti + "\n" ;
-			contentText = " " + noi_dung;
-//			Log.d("ToanNM", "At notification_count==1,message: "+message);
-			notify(context,NOTIFICATION_ID);
+			if(notification_type.equalsIgnoreCase(congvan)){
+				contentText = congvan_content;
+				notifyCongVan(context);
+			}
+			if(notification_type.equalsIgnoreCase(congviec)){
+				contentText = congviec_content;
+				notifyCongViec(context);
+			}
+			if(notification_type.equalsIgnoreCase(lichbieu)){
+				contentText = lichbieu_content;
+				notifyLichBieu(context);
+			} 
 		}
 		if(notification_count>1){
 			if(notification_type.equalsIgnoreCase(congvan)){
-				NOTIFICATION_ID = CONGVAN_NOTIFICATION_ID;
 				noti = " cong van";
 				noti_count = congVan_Count;
-				congvan_name += "\n" + ten + "\n";
-				_ten += "\n" + ten + "\n";
-//				Log.d("ToanNM", "count:="+ noti_count +" " +notification_type);
+				congvan_name += "" + ten + "\n";
+				
 			}
 			if(notification_type.equalsIgnoreCase(congviec)){
-				NOTIFICATION_ID = CONGVIEC_NOTIFICATION_ID;
 				noti = " cong viec";
 				noti_count = congViec_Count;
-				congviec_name += "\n" + ten + "\n";
-				_ten += "\n" + ten + "\n";
-//				Log.d("ToanNM", "count:="+ noti_count +" " +notification_type);
+				congviec_name += "" + ten + "\n";
+				
 			}
 			if(notification_type.equalsIgnoreCase(lichbieu)){
-				NOTIFICATION_ID = LICHBIEU_NOTIFICATION_ID;
 				noti = " lich bieu";
 				noti_count = lichBieu_Count;
-				lichbieu_name += "\n" + ten + "\n";
-				_ten += "\n" + ten + "\n";
-//				Log.d("ToanNM", "count:="+ noti_count +" " +notification_type);
+				lichbieu_name +=  "" + ten + "\n";
+				
 			}
 			message = "Ban co " + noti_count + " " + noti + " " + "\n" ;
 			if(notification_type.equalsIgnoreCase(congvan)){
 				contentText = congvan_name;
+				notifyCongVan(context);
 			}
 			if(notification_type.equalsIgnoreCase(congviec)){
 				contentText = congviec_name;
+				notifyCongViec(context);
+				
 			}
 			if(notification_type.equalsIgnoreCase(lichbieu)){
 				contentText = lichbieu_name;
-			}
-//			contentText = _ten;
-			Log.d("ToanNM", "name:---------- "+contentText+" ----------");
-//			Log.d("ToanNM", "At notification_count>1,message: "+message);
-			notify(context,NOTIFICATION_ID);
+				notifyLichBieu(context);
+				
+			} 
 		}
-//		Log.d("ToanNM", "message:"+message);
 	}
 	// ======================================================= \\
-	public static void notify(Context context,int notification_id) {
+	public static void notifyCongVan(Context context) {
 		/**
-		 * Notification use RemoteViews:
+		 * normal Notification:
 		 */
-//			Intent notifyIntent = new Intent(context, MainActivity.class);
-//			notifyIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//			PendingIntent pendingIntent = PendingIntent.getActivity
-//					(context,
-//					 0,
-//					 notifyIntent,
-//					 PendingIntent.FLAG_UPDATE_CURRENT);
-//			notificationView = new RemoteViews(my_package, R.layout.notification_layout);
-//			notificationView.setImageViewResource(R.id.notification_logo, R.drawable.ic_notification_logo);
-//			notificationView.setTextViewText(R.id.notification_title, message);
-//			notificationView.setTextViewText(R.id.notification_content, contentText);
-//			notificationBuilder = new NotificationCompat.Builder(context);
-//
-//			notificationBuilder.setContentIntent(pendingIntent)
-//			                   .setSmallIcon(R.drawable.ic_launcher)
-////			                   .setTicker("Ban co" +  notification_count_local + "' cong van/cong viec/lich bieu '" + "put noi dung here" + "'")
-////			                   .setOngoing(true)
-//			                   .setContentTitle(message)
-//			                   .setContentText(contentText)
-////			                   .setStyle(new NotificationCompat.BigTextStyle().bigText(contentText))
-//			                   .setContent(notificationView);
-////			notificationView.setOnClickPendingIntent(viewId, pendingIntent)
-//			Notification notification = notificationBuilder.getNotification();
-//			notification.flags |= Notification.FLAG_SHOW_LIGHTS;
-//			NotificationManager notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
-//			notificationManager.notify(3, notification);
+		
+			NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+			// ==============================
+					Intent notIntent = new Intent(context, MainActivity.class);
+				    notIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | 
+				            Intent.FLAG_ACTIVITY_CLEAR_TASK);
+				    PendingIntent pendInt = PendingIntent.getActivity(context, 0,
+				      notIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+				    NavigationDrawerFragment.mCurrentSelectedPosition = 1;
+				    // ==============================
+
+					BigTextStyle congVanStyle = new NotificationCompat.BigTextStyle();
+					congVanStyle.setBigContentTitle(message);
+					congVanStyle.bigText(contentText);
+					congVanStyle.setSummaryText("CongVanSummaryText");
+//					congVanStyle.setBuilder(builder);
+//					congVanStyle.build();
+				    
+				    builder.setContentIntent(pendInt);
+			builder.setSmallIcon(R.drawable.ic_notification_logo);
+			builder.setContentTitle(message);
+			builder.setContentText(contentText);
+			builder.setStyle(congVanStyle);
+			
+			//mo rong
+			long[] pattern = {(long)100, (long)100, (long) 100, (long) 100, (long) 100};
+			builder.setVibrate(pattern);
+			builder.setLights(0xFF0000FF, 500, 500);
+//					builder.setAutoCancel(true);
+			Notification notification = builder.getNotification();
+			notification.flags |= Notification.FLAG_SHOW_LIGHTS;
+			
+			
+			NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+//			Log.d("Count", "NOTIFICATION_ID:"+notification_id);
+			Log.d("ToanNM", "Run notifyCongVan();");
+			manager.notify(CONGVAN_NOTIFICATION_ID, notification);
+		
+		}
+	public static void notifyCongViec(Context context) {
 		/**
 		 * normal Notification:
 		 * @return 
 		 */
 		
 			NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-//			builder.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher));
 			// ==============================
 					Intent notIntent = new Intent(context, MainActivity.class);
-				    notIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+					notIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | 
+				            Intent.FLAG_ACTIVITY_CLEAR_TASK);
 				    PendingIntent pendInt = PendingIntent.getActivity(context, 0,
 				      notIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 				    NavigationDrawerFragment.mCurrentSelectedPosition = 1;
 				    // ==============================
+				    BigTextStyle congViecStyle = new NotificationCompat.BigTextStyle();
+				    congViecStyle.setBigContentTitle(message);
+				    congViecStyle.bigText(contentText);
+				    congViecStyle.setSummaryText("CongViecSummaryText");
+//				    congViecStyle.setBuilder(builder);
+//				    congViecStyle.build();				    
+				    
 				    builder.setContentIntent(pendInt);
-			builder.setSmallIcon(R.drawable.ic_launcher);
+			builder.setSmallIcon(R.drawable.ic_notification_logo);
 			builder.setContentTitle(message);
-			builder.setStyle(new NotificationCompat.BigTextStyle().bigText(contentText));
 			builder.setContentText(contentText);
-			
-//			builder.setContentInfo(noidung);
-			
-//			Intent resultIntent = new Intent();
-//			resultIntent.setClass(context, HandleNotificationService.class);
-//			resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//					resultIntent.setAction(Intent.ACTION_VIEW);
-//					resultIntent.setData(Uri.parse("http://google.com.vn"));
-//					TaskStackBuilder stack = TaskStackBuilder.create(context);
-//					stack.addParentStack(MainActivity.class);
-//					stack.addNextIntent(resultIntent);
-//			PendingIntent pendingIntent = PendingIntent.getService(context, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-////					PendingIntent resultPendingIntent = stack.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-//			builder.setContentIntent(pendingIntent);
+			builder.setStyle(congViecStyle);
 
 			//mo rong
 			long[] pattern = {(long)100, (long)100, (long) 100, (long) 100, (long) 100};
@@ -230,10 +308,133 @@ public class MyNotificationManager {
 			notification.flags |= Notification.FLAG_SHOW_LIGHTS;
 			
 			NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-			Log.d("Count", "NOTIFICATION_ID:"+notification_id);
-			manager.notify(notification_id, notification);
+//			Log.d("Count", "NOTIFICATION_ID:"+notification_id);
+			Log.d("ToanNM", "Run notifyCongViec();");
+			manager.notify(CONGVIEC_NOTIFICATION_ID, notification);
 		
 		}
+	public static void notifyLichBieu(Context context) {
+		/**
+		 * normal Notification:
+		 */
+		
+			NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+			// ==============================
+					Intent notIntent = new Intent(context, MainActivity.class);
+					notIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | 
+				            Intent.FLAG_ACTIVITY_CLEAR_TASK);
+				    PendingIntent pendInt = PendingIntent.getActivity(context, 0,
+				      notIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+				    NavigationDrawerFragment.mCurrentSelectedPosition = 1;
+				    // ==============================
+				    BigTextStyle lichBieuStyle = new NotificationCompat.BigTextStyle();
+				    lichBieuStyle.setBigContentTitle(message);
+				    lichBieuStyle.bigText("LichBieuContentText");
+				    lichBieuStyle.setSummaryText("LichBieuSummaryText");
+//				    lichBieuStyle.setBuilder(builder);
+//				    lichBieuStyle.build();
+				    
+				    builder.setContentIntent(pendInt);
+			builder.setSmallIcon(R.drawable.ic_notification_logo);
+			builder.setContentTitle(message);
+			builder.setContentText(contentText);
+			builder.setStyle(lichBieuStyle);
+
+			//mo rong
+			long[] pattern = {(long)100, (long)100, (long) 100, (long) 100, (long) 100};
+			builder.setVibrate(pattern);
+			builder.setLights(0xFF0000FF, 500, 500);
+//					builder.setAutoCancel(true);
+			Notification notification = builder.getNotification();
+			notification.flags |= Notification.FLAG_SHOW_LIGHTS;
+			
+			
+			NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+//			Log.d("Count", "NOTIFICATION_ID:"+notification_id);
+			Log.d("ToanNM", "Run notifyLichBieu();");
+			manager.notify(LICHBIEU_NOTIFICATION_ID, notification);
+		
+		}
+	// ========================================================================== \\
+//	public static void notify(Context context, int notification_id) {
+//		/**
+//		 * Notification use RemoteViews:
+//		 */
+////			Intent notifyIntent = new Intent(context, MainActivity.class);
+////			notifyIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+////			PendingIntent pendingIntent = PendingIntent.getActivity
+////					(context,
+////					 0,
+////					 notifyIntent,
+////					 PendingIntent.FLAG_UPDATE_CURRENT);
+////			notificationView = new RemoteViews(my_package, R.layout.notification_layout);
+////			notificationView.setImageViewResource(R.id.notification_logo, R.drawable.ic_notification_logo);
+////			notificationView.setTextViewText(R.id.notification_title, message);
+////			notificationView.setTextViewText(R.id.notification_content, contentText);
+////			notificationBuilder = new NotificationCompat.Builder(context);
+////
+////			notificationBuilder.setContentIntent(pendingIntent)
+////			                   .setSmallIcon(R.drawable.ic_launcher)
+//////			                   .setTicker("Ban co" +  notification_count_local + "' cong van/cong viec/lich bieu '" + "put noi dung here" + "'")
+//////			                   .setOngoing(true)
+////			                   .setContentTitle(message)
+////			                   .setContentText(contentText)
+//////			                   .setStyle(new NotificationCompat.BigTextStyle().bigText(contentText))
+////			                   .setContent(notificationView);
+//////			notificationView.setOnClickPendingIntent(viewId, pendingIntent)
+////			Notification notification = notificationBuilder.getNotification();
+////			notification.flags |= Notification.FLAG_SHOW_LIGHTS;
+////			NotificationManager notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+////			notificationManager.notify(3, notification);
+//		/**
+//		 * normal Notification:
+//		 * @return 
+//		 */
+//		
+//			NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+//			// ==============================
+//					Intent notIntent = new Intent(context, MainActivity.class);
+//				    notIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//				    PendingIntent pendInt = PendingIntent.getActivity(context, 0,
+//				      notIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+//				    NavigationDrawerFragment.mCurrentSelectedPosition = 1;
+//				    // ==============================
+//				    builder.setContentIntent(pendInt);
+//			builder.setSmallIcon(R.drawable.ic_notification_logo);
+//			builder.setContentTitle(message);
+//			builder.setContentText(contentText);
+//			builder.setStyle(new NotificationCompat.BigTextStyle().bigText(contentText));
+//			
+////			builder.setContentInfo(noidung);
+//			
+////			Intent resultIntent = new Intent();
+////			resultIntent.setClass(context, HandleNotificationService.class);
+////			resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); 
+//			
+////					resultIntent.setAction(Intent.ACTION_VIEW);
+////					resultIntent.setData(Uri.parse("http://google.com.vn"));
+////					TaskStackBuilder stack = TaskStackBuilder.create(context);
+////					stack.addParentStack(MainActivity.class);
+////					stack.addNextIntent(resultIntent);
+////			PendingIntent pendingIntent = PendingIntent.getService(context, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+//////					PendingIntent resultPendingIntent = stack.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+////			builder.setContentIntent(pendingIntent);
+//
+//			//mo rong
+//			long[] pattern = {(long)100, (long)100, (long) 100, (long) 100, (long) 100};
+//			builder.setVibrate(pattern);
+//			builder.setLights(0xFF0000FF, 500, 500);
+////					builder.setAutoCancel(true);
+//			Notification notification = builder.getNotification();
+//			notification.flags |= Notification.FLAG_SHOW_LIGHTS;
+//			
+//			
+//			NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+//			Log.d("Count", "NOTIFICATION_ID:"+notification_id);
+//			manager.notify(notification_id, notification);
+//		
+//		}
+	
 //	}
 //	public static int getNotificationType(){
 //		//test getCount:

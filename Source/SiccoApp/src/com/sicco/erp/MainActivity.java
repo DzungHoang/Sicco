@@ -119,7 +119,8 @@ public class MainActivity extends ActionBarActivity implements
 //			SharedPrefUtils.savePref(getApplicationContext(), SharedPrefUtils.KEY_CB_REMEMBER, false);
 			session.logoutUser();
 			ServiceStart.stopAllService(getApplicationContext());
-			HandleNotificationService.cancelAllNotification(getApplicationContext());
+			HandleNotificationService handleNotificationService = new HandleNotificationService();
+			handleNotificationService.cancelAllNotification(getApplicationContext());
 			finish();
 			break;
 		}

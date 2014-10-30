@@ -161,10 +161,6 @@ public class SuaCongViecActivity extends Activity implements OnClickListener {
 		date = c.get(Calendar.DATE);
 		months = c.get(Calendar.MONTH);
 		years_now = c.get(Calendar.YEAR);
-//		tvNgayhoanThanh.setText(new StringBuilder().append(" ")
-//				.append(padding_str(date)).append("-")
-//				.append(padding_str(months + 1)).append("-")
-//				.append(padding_str(years_now)));
 
 		dataPB = new ArrayList<PhongBan>();
 		dataND = new HashMap<String, List<NguoiDung>>();
@@ -196,8 +192,7 @@ public class SuaCongViecActivity extends Activity implements OnClickListener {
 			new GetDuAn().execute();
 			mDuAn = new ArrayList<DuAn>();
 			mLvDuAn = (ListView) dialogDuAn.findViewById(R.id.lv_duan);
-			mDuAnAdapter = new DuAnAdapter(SuaCongViecActivity.this,
-					android.R.layout.simple_list_item_single_choice, mDuAn);
+			mDuAnAdapter = new DuAnAdapter(SuaCongViecActivity.this,R.layout.item_dialog_du_an, mDuAn);
 			mLvDuAn.setAdapter(mDuAnAdapter);
 			mLvDuAn.setOnItemClickListener(new OnItemClickListener() {
 

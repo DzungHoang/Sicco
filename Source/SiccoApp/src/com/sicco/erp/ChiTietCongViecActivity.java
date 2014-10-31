@@ -24,9 +24,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,7 +42,8 @@ import com.sicco.erp.model.ThaoLuan;
 public class ChiTietCongViecActivity extends Activity {
 
 	ProgressDialog pDialog;
-	String url_congviec = "http://apis.mobile.vareco.vn/sicco/congviec.php";
+	String url_updateTienDo = "http://apis.mobile.vareco.vn/sicco/phongban.php";
+	String url_postthaoluan = "http://apis.mobile.vareco.vn/sicco/phongban.php";
 	String url_thaoluan = "http://apis.mobile.vareco.vn/sicco/thaoluan.php";
 	JSONArray thaoluan = null, success = null;
 	ArrayList<HashMap<String, String>> thaoLuanList;
@@ -66,6 +69,7 @@ public class ChiTietCongViecActivity extends Activity {
 			nguoi_thao_luan;
 	StringBuilder timeThaoLuan;
 	int page = 1;
+	int mThaoLuanRunningPage = -1;
 
 	private int minute;
 	private int hour;
@@ -176,13 +180,14 @@ public class ChiTietCongViecActivity extends Activity {
 						page = page + 1;
 						new GetThaoLuan().execute(token, id_cong_viec,
 								Integer.toString(page));
-						mThaoLuan.clear();
-						// mThaoLuan.addAll(mThaoLuan);
-						// mAdapter.notifyDataSetChanged();
+						 mThaoLuan.clear();
+						 mThaoLuan.addAll(mThaoLuan);
+						 mAdapter.notifyDataSetChanged();
 						((LoadMoreListView) mListView).onLoadMoreComplete();
 
 					}
 				});
+		
 	}
 
 	private static String padding_str(int c) {
@@ -200,10 +205,10 @@ public class ChiTietCongViecActivity extends Activity {
 		protected void onPreExecute() {
 			super.onPreExecute();
 			// Showing progress dialog
-			pDialog = new ProgressDialog(ChiTietCongViecActivity.this);
-			pDialog.setMessage(getResources().getString(R.string.vui_long_doi));
-			pDialog.setCancelable(true);
-			pDialog.show();
+//			pDialog = new ProgressDialog(ChiTietCongViecActivity.this);
+//			pDialog.setMessage(getResources().getString(R.string.vui_long_doi));
+//			pDialog.setCancelable(true);
+//			pDialog.show();
 
 		}
 
@@ -214,7 +219,8 @@ public class ChiTietCongViecActivity extends Activity {
 			List<NameValuePair> valuePairs = new ArrayList<NameValuePair>();
 			valuePairs.add(new BasicNameValuePair("token", token));
 			valuePairs.add(new BasicNameValuePair("id_cong_viec", id));
-			valuePairs.add(new BasicNameValuePair("page", Integer.toString(page)));
+			valuePairs.add(new BasicNameValuePair("page", Integer
+					.toString(page)));
 
 			String ret = handler.makeHTTPRequest(url_thaoluan,
 					HTTPHandler.POST, valuePairs);
@@ -225,8 +231,8 @@ public class ChiTietCongViecActivity extends Activity {
 		@Override
 		protected void onPostExecute(String result) {
 			super.onPostExecute(result);
-			if (pDialog.isShowing())
-				pDialog.dismiss();
+//			if (pDialog.isShowing())
+//				pDialog.dismiss();
 			if (result != null) {
 				try {
 
@@ -278,9 +284,8 @@ public class ChiTietCongViecActivity extends Activity {
 			nameValuePairs.add(new BasicNameValuePair("thoi_gian", thoigian));
 			nameValuePairs.add(new BasicNameValuePair("noi_dung",
 					noidungthaoluan));
-			String ret = handler.makeHTTPRequest(url_congviec,
+			String ret = handler.makeHTTPRequest(url_postthaoluan,
 					HTTPHandler.POST, nameValuePairs);
-			Log.d("LuanDT", "PostThaoLuan : " + nameValuePairs);
 			return ret;
 		}
 
@@ -289,9 +294,35 @@ public class ChiTietCongViecActivity extends Activity {
 			super.onPostExecute(result);
 			if (pDialog.isShowing())
 				pDialog.dismiss();
+			int successThaoLuan = -1;
 			if (result != null) {
 				try {
 					JSONObject jsonObject = new JSONObject(result);
+					String stSuccess = jsonObject.getString("success");
+					if (stSuccess.equals("1")) {
+						successThaoLuan = 1;
+					}
+					Log.d("LuanDT", "stSuccess = " + stSuccess);
+					Log.d("LuanDT", "successThaoLuan = " + successThaoLuan);
+					if (successThaoLuan == 1) {
+//						new GetThaoLuan().execute(token, id_cong_viec,
+//								Integer.toString(page));
+						Toast.makeText(
+								getApplicationContext(),
+								""
+										+ getResources()
+												.getString(
+														R.string.gui_thao_luan_thanh_cong),
+								Toast.LENGTH_LONG).show();
+					} else {
+						Toast.makeText(
+								getApplicationContext(),
+								""
+										+ getResources()
+												.getString(
+														R.string.khong_gui_duoc_thao_luan),
+								Toast.LENGTH_LONG).show();
+					}
 
 				} catch (JSONException e) {
 					e.printStackTrace();
@@ -322,7 +353,7 @@ public class ChiTietCongViecActivity extends Activity {
 			nameValuePairs.add(new BasicNameValuePair("username", username));
 			nameValuePairs.add(new BasicNameValuePair("id_cong_viec", id));
 			nameValuePairs.add(new BasicNameValuePair("tien_do", updateTienDo));
-			String ret = handler.makeHTTPRequest(url_congviec,
+			String ret = handler.makeHTTPRequest(url_updateTienDo,
 					HTTPHandler.POST, nameValuePairs);
 			Log.d("LuanDT", "POST-UpdateTienDoCV : " + nameValuePairs);
 			return ret;
@@ -333,15 +364,34 @@ public class ChiTietCongViecActivity extends Activity {
 			super.onPostExecute(result);
 			if (pDialog.isShowing())
 				pDialog.dismiss();
+			int successTienDo = -1;
 			if (result != null) {
 				try {
 					JSONObject jsonObject = new JSONObject(result);
-					// success = jsonObject.getJSONArray("success");
-					// for (int i = 0; i < success.length(); i++) {
-					// JSONObject kq = success.getJSONObject(i);
-					// kqUpdateTienDo = kq.getString("success");
-					// }
-					// Log.d("LuanDT", "kqUpdateTienDo : " + kqUpdateTienDo);
+					String stSuccess = jsonObject.getString("success");
+					if (stSuccess.equals("1")) {
+						successTienDo = 1;
+					}
+					Log.d("LuanDT", "stSuccess = " + stSuccess);
+					Log.d("LuanDT", "successThaoLuan = " + successTienDo);
+					if (successTienDo == 1) {
+						Toast.makeText(
+								getApplicationContext(),
+								""
+										+ getResources()
+												.getString(
+														R.string.cap_nhat_tien_do_thanh_cong),
+								Toast.LENGTH_LONG).show();
+					} else {
+						Toast.makeText(
+								getApplicationContext(),
+								""
+										+ getResources()
+												.getString(
+														R.string.khong_cap_nhat_duoc_tien_do),
+								Toast.LENGTH_LONG).show();
+					}
+
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}

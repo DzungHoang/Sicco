@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="efp__app_name">ExFilePicker</string>
+    <string name="efp__action_grid">Mảng</string>
+    <string name="efp__action_list">Danh sách</string>
+
+    <string-array name="efp__size_units">
+        <item>B</item>
+        <item>kB</item>
+        <item>mB</item>
+        <item>gB</item>
+        <item>tB</item>
+        <item>pB</item>
+    </string-array>
+
+    <string name="efp__empty_directory">Thư mục trống</string>
+    <string name="efp__action_select_all">Chọn tất</string>
+    <string name="efp__action_deselect">Bỏ chọn</string>
+    <string name="efp__action_invert_selection">Đảo ngược lựa chọn</string>
+    <string name="efp__new_folder">Tạo thư mục</string>
+    <string name="efp__folder_name_hint">Tên thư mục</string>
+    <string name="efp__folder_created">Tạo thư mục thành công</string>
+    <string name="efp__folder_not_created">Lỗi! Không thể tạo thư mục</string>
+    <string name="efp__folder_already_exists">Thư mục đã tồn tại</string>
+    <string name="efp__sort">Sắp xếp</string>
+    <string-array name="efp__sorting_types">
+        <item>Theo tên, tăng dần</item>
+        <item>Theo tên, giảm dần</item>
+        <item>Theo kích cỡ, tăng dần</item>
+        <item>Theo kích cỡ, giảm dần</item>
+        <item>Theo thời gian, tăng dần</item>
+        <item>Theo thời gian, giảm dần</item>
+    </string-array>
+
+</resources>

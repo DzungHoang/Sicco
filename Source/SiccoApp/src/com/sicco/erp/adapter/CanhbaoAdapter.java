@@ -28,7 +28,7 @@ public class CanhbaoAdapter extends CursorAdapter {
 			TextView msgTxt = (TextView) view.findViewById(R.id.msg_canhbao);
 			TextView urlTxt = (TextView) view.findViewById(R.id.url_canhbao);
 			
-			String msg = cursor.getString(cursor.getColumnIndex(NotificationDBController.MSG_TYPE_COL));
+			String msg = cursor.getString(cursor.getColumnIndex(NotificationDBController.NAME_COL));
 			String url = cursor.getString(cursor.getColumnIndex(NotificationDBController.URL_COL));
 			
 			msgTxt.setText(msg);

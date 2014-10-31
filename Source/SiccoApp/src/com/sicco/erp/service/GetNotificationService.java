@@ -163,8 +163,8 @@ public class GetNotificationService extends Service {
 					if (cursor != null && cursor.getCount() > 0) {
 					} 
 					else {
-						origanizeNoti();
 						//TuNT//
+						origanizeNoti();
 						AppWidgetManager manager = AppWidgetManager.getInstance(context);
 						int[] appWidgetIds = manager.getAppWidgetIds(new ComponentName(context, WidgetCBProvider.class));
 						Intent updateIntent = new  Intent(context, WidgetCBProvider.class);
@@ -185,71 +185,28 @@ public class GetNotificationService extends Service {
 
 		@Override
 		protected void onPostExecute(String result) {
-
 			super.onPostExecute(result);
 		}
 	}
 	public void origanizeNoti(){
-//		int congviecmoi=0;
-//		int congvanmoi = 0;
-//		int lichcanhan = 0;
-//		Log.d("ToanNM", "origanizeNoti():notification_list.size()"+notification_list.size());
-		int max = notification_list.size();
-		for (int i = 0; i < max; i++) {
-			// Set congvan/congviec/lichbieu(count) only
-//			if(notification_list.get(i).getMsg().contains("congviecmoi")){
-//				congviecmoi++;
-//				Log.d("ToanNM", "congviecmoi_count:"+congviecmoi);
-//			}
-//			if(notification_list.get(i).getMsg().contains("congvanmoi")){
-//				congvanmoi++;
-//				Log.d("ToanNM", "congvanmoi_count:"+congvanmoi);
-//			}
-//			if(notification_list.get(i).getMsg().contains("lichcanhan")){
-//				lichcanhan++;
-//				Log.d("ToanNM", "lichcanhan_count:"+lichcanhan);
-//			}
-//			Log.d("Count", "------- i =" + i +" -------");
-			if(notification_list!=null){
-				// ArrayList for CongVan:
-				if(notification_list.get(i).getNotify().contains(congvan)){
+		Log.d("ToanNM", "done origanizeNoti();");
+		sereprateList(notification_list, congvan, congVan_list);
+		sereprateList(notification_list, congviec, congViec_list);
+		sereprateList(notification_list, lichbieu, lichBieu_list);
+		
+	}
+	public void sereprateList(ArrayList<NotificationModel> allList, String key, ArrayList<NotificationModel> outputList){
+		if(allList != null){
+			int max = allList.size();
+			Log.d("ToanNM", "max:"+max);
+			for(int i = 0; i < max; i++){
+			// ArrayList for key:
+				if(allList.get(i).getNotify().contains(key)){
 					//add a new ArrayList
-						congVan_list.add(notification_list.get(i));
-						congVan_count = congVan_list.size();
-						// get data
-						String ten = notification_list.get(i).getName();
-						String noi_dung = notification_list.get(i).getContent();
-						
-						Log.d("ToanNM", "run congvan:"+ ten + " " +noi_dung +" " + congVan_count+ " i:" + i + "\n" +"----------------");
-						MyNotificationManager.notifyType(context, congVan_list, congVan_count, congvan, ten, noi_dung);
-//						Log.d("ToanNM", "notification_list.get(i).getNotify():"+notification_list.get(i).getNotify());
-						
-				} 
-				// ArrayList for CongViec:
-				if(notification_list.get(i).getNotify().contains(congviec)){
-					//add a new ArrayList
-						congViec_list.add(notification_list.get(i));
-						congViec_count = congViec_list.size();
-						// get data
-						String ten = notification_list.get(i).getName();
-						String noi_dung = notification_list.get(i).getContent();
-						
-						Log.d("ToanNM", "run congviec:"+ ten + " " +noi_dung +" " + congViec_count+ " i:"+i + "\n" +"----------------");
-						MyNotificationManager.notifyType(context, congViec_list, congViec_count, congviec, ten, noi_dung);
-//						Log.d("ToanNM", "notification_list.get(i).getNotify():"+notification_list.get(i).getNotify());
-					}
-				// ArrayList for LichBieu:
-				if(notification_list.get(i).getNotify().contains(lichbieu)){
-					//add a new ArrayList
-						lichBieu_list.add(notification_list.get(i));
-						lichBieu_count = lichBieu_list.size();
-						// get data
-						String ten = notification_list.get(i).getName();
-						String noi_dung = notification_list.get(i).getContent();
-						
-						Log.d("ToanNM", "run lichbieu:"+ ten + " " +noi_dung +" " + lichBieu_count+ " i:" + i + "\n" +"----------------");
-						MyNotificationManager.notifyType(context, lichBieu_list, lichBieu_count, lichbieu, ten, noi_dung);
-//						Log.d("ToanNM", "notification_list.get(i).getNotify():"+notification_list.get(i).getNotify());
+//						outputList = new ArrayList<NotificationModel>();
+						outputList.add(allList.get(i));
+						MyNotificationManager myNotificationManager = new MyNotificationManager();
+						myNotificationManager.notifyType(context, outputList);
 					}
 			}
 		}

@@ -145,7 +145,6 @@ public class HandleNotificationService extends Service {
 //				}
 //			}
 //		}
-	
 //		MyNotificationManager.resetCount();
 //		CongVanCancelNotification(getApplicationContext());
 //		CongViecCancelNotification(getApplicationContext());
@@ -172,5 +171,11 @@ public class HandleNotificationService extends Service {
 		CongVanCancelNotification(context);
 		CongViecCancelNotification(context);
 		LichBieuCancelNotification(context);
+	}
+	public void cancelNotification(Context context, int notification_id){
+		String notificationServiceStr = Context.NOTIFICATION_SERVICE;
+		NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(notificationServiceStr);
+		mNotificationManager.cancel(notification_id);
+		Log.d("ToanNM", "cancelNotification() at notification_id:"+notification_id);
 	}
 }

@@ -1,6 +1,5 @@
 package com.sicco.erp;
 
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -12,19 +11,19 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import ru.bartwell.exfilepicker.ExFilePicker;
+import ru.bartwell.exfilepicker.ExFilePickerParcelObject;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -52,9 +51,9 @@ import com.sicco.erp.manager.SessionManager;
 import com.sicco.erp.model.DuAn;
 import com.sicco.erp.model.NguoiDung;
 import com.sicco.erp.model.PhongBan;
-import com.sicco.erp.utils.FileUtils;
 
 public class ThemCongViecActivity extends Activity implements OnClickListener {
+	private static final int EX_FILE_PICKER_RESULT = 0;
 	LinearLayout mLayoutNgayHoanThanh;
 	LinearLayout mLayoutDuAn;
 	LinearLayout mLayoutNguoiXuLy;
@@ -70,6 +69,7 @@ public class ThemCongViecActivity extends Activity implements OnClickListener {
 	String url_duan = "http://apis.mobile.vareco.vn/sicco/duan.php";
 	String url_phongban = "http://apis.mobile.vareco.vn/sicco/phongban.php";
 	String url_nguoidung = "http://apis.mobile.vareco.vn/sicco/nguoidung.php";
+	String url_themcongviec = "http://apis.mobile.vareco.vn/sicco/themcongviec.php";
 	JSONArray duan = null, phongBan = null, nguoiDung = null;
 	ArrayList<HashMap<String, String>> duAnList;
 	ArrayList<DuAn> mDuAn;
@@ -102,9 +102,11 @@ public class ThemCongViecActivity extends Activity implements OnClickListener {
 	String nguoiXem;
 	// ////////////Post data//////////////
 	String token;
+	StringBuilder ngayHoanThanh;
 	String idDuAn;
 	String idNguoiXuLy;
 	String idNguoiXem;
+	String stTepDinhKem;
 
 	private static final int FILE_SELECT_CODE = 0;
 
@@ -117,7 +119,7 @@ public class ThemCongViecActivity extends Activity implements OnClickListener {
 
 		sessionManager = SessionManager.getInstance(getApplicationContext());
 		token = sessionManager.getUserDetails().get(SessionManager.KEY_TOKEN);
-		
+
 		mLayoutNgayHoanThanh = (LinearLayout) findViewById(R.id.layout_ngay_hoan_thanh);
 		mLayoutDuAn = (LinearLayout) findViewById(R.id.layout_du_an);
 		mLayoutNguoiXuLy = (LinearLayout) findViewById(R.id.layout_nguoi_xu_ly);
@@ -137,10 +139,11 @@ public class ThemCongViecActivity extends Activity implements OnClickListener {
 		date = c.get(Calendar.DATE);
 		months = c.get(Calendar.MONTH);
 		years_now = c.get(Calendar.YEAR);
-		tvNgayhoanThanh.setText(new StringBuilder().append(" ")
+		ngayHoanThanh = new StringBuilder().append(" ")
 				.append(padding_str(date)).append("-")
 				.append(padding_str(months + 1)).append("-")
-				.append(padding_str(years_now)));
+				.append(padding_str(years_now));
+		tvNgayhoanThanh.setText(ngayHoanThanh);
 
 		dataPB = new ArrayList<PhongBan>();
 		dataND = new HashMap<String, List<NguoiDung>>();
@@ -149,10 +152,6 @@ public class ThemCongViecActivity extends Activity implements OnClickListener {
 
 	@Override
 	protected void onResume() {
-		if (path != null) {
-			String fileName = path.substring(path.lastIndexOf("/") + 1);
-			tvTepDinhKem.setText(fileName);
-		}
 		super.onResume();
 	}
 
@@ -224,8 +223,9 @@ public class ThemCongViecActivity extends Activity implements OnClickListener {
 								tvChonDuAn.setText(mDuAn.get(positionDuAn)
 										.getTenDuAn());
 								idDuAn = mDuAn.get(positionDuAn).getId();
-//								Toast.makeText(getApplicationContext(),
-//										"idDuAn: " + idDuAn, 0).show();
+								Toast.makeText(getApplicationContext(),
+										"idDuAn: " + idDuAn, 0).show();
+								tvChonDuAn.setError(null);
 							}
 						}
 					});
@@ -284,10 +284,10 @@ public class ThemCongViecActivity extends Activity implements OnClickListener {
 
 				@Override
 				public void onGroupExpand(int groupPosition) {
-//					Toast.makeText(
-//							getApplicationContext(),
-//							dataPB.get(groupPosition).getTenPhongBan()
-//									+ " Expanded", Toast.LENGTH_SHORT).show();
+					// Toast.makeText(
+					// getApplicationContext(),
+					// dataPB.get(groupPosition).getTenPhongBan()
+					// + " Expanded", Toast.LENGTH_SHORT).show();
 				}
 			});
 			// Listview Group collasped listener
@@ -295,10 +295,10 @@ public class ThemCongViecActivity extends Activity implements OnClickListener {
 
 				@Override
 				public void onGroupCollapse(int groupPosition) {
-//					Toast.makeText(
-//							getApplicationContext(),
-//							dataPB.get(groupPosition).getTenPhongBan()
-//									+ " Collapsed", Toast.LENGTH_SHORT).show();
+					// Toast.makeText(
+					// getApplicationContext(),
+					// dataPB.get(groupPosition).getTenPhongBan()
+					// + " Collapsed", Toast.LENGTH_SHORT).show();
 
 				}
 			});
@@ -353,11 +353,12 @@ public class ThemCongViecActivity extends Activity implements OnClickListener {
 												.getId() + ", ";
 									}
 								}
+								tvChonNguoiXuLy.setError(null);
 							}
-//							Toast.makeText(getApplicationContext(),
-//									"id: " + idNguoiXuLy, Toast.LENGTH_SHORT)
-//									.show();
 							tvChonNguoiXuLy.setText(nguoiXuLy);
+							Toast.makeText(getApplicationContext(),
+									"id: " + idNguoiXuLy, Toast.LENGTH_SHORT)
+									.show();
 							Log.d("TuNT", "List active: " + listNXLChecked);
 						}
 					});
@@ -415,10 +416,10 @@ public class ThemCongViecActivity extends Activity implements OnClickListener {
 
 				@Override
 				public void onGroupExpand(int groupPosition) {
-//					Toast.makeText(
-//							getApplicationContext(),
-//							dataPB.get(groupPosition).getTenPhongBan()
-//									+ " Expanded", Toast.LENGTH_SHORT).show();
+					// Toast.makeText(
+					// getApplicationContext(),
+					// dataPB.get(groupPosition).getTenPhongBan()
+					// + " Expanded", Toast.LENGTH_SHORT).show();
 				}
 			});
 			// Listview Group collasped listener
@@ -426,10 +427,10 @@ public class ThemCongViecActivity extends Activity implements OnClickListener {
 
 				@Override
 				public void onGroupCollapse(int groupPosition) {
-//					Toast.makeText(
-//							getApplicationContext(),
-//							dataPB.get(groupPosition).getTenPhongBan()
-//									+ " Collapsed", Toast.LENGTH_SHORT).show();
+					// Toast.makeText(
+					// getApplicationContext(),
+					// dataPB.get(groupPosition).getTenPhongBan()
+					// + " Collapsed", Toast.LENGTH_SHORT).show();
 				}
 			});
 
@@ -483,10 +484,11 @@ public class ThemCongViecActivity extends Activity implements OnClickListener {
 												.getId() + ", ";
 									}
 								}
+								tvChonNguoiXem.setError(null);
 							}
-//							Toast.makeText(getApplicationContext(),
-//									"id: " + idNguoiXem, Toast.LENGTH_SHORT)
-//									.show();
+							Toast.makeText(getApplicationContext(),
+									"id: " + idNguoiXem, Toast.LENGTH_SHORT)
+									.show();
 							tvChonNguoiXem.setText(nguoiXem);
 							Log.d("TuNT", "List active: " + listNXChecked);
 						}
@@ -495,7 +497,10 @@ public class ThemCongViecActivity extends Activity implements OnClickListener {
 			alertDialogNX.show();
 			break;
 		case R.id.layout_tep_dinh_kem:
-			showFileChooser();
+			Intent intent = new Intent(getApplicationContext(), ru.bartwell.exfilepicker.ExFilePickerActivity.class);
+			intent.putExtra(ExFilePicker.SET_ONLY_ONE_ITEM, true);
+			intent.putExtra(ExFilePicker.SET_CHOICE_TYPE, ExFilePicker.CHOICE_TYPE_FILES);
+			startActivityForResult(intent, EX_FILE_PICKER_RESULT);
 			break;
 
 		default:
@@ -550,8 +555,11 @@ public class ThemCongViecActivity extends Activity implements OnClickListener {
 
 		@Override
 		protected String doInBackground(String... arg0) {
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			nameValuePairs.add(new BasicNameValuePair("token", token));
 			HTTPHandler handler = new HTTPHandler();
-			String ret = handler.makeHTTPRequest(url_duan, HTTPHandler.GET);
+			String ret = handler.makeHTTPRequest(url_duan, HTTPHandler.POST,
+					nameValuePairs);
 			return ret;
 		}
 
@@ -601,8 +609,11 @@ public class ThemCongViecActivity extends Activity implements OnClickListener {
 
 		@Override
 		protected String doInBackground(String... arg0) {
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			nameValuePairs.add(new BasicNameValuePair("token", token));
 			HTTPHandler handler = new HTTPHandler();
-			String ret = handler.makeHTTPRequest(url_phongban, HTTPHandler.GET);
+			String ret = handler.makeHTTPRequest(url_phongban,
+					HTTPHandler.POST, nameValuePairs);
 			return ret;
 		}
 
@@ -659,9 +670,11 @@ public class ThemCongViecActivity extends Activity implements OnClickListener {
 
 		@Override
 		protected String doInBackground(String... arg0) {
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			nameValuePairs.add(new BasicNameValuePair("token", token));
 			HTTPHandler handler = new HTTPHandler();
-			String ret = handler
-					.makeHTTPRequest(url_nguoidung, HTTPHandler.GET);
+			String ret = handler.makeHTTPRequest(url_nguoidung,
+					HTTPHandler.POST, nameValuePairs);
 			return ret;
 		}
 
@@ -700,8 +713,8 @@ public class ThemCongViecActivity extends Activity implements OnClickListener {
 		}
 
 	}
-	
-	/////////////Gui len cong viec////////////////////////
+
+	// ///////////Gui len cong viec////////////////////////
 	private class AddCongViec extends AsyncTask<String, Void, String> {
 
 		@Override
@@ -716,29 +729,36 @@ public class ThemCongViecActivity extends Activity implements OnClickListener {
 			String noiDung = arg0[2];
 			String ngayHoanThanh = arg0[3];
 			String duAn = arg0[4];
-			String nguoiXem = arg0[5];
-			String tepDinhKem = arg0[6];
-			String phongBan = arg0[7];
-			String tuNgay = arg0[8];
-			String tienDo = arg0[9];
-			String mucDo = arg0[10];
+			String nguoiXuLy = arg0[5];
+			String nguoiXem = arg0[6];
+			String tepDinhKem = arg0[7];
+			String phongBan = arg0[8];
+			String tuNgay = arg0[9];
+			String tienDo = arg0[10];
+			String mucDo = arg0[11];
 
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair("token", token));
-			nameValuePairs.add(new BasicNameValuePair("ten_cong_viec", tenCongViec));
+			nameValuePairs.add(new BasicNameValuePair("ten_cong_viec",
+					tenCongViec));
 			nameValuePairs.add(new BasicNameValuePair("noi_dung", noiDung));
-			nameValuePairs.add(new BasicNameValuePair("ngay_hoan_thanh", ngayHoanThanh));
+			nameValuePairs.add(new BasicNameValuePair("ngay_hoan_thanh",
+					ngayHoanThanh));
 			nameValuePairs.add(new BasicNameValuePair("du_an", duAn));
+			nameValuePairs
+					.add(new BasicNameValuePair("nguoi_xu_ly", nguoiXuLy));
 			nameValuePairs.add(new BasicNameValuePair("nguoi_xem", nguoiXem));
-			nameValuePairs.add(new BasicNameValuePair("tep_dinh_kem", tepDinhKem));
+			nameValuePairs.add(new BasicNameValuePair("tep_dinh_kem",
+					tepDinhKem));
 			nameValuePairs.add(new BasicNameValuePair("phong_ban", phongBan));
 			nameValuePairs.add(new BasicNameValuePair("tu_ngay", tuNgay));
 			nameValuePairs.add(new BasicNameValuePair("tien_do", tienDo));
 			nameValuePairs.add(new BasicNameValuePair("muc_do", mucDo));
-			
+
 			HTTPHandler handler = new HTTPHandler();
-			String ret = handler
-					.makeHTTPRequest(url_nguoidung, HTTPHandler.POST, nameValuePairs);
+			String ret = handler.makeHTTPRequest(url_themcongviec,
+					HTTPHandler.POST, nameValuePairs);
+			Log.d("TuNT", "nameValuePairs: " + nameValuePairs);
 			return ret;
 		}
 
@@ -746,10 +766,12 @@ public class ThemCongViecActivity extends Activity implements OnClickListener {
 		protected void onPostExecute(String result) {
 			int success = -1;
 			if (result != null) {
+				Log.d("TuNT", "jsonCode: "+result);
 				try {
 					JSONObject jsonObj = new JSONObject(result);
-					String stSuccess = jsonObj.getString("success");
-					if(stSuccess.toString().equals(1)){
+					int stSuccess = jsonObj.getInt("success");
+					Log.d("TuNT", "success"+stSuccess);
+					if (Integer.toString(stSuccess).equals("1")) {
 						success = 1;
 					}
 				} catch (JSONException e) {
@@ -761,69 +783,32 @@ public class ThemCongViecActivity extends Activity implements OnClickListener {
 			} else {
 				Log.e("TuNT", "Khong the lay data tu url nay");
 			}
+			if (success == 1) {
+				Toast.makeText(getApplicationContext(), "Thêm thành công", 0)
+						.show();
+			}
 			super.onPostExecute(result);
 		}
 
 	}
-
-	private void showFileChooser() {
-		Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-		intent.setType("*/*");
-		intent.addCategory(Intent.CATEGORY_OPENABLE);
-
-		try {
-			startActivityForResult(Intent.createChooser(intent,
-					getString(R.string.chon_tep_dinh_kem)), FILE_SELECT_CODE);
-		} catch (android.content.ActivityNotFoundException ex) {
-			// Potentially direct the user to the Market with a Dialog
-//			Toast.makeText(this, "Please install a File Manager.",
-//					Toast.LENGTH_SHORT).show();
-		}
-	}
-
+	//////////activity result///////////
 	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		switch (requestCode) {
-		case FILE_SELECT_CODE:
-			if (resultCode == RESULT_OK) {
-				// Get the Uri of the selected file
-				Uri uri = data.getData();
-				Log.d("LuanDT", "File Uri: " + uri.toString());
-				// Get the path
-				path = FileUtils.getPath(this, uri);
-				Log.d("LuanDT", "File Path: " + path);
-//				Toast.makeText(this, "File Selected: " + path,
-//						Toast.LENGTH_SHORT).show();
-				// Get the file instance
-				// File file = new File(path);
-				// Initiate the upload
-			}
-			break;
-		}
-		super.onActivityResult(requestCode, resultCode, data);
-	}
-
-	public static String getPath(Context context, Uri uri)
-			throws URISyntaxException {
-		if ("content".equalsIgnoreCase(uri.getScheme())) {
-			String[] projection = { "_data" };
-			Cursor cursor = null;
-
-			try {
-				cursor = context.getContentResolver().query(uri, projection,
-						null, null, null);
-				int column_index = cursor.getColumnIndexOrThrow("_data");
-				if (cursor.moveToFirst()) {
-					return cursor.getString(column_index);
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == EX_FILE_PICKER_RESULT) {
+			if (data != null) {
+				ExFilePickerParcelObject object = (ExFilePickerParcelObject) data.getParcelableExtra(ExFilePickerParcelObject.class.getCanonicalName());
+				if (object.count > 0) {
+					StringBuffer buffer = new StringBuffer();
+					for (int i = 0; i < object.count; i++) {
+						buffer.append(object.names.get(i));
+						if (i < object.count - 1) buffer.append(", ");
+					}
+					stTepDinhKem = stTepDinhKem+buffer.toString();
+					Log.d("TuNT", "Duong dan file:" + stTepDinhKem);
+					tvTepDinhKem.setText(buffer.toString());
 				}
-			} catch (Exception e) {
-				// Eat it
 			}
-		} else if ("file".equalsIgnoreCase(uri.getScheme())) {
-			return uri.getPath();
 		}
-
-		return null;
 	}
 
 	// ------------option menu-------------------------//
@@ -842,7 +827,39 @@ public class ThemCongViecActivity extends Activity implements OnClickListener {
 			finish();
 			break;
 		case R.id.action_done:
-			Toast.makeText(getApplicationContext(), "send", 0).show();
+			boolean error = false;
+			if (TextUtils.isEmpty(edTenCongViec.getText())) {
+				edTenCongViec.setError(getResources().getString(
+						R.string.truong_nay_khong_duoc_de_rong));
+				error = true;
+			}
+			if (TextUtils.isEmpty(edNDCongViec.getText())) {
+				edNDCongViec.setError(getResources().getString(
+						R.string.truong_nay_khong_duoc_de_rong));
+				error = true;
+			}
+			if (getResources().getString(R.string.chon_du_an).equals(
+					tvChonDuAn.getText().toString())) {
+				tvChonDuAn.setError("");
+				error = true;
+			}
+			if (getResources().getString(R.string.chon_nguoi_xu_ly).equals(
+					tvChonNguoiXuLy.getText().toString())) {
+				tvChonNguoiXuLy.setError("");
+				error = true;
+			}
+			if (getResources().getString(R.string.chon_nguoi_xem).equals(
+					tvChonNguoiXem.getText().toString())) {
+				tvChonNguoiXem.setError("");
+				error = true;
+			}
+			if (error == false) {
+				new AddCongViec().execute(token, edTenCongViec.getText()
+						.toString(), edNDCongViec.getText().toString(),
+						ngayHoanThanh.toString(), idDuAn, idNguoiXuLy,
+						idNguoiXem, tvTepDinhKem.getText().toString(), "1",
+						"2", "3", "4");
+			}
 			break;
 		default:
 			break;

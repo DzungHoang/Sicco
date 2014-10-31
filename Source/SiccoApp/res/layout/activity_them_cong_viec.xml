@@ -15,7 +15,6 @@
             android:orientation="vertical"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
-            android:paddingBottom="15dp"
             android:paddingTop="10dp" >
 
             <TextView
@@ -81,7 +80,7 @@
 
                 <TextView
                     android:id="@+id/tv_ngay_hoan_thanh"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Chọn ngày"
                     android:textSize="14sp" />
@@ -107,7 +106,7 @@
 
                 <TextView
                     android:id="@+id/tv_du_an"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Chọn dự án"
                     android:textSize="14sp" />
@@ -133,7 +132,7 @@
 
                 <TextView
                     android:id="@+id/tv_nguoi_xu_ly"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Chọn người xử lý"
                     android:textSize="14sp" />
@@ -159,7 +158,7 @@
 
                 <TextView
                     android:id="@+id/tv_nguoi_xem"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Chọn người xem"
                     android:textSize="14sp" />
@@ -185,7 +184,7 @@
 
                 <TextView
                     android:id="@+id/tv_tep_dinh_kem"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Chọn file"
                     android:textSize="14sp" />

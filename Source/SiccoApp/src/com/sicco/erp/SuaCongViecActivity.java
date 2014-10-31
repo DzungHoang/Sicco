@@ -1,8 +1,6 @@
 package com.sicco.erp;
 
-import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -12,33 +10,19 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
-import com.sicco.erp.ThemCongViecActivity.LoadingDuAnFinishListener;
-import com.sicco.erp.ThemCongViecActivity.LoadingFinishListener;
-import com.sicco.erp.ThemCongViecActivity.LoadingNguoiDungFinishListener;
-import com.sicco.erp.adapter.DuAnAdapter;
-import com.sicco.erp.adapter.ExpandableListUserAdapter;
-import com.sicco.erp.http.HTTPHandler;
-import com.sicco.erp.manager.SessionManager;
-import com.sicco.erp.model.DuAn;
-import com.sicco.erp.model.NguoiDung;
-import com.sicco.erp.model.PhongBan;
-import com.sicco.erp.utils.FileUtils;
+import ru.bartwell.exfilepicker.ExFilePicker;
+import ru.bartwell.exfilepicker.ExFilePickerParcelObject;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.DatePickerDialog.OnDateSetListener;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.app.DatePickerDialog.OnDateSetListener;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.appcompat.R.string;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -47,20 +31,29 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
 import android.widget.ExpandableListView.OnGroupCollapseListener;
 import android.widget.ExpandableListView.OnGroupExpandListener;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.sicco.erp.adapter.DuAnAdapter;
+import com.sicco.erp.adapter.ExpandableListUserAdapter;
+import com.sicco.erp.http.HTTPHandler;
+import com.sicco.erp.manager.SessionManager;
+import com.sicco.erp.model.DuAn;
+import com.sicco.erp.model.NguoiDung;
+import com.sicco.erp.model.PhongBan;
 
 public class SuaCongViecActivity extends Activity implements OnClickListener {
+	private static final int EX_FILE_PICKER_RESULT = 0;
 	LinearLayout mLayoutNgayHoanThanh;
 	LinearLayout mLayoutDuAn;
 	LinearLayout mLayoutNguoiXuLy;
@@ -73,10 +66,10 @@ public class SuaCongViecActivity extends Activity implements OnClickListener {
 	TextView tvChonNguoiXem;
 	EditText edtTenCongViec;
 	EditText edtNoiDungCongViec;
-	
-	String  postTenCongViec,postNoiDung,postNgayHoanThanh,postIdDuAn,postNguoiXuLy,postNguoiXem,postPathTepDinhKem;
 
-	
+	String postTenCongViec, postNoiDung, postNgayHoanThanh, postIdDuAn,
+			postNguoiXuLy, postNguoiXem, postPathTepDinhKem;
+
 	Dialog mDialog;
 	String path;
 
@@ -90,20 +83,17 @@ public class SuaCongViecActivity extends Activity implements OnClickListener {
 	ListView mLvDuAn;
 	DuAnAdapter mDuAnAdapter;
 
-	
-	
-
 	ExpandableListView listView;
 	ExpandableListUserAdapter adapter;
 	LinearLayout loading;
 	ArrayList<NguoiDung> listNXLChecked = new ArrayList<NguoiDung>();
 	ArrayList<NguoiDung> listNXChecked = new ArrayList<NguoiDung>();
-	
+
 	List<PhongBan> dataPB;
 	HashMap<String, List<NguoiDung>> dataND;
 	HashMap<String, ArrayList<NguoiDung>> hashMap;
 	ArrayList<NguoiDung> dsNguoiDung;
-	
+
 	private int date;
 	private int months;
 	private int years_now;
@@ -117,10 +107,11 @@ public class SuaCongViecActivity extends Activity implements OnClickListener {
 	String idDuAn;
 	String idNguoiXuLy;
 	String idNguoiXem;
-	
+	String stTepDinhKem;
+
 	String id, tenCongViec, tinhTrang, tienDo, nguoiThucHien, phongBan,
-	loaiCongViec, ngayKetThuc, duAn, mucUuTien, nguoiDuocXem,
-	nguoiGiao, moTa, tongHopBaoCao, Url, token, username;
+			loaiCongViec, ngayKetThuc, duAn, mucUuTien, nguoiDuocXem,
+			nguoiGiao, moTa, tongHopBaoCao, Url, token, username;
 	private static final String TAG = "SuaCongViecActivity";
 	private static final int FILE_SELECT_CODE = 0;
 
@@ -130,18 +121,18 @@ public class SuaCongViecActivity extends Activity implements OnClickListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_them_cong_viec);
-		
+
 		SessionManager sessionManager = SessionManager
 				.getInstance(SuaCongViecActivity.this);
 		token = sessionManager.getUserDetails().get(SessionManager.KEY_TOKEN);
 		username = sessionManager.getUserDetails().get(SessionManager.KEY_NAME);
-		
+
 		mLayoutNgayHoanThanh = (LinearLayout) findViewById(R.id.layout_ngay_hoan_thanh);
 		mLayoutDuAn = (LinearLayout) findViewById(R.id.layout_du_an);
 		mLayoutNguoiXuLy = (LinearLayout) findViewById(R.id.layout_nguoi_xu_ly);
 		mLayoutNguoiXem = (LinearLayout) findViewById(R.id.layout_nguoi_xem);
 		mLayoutTepDinhKem = (LinearLayout) findViewById(R.id.layout_tep_dinh_kem);
-		
+
 		Intent intent = getIntent();
 		id = intent.getStringExtra("id");
 		tenCongViec = intent.getStringExtra("ten_cong_viec");
@@ -158,7 +149,7 @@ public class SuaCongViecActivity extends Activity implements OnClickListener {
 		moTa = intent.getStringExtra("mo_ta");
 		tongHopBaoCao = intent.getStringExtra("tong_hop_bao_cao");
 		Url = intent.getStringExtra("Url");
-		
+
 		final String[] listNguoiThucHien = nguoiThucHien.split(",");
 		for (int i = 0; i < listNguoiThucHien.length; i++) {
 			listNXLChecked.add(new NguoiDung("", listNguoiThucHien[i], ""));
@@ -167,9 +158,12 @@ public class SuaCongViecActivity extends Activity implements OnClickListener {
 		for (int i = 0; i < listNguoiXem.length; i++) {
 			listNXChecked.add(new NguoiDung("", listNguoiXem[i], ""));
 		}
-		Toast.makeText(getApplicationContext(), "nguoithuchien 1:"+listNguoiXem[0].toString()
-				+ "nguoithuchien 2:"+listNguoiXem[1].toString(), 0).show();
-		
+//		Toast.makeText(
+//				getApplicationContext(),
+//				"nguoithuchien 1:" + listNguoiXem[0].toString()
+//						+ "nguoithuchien 2:" + listNguoiXem[1].toString(), 0)
+//				.show();
+
 		tvChonDuAn = (TextView) findViewById(R.id.tv_du_an);
 		tvChonNguoiXuLy = (TextView) findViewById(R.id.tv_nguoi_xu_ly);
 		tvTepDinhKem = (TextView) findViewById(R.id.tv_tep_dinh_kem);
@@ -177,7 +171,7 @@ public class SuaCongViecActivity extends Activity implements OnClickListener {
 		tvChonNguoiXem = (TextView) findViewById(R.id.tv_nguoi_xem);
 		edtTenCongViec = (EditText) findViewById(R.id.edt_ten_cong_viec);
 		edtNoiDungCongViec = (EditText) findViewById(R.id.edt_noi_dung);
-		
+
 		tvTepDinhKem.setText(R.string.chon_tep_dinh_kem);
 		edtTenCongViec.setText(tenCongViec);
 		edtNoiDungCongViec.setText(moTa);
@@ -187,11 +181,15 @@ public class SuaCongViecActivity extends Activity implements OnClickListener {
 		tvChonNguoiXem.setText(nguoiDuocXem);
 
 		final String[] valueNgayHoanThanh = ngayKetThuc.split("/");
-		Toast.makeText(getApplicationContext(), valueNgayHoanThanh[0].toString() + "/" +valueNgayHoanThanh[1].toString() + "/" +valueNgayHoanThanh[2].toString(), 0).show();
+		Toast.makeText(
+				getApplicationContext(),
+				valueNgayHoanThanh[0].toString() + "/"
+						+ valueNgayHoanThanh[1].toString() + "/"
+						+ valueNgayHoanThanh[2].toString(), 0).show();
 		date = Integer.parseInt(valueNgayHoanThanh[0].toString());
 		months = Integer.parseInt(valueNgayHoanThanh[1].toString());
 		years_now = Integer.parseInt(valueNgayHoanThanh[2].toString());
-		
+
 		dataPB = new ArrayList<PhongBan>();
 		dataND = new HashMap<String, List<NguoiDung>>();
 		dsNguoiDung = new ArrayList<NguoiDung>();
@@ -223,8 +221,9 @@ public class SuaCongViecActivity extends Activity implements OnClickListener {
 			new GetDuAn().execute();
 			mDuAn = new ArrayList<DuAn>();
 			mLvDuAn = (ListView) dialogDuAn.findViewById(R.id.lv_duan);
-			mDuAnAdapter = new DuAnAdapter(SuaCongViecActivity.this,R.layout.item_dialog_du_an, mDuAn);
-			
+			mDuAnAdapter = new DuAnAdapter(SuaCongViecActivity.this,
+					R.layout.item_dialog_du_an, mDuAn);
+
 			setLoadingFinishListener(new LoadingDuAnFinishListener() {
 
 				@Override
@@ -233,7 +232,9 @@ public class SuaCongViecActivity extends Activity implements OnClickListener {
 					loading.setVisibility(View.INVISIBLE);
 					mLvDuAn.setAdapter(mDuAnAdapter);
 					for (int i = 0; i < mDuAn.size(); i++) {
-						Toast.makeText(getApplicationContext(), mDuAn.get(i).getTenDuAn()+"/"+duAn, 0).show();
+						Toast.makeText(getApplicationContext(),
+								mDuAn.get(i).getTenDuAn() + "/" + duAn, 0)
+								.show();
 						if (mDuAn.get(i).getTenDuAn().equals(duAn)) {
 							mLvDuAn.setItemChecked(i, true);
 						}
@@ -369,7 +370,8 @@ public class SuaCongViecActivity extends Activity implements OnClickListener {
 			});
 
 			AlertDialog.Builder builderNXL = new AlertDialog.Builder(this);
-			builderNXL.setTitle(getResources().getString(R.string.chon_nguoi_xu_ly));
+			builderNXL.setTitle(getResources().getString(
+					R.string.chon_nguoi_xu_ly));
 			builderNXL.setView(dialogUserList);
 			builderNXL.setNegativeButton("Cancel",
 					new DialogInterface.OnClickListener() {
@@ -388,21 +390,27 @@ public class SuaCongViecActivity extends Activity implements OnClickListener {
 						public void onClick(DialogInterface dialog, int which) {
 							idNguoiXuLy = "";
 							nguoiXuLy = "";
-							if(listNXLChecked.isEmpty()){
-								nguoiXuLy = getResources().getString(R.string.nguoi_xu_ly);
-							}else{
+							if (listNXLChecked.isEmpty()) {
+								nguoiXuLy = getResources().getString(
+										R.string.nguoi_xu_ly);
+							} else {
 								for (int i = 0; i < listNXLChecked.size(); i++) {
-									if(i == listNXLChecked.size() - 1){
-										nguoiXuLy += listNXLChecked.get(i).getUsername();
-									}else{
-										nguoiXuLy += listNXLChecked.get(i).getUsername()+", ";
+									if (i == listNXLChecked.size() - 1) {
+										nguoiXuLy += listNXLChecked.get(i)
+												.getUsername();
+									} else {
+										nguoiXuLy += listNXLChecked.get(i)
+												.getUsername() + ", ";
 									}
-									idNguoiXuLy += listNXLChecked.get(i).getId() + ",";
+									idNguoiXuLy += listNXLChecked.get(i)
+											.getId() + ",";
 								}
 							}
-							Toast.makeText(getApplicationContext(), "id: "+idNguoiXuLy, Toast.LENGTH_SHORT).show();
+							Toast.makeText(getApplicationContext(),
+									"id: " + idNguoiXuLy, Toast.LENGTH_SHORT)
+									.show();
 							tvChonNguoiXuLy.setText(nguoiXuLy);
-							Log.d("TuNT", "List active: "+listNXLChecked);
+							Log.d("TuNT", "List active: " + listNXLChecked);
 						}
 					});
 			AlertDialog alertDialogNXL = builderNXL.create();
@@ -459,10 +467,10 @@ public class SuaCongViecActivity extends Activity implements OnClickListener {
 
 				@Override
 				public void onGroupExpand(int groupPosition) {
-//					Toast.makeText(
-//							getApplicationContext(),
-//							dataPB.get(groupPosition).getTenPhongBan()
-//									+ " Expanded", Toast.LENGTH_SHORT).show();
+					// Toast.makeText(
+					// getApplicationContext(),
+					// dataPB.get(groupPosition).getTenPhongBan()
+					// + " Expanded", Toast.LENGTH_SHORT).show();
 				}
 			});
 			// Listview Group collasped listener
@@ -470,10 +478,10 @@ public class SuaCongViecActivity extends Activity implements OnClickListener {
 
 				@Override
 				public void onGroupCollapse(int groupPosition) {
-//					Toast.makeText(
-//							getApplicationContext(),
-//							dataPB.get(groupPosition).getTenPhongBan()
-//									+ " Collapsed", Toast.LENGTH_SHORT).show();
+					// Toast.makeText(
+					// getApplicationContext(),
+					// dataPB.get(groupPosition).getTenPhongBan()
+					// + " Collapsed", Toast.LENGTH_SHORT).show();
 				}
 			});
 
@@ -528,9 +536,9 @@ public class SuaCongViecActivity extends Activity implements OnClickListener {
 									}
 								}
 							}
-//							Toast.makeText(getApplicationContext(),
-//									"id: " + idNguoiXem, Toast.LENGTH_SHORT)
-//									.show();
+							// Toast.makeText(getApplicationContext(),
+							// "id: " + idNguoiXem, Toast.LENGTH_SHORT)
+							// .show();
 							tvChonNguoiXem.setText(nguoiXem);
 							Log.d("TuNT", "List active: " + listNXChecked);
 						}
@@ -539,13 +547,41 @@ public class SuaCongViecActivity extends Activity implements OnClickListener {
 			alertDialogNX.show();
 			break;
 		case R.id.layout_tep_dinh_kem:
-			showFileChooser();
+			Intent intent = new Intent(getApplicationContext(),
+					ru.bartwell.exfilepicker.ExFilePickerActivity.class);
+			intent.putExtra(ExFilePicker.SET_ONLY_ONE_ITEM, true);
+			intent.putExtra(ExFilePicker.SET_CHOICE_TYPE,
+					ExFilePicker.CHOICE_TYPE_FILES);
+			startActivityForResult(intent, EX_FILE_PICKER_RESULT);
 			break;
 
 		default:
 			break;
 		}
 
+	}
+
+	// ////////activity result///////////
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == EX_FILE_PICKER_RESULT) {
+			if (data != null) {
+				ExFilePickerParcelObject object = (ExFilePickerParcelObject) data
+						.getParcelableExtra(ExFilePickerParcelObject.class
+								.getCanonicalName());
+				if (object.count > 0) {
+					StringBuffer buffer = new StringBuffer();
+					for (int i = 0; i < object.count; i++) {
+						buffer.append(object.names.get(i));
+						if (i < object.count - 1)
+							buffer.append(", ");
+					}
+					stTepDinhKem = stTepDinhKem + buffer.toString();
+					Log.d("TuNT", "Duong dan file:" + stTepDinhKem);
+					tvTepDinhKem.setText(buffer.toString());
+				}
+			}
+		}
 	}
 
 	// ------------choose date------------------//
@@ -765,125 +801,86 @@ public class SuaCongViecActivity extends Activity implements OnClickListener {
 		}
 	}
 
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		switch (requestCode) {
-		case FILE_SELECT_CODE:
-			if (resultCode == RESULT_OK) {
-				// Get the Uri of the selected file
-				Uri uri = data.getData();
-				Log.d("LuanDT", "File Uri: " + uri.toString());
-				// Get the path
-				path = FileUtils.getPath(this, uri);
-				Log.d("LuanDT", "File Path: " + path);
-				Toast.makeText(this, "File Selected: " + path,
-						Toast.LENGTH_SHORT).show();
-				// Get the file instance
-				// File file = new File(path);
-				// Initiate the upload 
-			}
-			break;
-		}
-		super.onActivityResult(requestCode, resultCode, data);
-	}
+	// =========================================POST===========================================================//
 
-	public static String getPath(Context context, Uri uri)
-			throws URISyntaxException {
-		if ("content".equalsIgnoreCase(uri.getScheme())) {
-			String[] projection = { "_data" };
-			Cursor cursor = null;
-
-			try {
-				cursor = context.getContentResolver().query(uri, projection,
-						null, null, null);
-				int column_index = cursor.getColumnIndexOrThrow("_data");
-				if (cursor.moveToFirst()) {
-					return cursor.getString(column_index);
-				}
-			} catch (Exception e) {
-				// Eat it
-			}
-		} else if ("file".equalsIgnoreCase(uri.getScheme())) {
-			return uri.getPath();
+	private class postEditCongViec extends AsyncTask<String, Void, String> {
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			pDialog = new ProgressDialog(SuaCongViecActivity.this);
+			pDialog.setMessage(getResources().getString(R.string.vui_long_doi));
+			pDialog.setCancelable(false);
+			pDialog.show();
 		}
 
-		return null;
-	}
+		@Override
+		protected String doInBackground(String... arg0) {
+			HTTPHandler handler = new HTTPHandler();
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			nameValuePairs.add(new BasicNameValuePair("token", token));
+			nameValuePairs.add(new BasicNameValuePair("username", username));
+			nameValuePairs.add(new BasicNameValuePair("ten_cong_viec",
+					postTenCongViec));
+			nameValuePairs.add(new BasicNameValuePair("noi_dung", postNoiDung));
+			nameValuePairs.add(new BasicNameValuePair("ngay_hoan_thanh",
+					postNgayHoanThanh));
+			nameValuePairs.add(new BasicNameValuePair("du_an", postIdDuAn));
+			nameValuePairs.add(new BasicNameValuePair("nguoi_thuc_hien",
+					postNguoiXuLy));
+			nameValuePairs
+					.add(new BasicNameValuePair("nguoi_xem", postNguoiXem));
+			nameValuePairs.add(new BasicNameValuePair("tep_dinh_kem",
+					postPathTepDinhKem));
+			String ret = handler.makeHTTPRequest(url_duan, HTTPHandler.POST,
+					nameValuePairs);
+			Log.d("LuanDT", "PostEditCongViec : " + nameValuePairs);
+			return ret;
+		}
 
-//=========================================POST===========================================================//
-
-		private class postEditCongViec extends AsyncTask<String, Void, String> {
-			@Override
-			protected void onPreExecute() {
-				super.onPreExecute();
-				pDialog = new ProgressDialog(SuaCongViecActivity.this);
-				pDialog.setMessage(getResources().getString(R.string.vui_long_doi));
-				pDialog.setCancelable(false);
-				pDialog.show();
-			}
-
-			@Override
-			protected String doInBackground(String... arg0) {
-				HTTPHandler handler = new HTTPHandler();
-				List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-				nameValuePairs.add(new BasicNameValuePair("token", token));
-				nameValuePairs.add(new BasicNameValuePair("username",
-						username));
-				nameValuePairs.add(new BasicNameValuePair("ten_cong_viec", postTenCongViec));
-				nameValuePairs.add(new BasicNameValuePair("noi_dung", postNoiDung));
-				nameValuePairs.add(new BasicNameValuePair("ngay_hoan_thanh",postNgayHoanThanh));
-				nameValuePairs.add(new BasicNameValuePair("du_an",postIdDuAn));
-				nameValuePairs.add(new BasicNameValuePair("nguoi_thuc_hien",postNguoiXuLy));
-				nameValuePairs.add(new BasicNameValuePair("nguoi_xem",postNguoiXem));
-				nameValuePairs.add(new BasicNameValuePair("tep_dinh_kem",postPathTepDinhKem));
-				String ret = handler.makeHTTPRequest(url_duan,
-						HTTPHandler.POST, nameValuePairs);
-				Log.d("LuanDT", "PostEditCongViec : " + nameValuePairs);
-				return ret;
-			}
-
-			@Override
-			protected void onPostExecute(String result) {
-				super.onPostExecute(result);
-				if (pDialog.isShowing())
-					pDialog.dismiss();
-				int successEditCongViec = -1;
-				if (result != null) {
-					try {
-						JSONObject jsonObject = new JSONObject(result);
-						String resultEditCongViec = jsonObject.getString("success");
-						if (resultEditCongViec.equals("1")) {
-							successEditCongViec = 1;
-						}
-						Log.d("NgaDV", "resultEditCongViec = " + resultEditCongViec);
-						Log.d("NgaDV", "successEditCongViec = " + successEditCongViec);
-						if (successEditCongViec == 1) {
-//							new GetThaoLuan().execute(token, id_cong_viec,
-//									Integer.toString(page));
-							Toast.makeText(
-									getApplicationContext(),
-									""
-											+ getResources()
-													.getString(
-															R.string.sua_cong_viec_thanh_cong),
-									Toast.LENGTH_LONG).show();}
-						else {
-							Toast.makeText(
-									getApplicationContext(),
-									""
-											+ getResources()
-													.getString(
-															R.string.sua_cong_viec_khong_thanh_cong),
-									Toast.LENGTH_LONG).show();
-						}
-					} catch (JSONException e) {
-						e.printStackTrace();
+		@Override
+		protected void onPostExecute(String result) {
+			super.onPostExecute(result);
+			if (pDialog.isShowing())
+				pDialog.dismiss();
+			int successEditCongViec = -1;
+			if (result != null) {
+				try {
+					JSONObject jsonObject = new JSONObject(result);
+					String resultEditCongViec = jsonObject.getString("success");
+					if (resultEditCongViec.equals("1")) {
+						successEditCongViec = 1;
 					}
-				} else {
-					Log.e("LuanDT", "Error!");
+					Log.d("NgaDV", "resultEditCongViec = " + resultEditCongViec);
+					Log.d("NgaDV", "successEditCongViec = "
+							+ successEditCongViec);
+					if (successEditCongViec == 1) {
+						// new GetThaoLuan().execute(token, id_cong_viec,
+						// Integer.toString(page));
+						Toast.makeText(
+								getApplicationContext(),
+								""
+										+ getResources()
+												.getString(
+														R.string.sua_cong_viec_thanh_cong),
+								Toast.LENGTH_LONG).show();
+					} else {
+						Toast.makeText(
+								getApplicationContext(),
+								""
+										+ getResources()
+												.getString(
+														R.string.sua_cong_viec_khong_thanh_cong),
+								Toast.LENGTH_LONG).show();
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
 				}
+			} else {
+				Log.e("LuanDT", "Error!");
 			}
 		}
+	}
+
 	// ------------option menu-------------------------//
 
 	@Override
@@ -899,7 +896,7 @@ public class SuaCongViecActivity extends Activity implements OnClickListener {
 			finish();
 			break;
 		case R.id.action_done:
-			
+
 			if (TextUtils.isEmpty(edtTenCongViec.getText())) {
 				edtTenCongViec.setError("ban chua nhap ten");
 				return true;
@@ -908,7 +905,7 @@ public class SuaCongViecActivity extends Activity implements OnClickListener {
 				edtNoiDungCongViec.setError("banj chua nhap noi dung");
 				return true;
 			}
-			
+
 			postTenCongViec = edtTenCongViec.getText().toString();
 			postNoiDung = edtNoiDungCongViec.getText().toString();
 			postNgayHoanThanh = tvNgayhoanThanh.getText().toString();
@@ -916,31 +913,31 @@ public class SuaCongViecActivity extends Activity implements OnClickListener {
 			postNguoiXuLy = tvChonNguoiXuLy.getText().toString();
 			postNguoiXem = tvChonNguoiXem.getText().toString();
 			postPathTepDinhKem = tvTepDinhKem.getText().toString();
-			
-			Toast.makeText(getApplicationContext(),
-					"idDuAnpost: " + idDuAn
-					+ "--postTenCongViec" + postTenCongViec
-					+ "--postNoiDung" +postNoiDung
+
+			Toast.makeText(
+					getApplicationContext(),
+					"idDuAnpost: " + idDuAn + "--postTenCongViec"
+							+ postTenCongViec + "--postNoiDung" + postNoiDung
+							+ "--postNgayHoanThanh" + postNgayHoanThanh
+							+ "--postIdDuAn" + postIdDuAn + "--postNguoiXuLy"
+							+ postNguoiXuLy + "--postNguoiXem" + postNguoiXem
+							+ "--postPathTepDinhKem" + postPathTepDinhKem, 1)
+					.show();
+			Log.d("NgaDV",
+					"-==========================================================");
+			Log.d("NgaDV", "idDuAnpost: " + idDuAn + "--postTenCongViec"
+					+ postTenCongViec + "--postNoiDung" + postNoiDung
 					+ "--postNgayHoanThanh" + postNgayHoanThanh
-					+ "--postIdDuAn" + postIdDuAn
-					+ "--postNguoiXuLy" + postNguoiXuLy
-					+ "--postNguoiXem" + postNguoiXem
-					+ "--postPathTepDinhKem" + postPathTepDinhKem, 1).show();
-			Log.d("NgaDV", "-==========================================================");
-			Log.d("NgaDV", "idDuAnpost: " + idDuAn
-					+ "--postTenCongViec" + postTenCongViec
-					+ "--postNoiDung" +postNoiDung
-					+ "--postNgayHoanThanh" + postNgayHoanThanh
-					+ "--postIdDuAn" + postIdDuAn
-					+ "--postNguoiXuLy" + postNguoiXuLy
-					+ "--postNguoiXem" + postNguoiXem
+					+ "--postIdDuAn" + postIdDuAn + "--postNguoiXuLy"
+					+ postNguoiXuLy + "--postNguoiXem" + postNguoiXem
 					+ "--postPathTepDinhKem" + postPathTepDinhKem);
-			Log.d("NgaDV", "-==========================================================");
-			
-			new postEditCongViec().execute(token,username,postTenCongViec,postNoiDung,postNgayHoanThanh,
-					postIdDuAn,postNguoiXuLy,postNguoiXem,
-					postPathTepDinhKem);
-			
+			Log.d("NgaDV",
+					"-==========================================================");
+
+			new postEditCongViec().execute(token, username, postTenCongViec,
+					postNoiDung, postNgayHoanThanh, postIdDuAn, postNguoiXuLy,
+					postNguoiXem, postPathTepDinhKem);
+
 			break;
 		default:
 			break;
@@ -967,6 +964,7 @@ public class SuaCongViecActivity extends Activity implements OnClickListener {
 	public static interface LoadingNguoiDungFinishListener {
 		public void onFinished();
 	}
+
 	private LoadingDuAnFinishListener mInterfaceDA;
 
 	public void setLoadingFinishListener(LoadingDuAnFinishListener listener) {

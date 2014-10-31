@@ -85,5 +85,7 @@
 	<string name="chon_nguoi_xu_ly">Chọn người xử lý</string>
 	<string name="chon_nguoi_xem">Chọn người xem</string>
 	<string name="chon_tep_dinh_kem">Chọn tệp đính kèm</string>
+	
+	<string name="truong_nay_khong_duoc_de_rong">Trường này không được để rỗng.</string>
 </resources>
 

@@ -17,6 +17,10 @@
     <string name="action_example">Example action</string>
     <string name="action_settings">Settings</string>
     <string name="xem_them">Xem Thêm </string>
+    <string name="gui_thao_luan_thanh_cong">Gửi thảo luận thành công.</string>
+    <string name="khong_gui_duoc_thao_luan">Không gửi được thảo luận!!!</string>
+    <string name="cap_nhat_tien_do_thanh_cong">Cập nhật tiến độ công việc thành công</string>
+    <string name="khong_cap_nhat_duoc_tien_do">Không cập nhật được tiến độ công việc!</string>
     <!-- menu -->
     <string name="action_add_congviec">Thêm công việc</string>
     <string name="action_search">Tìm kiếm</string>

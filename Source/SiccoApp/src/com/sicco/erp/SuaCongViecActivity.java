@@ -6,6 +6,8 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -17,6 +19,7 @@ import com.sicco.erp.ThemCongViecActivity.LoadingNguoiDungFinishListener;
 import com.sicco.erp.adapter.DuAnAdapter;
 import com.sicco.erp.adapter.ExpandableListUserAdapter;
 import com.sicco.erp.http.HTTPHandler;
+import com.sicco.erp.manager.SessionManager;
 import com.sicco.erp.model.DuAn;
 import com.sicco.erp.model.NguoiDung;
 import com.sicco.erp.model.PhongBan;
@@ -70,6 +73,8 @@ public class SuaCongViecActivity extends Activity implements OnClickListener {
 	TextView tvChonNguoiXem;
 	EditText edtTenCongViec;
 	EditText edtNoiDungCongViec;
+	
+	String  postTenCongViec,postNoiDung,postNgayHoanThanh,postIdDuAn,postNguoiXuLy,postNguoiXem,postPathTepDinhKem;
 
 	
 	Dialog mDialog;
@@ -125,7 +130,12 @@ public class SuaCongViecActivity extends Activity implements OnClickListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_them_cong_viec);
-
+		
+		SessionManager sessionManager = SessionManager
+				.getInstance(SuaCongViecActivity.this);
+		token = sessionManager.getUserDetails().get(SessionManager.KEY_TOKEN);
+		username = sessionManager.getUserDetails().get(SessionManager.KEY_NAME);
+		
 		mLayoutNgayHoanThanh = (LinearLayout) findViewById(R.id.layout_ngay_hoan_thanh);
 		mLayoutDuAn = (LinearLayout) findViewById(R.id.layout_du_an);
 		mLayoutNguoiXuLy = (LinearLayout) findViewById(R.id.layout_nguoi_xu_ly);
@@ -175,11 +185,13 @@ public class SuaCongViecActivity extends Activity implements OnClickListener {
 		tvNgayhoanThanh.setText(ngayKetThuc);
 		tvChonNguoiXuLy.setText(nguoiThucHien);
 		tvChonNguoiXem.setText(nguoiDuocXem);
-		final Calendar c = Calendar.getInstance();
-		date = c.get(Calendar.DATE);
-		months = c.get(Calendar.MONTH);
-		years_now = c.get(Calendar.YEAR);
 
+		final String[] valueNgayHoanThanh = ngayKetThuc.split("/");
+		Toast.makeText(getApplicationContext(), valueNgayHoanThanh[0].toString() + "/" +valueNgayHoanThanh[1].toString() + "/" +valueNgayHoanThanh[2].toString(), 0).show();
+		date = Integer.parseInt(valueNgayHoanThanh[0].toString());
+		months = Integer.parseInt(valueNgayHoanThanh[1].toString());
+		years_now = Integer.parseInt(valueNgayHoanThanh[2].toString());
+		
 		dataPB = new ArrayList<PhongBan>();
 		dataND = new HashMap<String, List<NguoiDung>>();
 		dsNguoiDung = new ArrayList<NguoiDung>();
@@ -548,8 +560,8 @@ public class SuaCongViecActivity extends Activity implements OnClickListener {
 			years_now = year;
 
 			tvNgayhoanThanh.setText(new StringBuilder()
-					.append(padding_str(date)).append("-")
-					.append(padding_str(months + 1)).append("-")
+					.append(padding_str(date)).append("/")
+					.append(padding_str(months + 1)).append("/")
 					.append(padding_str(years_now)));
 		}
 
@@ -736,10 +748,6 @@ public class SuaCongViecActivity extends Activity implements OnClickListener {
 
 	}
 
-	// ------------choose nguoi xu ly------------------//
-
-	// ------------choose nguoi xem--------------------//
-
 	// ------------choose file-------------------------//
 
 	private void showFileChooser() {
@@ -772,7 +780,7 @@ public class SuaCongViecActivity extends Activity implements OnClickListener {
 						Toast.LENGTH_SHORT).show();
 				// Get the file instance
 				// File file = new File(path);
-				// Initiate the upload
+				// Initiate the upload 
 			}
 			break;
 		}
@@ -802,6 +810,80 @@ public class SuaCongViecActivity extends Activity implements OnClickListener {
 		return null;
 	}
 
+//=========================================POST===========================================================//
+
+		private class postEditCongViec extends AsyncTask<String, Void, String> {
+			@Override
+			protected void onPreExecute() {
+				super.onPreExecute();
+				pDialog = new ProgressDialog(SuaCongViecActivity.this);
+				pDialog.setMessage(getResources().getString(R.string.vui_long_doi));
+				pDialog.setCancelable(false);
+				pDialog.show();
+			}
+
+			@Override
+			protected String doInBackground(String... arg0) {
+				HTTPHandler handler = new HTTPHandler();
+				List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+				nameValuePairs.add(new BasicNameValuePair("token", token));
+				nameValuePairs.add(new BasicNameValuePair("username",
+						username));
+				nameValuePairs.add(new BasicNameValuePair("ten_cong_viec", postTenCongViec));
+				nameValuePairs.add(new BasicNameValuePair("noi_dung", postNoiDung));
+				nameValuePairs.add(new BasicNameValuePair("ngay_hoan_thanh",postNgayHoanThanh));
+				nameValuePairs.add(new BasicNameValuePair("du_an",postIdDuAn));
+				nameValuePairs.add(new BasicNameValuePair("nguoi_thuc_hien",postNguoiXuLy));
+				nameValuePairs.add(new BasicNameValuePair("nguoi_xem",postNguoiXem));
+				nameValuePairs.add(new BasicNameValuePair("tep_dinh_kem",postPathTepDinhKem));
+				String ret = handler.makeHTTPRequest(url_duan,
+						HTTPHandler.POST, nameValuePairs);
+				Log.d("LuanDT", "PostEditCongViec : " + nameValuePairs);
+				return ret;
+			}
+
+			@Override
+			protected void onPostExecute(String result) {
+				super.onPostExecute(result);
+				if (pDialog.isShowing())
+					pDialog.dismiss();
+				int successEditCongViec = -1;
+				if (result != null) {
+					try {
+						JSONObject jsonObject = new JSONObject(result);
+						String resultEditCongViec = jsonObject.getString("success");
+						if (resultEditCongViec.equals("1")) {
+							successEditCongViec = 1;
+						}
+						Log.d("NgaDV", "resultEditCongViec = " + resultEditCongViec);
+						Log.d("NgaDV", "successEditCongViec = " + successEditCongViec);
+						if (successEditCongViec == 1) {
+//							new GetThaoLuan().execute(token, id_cong_viec,
+//									Integer.toString(page));
+							Toast.makeText(
+									getApplicationContext(),
+									""
+											+ getResources()
+													.getString(
+															R.string.sua_cong_viec_thanh_cong),
+									Toast.LENGTH_LONG).show();}
+						else {
+							Toast.makeText(
+									getApplicationContext(),
+									""
+											+ getResources()
+													.getString(
+															R.string.sua_cong_viec_khong_thanh_cong),
+									Toast.LENGTH_LONG).show();
+						}
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+				} else {
+					Log.e("LuanDT", "Error!");
+				}
+			}
+		}
 	// ------------option menu-------------------------//
 
 	@Override
@@ -826,6 +908,38 @@ public class SuaCongViecActivity extends Activity implements OnClickListener {
 				edtNoiDungCongViec.setError("banj chua nhap noi dung");
 				return true;
 			}
+			
+			postTenCongViec = edtTenCongViec.getText().toString();
+			postNoiDung = edtNoiDungCongViec.getText().toString();
+			postNgayHoanThanh = tvNgayhoanThanh.getText().toString();
+			postIdDuAn = idDuAn;
+			postNguoiXuLy = tvChonNguoiXuLy.getText().toString();
+			postNguoiXem = tvChonNguoiXem.getText().toString();
+			postPathTepDinhKem = tvTepDinhKem.getText().toString();
+			
+			Toast.makeText(getApplicationContext(),
+					"idDuAnpost: " + idDuAn
+					+ "--postTenCongViec" + postTenCongViec
+					+ "--postNoiDung" +postNoiDung
+					+ "--postNgayHoanThanh" + postNgayHoanThanh
+					+ "--postIdDuAn" + postIdDuAn
+					+ "--postNguoiXuLy" + postNguoiXuLy
+					+ "--postNguoiXem" + postNguoiXem
+					+ "--postPathTepDinhKem" + postPathTepDinhKem, 1).show();
+			Log.d("NgaDV", "-==========================================================");
+			Log.d("NgaDV", "idDuAnpost: " + idDuAn
+					+ "--postTenCongViec" + postTenCongViec
+					+ "--postNoiDung" +postNoiDung
+					+ "--postNgayHoanThanh" + postNgayHoanThanh
+					+ "--postIdDuAn" + postIdDuAn
+					+ "--postNguoiXuLy" + postNguoiXuLy
+					+ "--postNguoiXem" + postNguoiXem
+					+ "--postPathTepDinhKem" + postPathTepDinhKem);
+			Log.d("NgaDV", "-==========================================================");
+			
+			new postEditCongViec().execute(token,username,postTenCongViec,postNoiDung,postNgayHoanThanh,
+					postIdDuAn,postNguoiXuLy,postNguoiXem,
+					postPathTepDinhKem);
 			
 			break;
 		default:

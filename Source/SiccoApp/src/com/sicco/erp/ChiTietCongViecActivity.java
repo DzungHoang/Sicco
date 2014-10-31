@@ -30,6 +30,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.costum.android.widget.LoadMoreListView;
+import com.costum.android.widget.LoadMoreListView.OnLoadMoreListener;
 import com.sicco.erp.adapter.ThaoLuanAdapter;
 import com.sicco.erp.http.HTTPHandler;
 import com.sicco.erp.manager.SessionManager;
@@ -60,9 +62,10 @@ public class ChiTietCongViecActivity extends Activity {
 	String id, tenCongViec, tinhTrang, tienDo, nguoiThucHien, phongBan,
 			loaiCongViec, ngayKetThuc, duAn, mucUuTien, nguoiDuocXem,
 			nguoiGiao, moTa, tongHopBaoCao, Url, token, username, thoigian,
-			noidungthaoluan, updateTienDo, kqUpdateTienDo, id_cong_viec, nguoi_thao_luan;
+			noidungthaoluan, updateTienDo, kqUpdateTienDo, id_cong_viec,
+			nguoi_thao_luan;
 	StringBuilder timeThaoLuan;
-	String page = "1";
+	int page = 1;
 
 	private int minute;
 	private int hour;
@@ -147,8 +150,8 @@ public class ChiTietCongViecActivity extends Activity {
 				} else {
 					nguoi_thao_luan = username;
 					noidungthaoluan = edtThaoLuan.getText().toString();
-					new PostThaoLuan().execute(token, nguoi_thao_luan, id_cong_viec, thoigian,
-							noidungthaoluan);
+					new PostThaoLuan().execute(token, nguoi_thao_luan,
+							id_cong_viec, thoigian, noidungthaoluan);
 				}
 
 			}
@@ -157,12 +160,29 @@ public class ChiTietCongViecActivity extends Activity {
 
 		thaoLuanList = new ArrayList<HashMap<String, String>>();
 		id_cong_viec = id;
-		new GetThaoLuan().execute(token, id_cong_viec, page);
+		new GetThaoLuan().execute(token, id_cong_viec, Integer.toString(page));
 		mThaoLuan = new ArrayList<ThaoLuan>();
 		mListView = (ListView) findViewById(R.id.lv_thao_luan);
 		mAdapter = new ThaoLuanAdapter(getBaseContext(),
 				R.layout.item_lv_thao_luan, mThaoLuan);
 		mListView.setAdapter(mAdapter);
+		// ----------Load More------//
+
+		((LoadMoreListView) mListView)
+				.setOnLoadMoreListener(new OnLoadMoreListener() {
+
+					@Override
+					public void onLoadMore() {
+						page = page + 1;
+						new GetThaoLuan().execute(token, id_cong_viec,
+								Integer.toString(page));
+						mThaoLuan.clear();
+						// mThaoLuan.addAll(mThaoLuan);
+						// mAdapter.notifyDataSetChanged();
+						((LoadMoreListView) mListView).onLoadMoreComplete();
+
+					}
+				});
 	}
 
 	private static String padding_str(int c) {
@@ -182,7 +202,7 @@ public class ChiTietCongViecActivity extends Activity {
 			// Showing progress dialog
 			pDialog = new ProgressDialog(ChiTietCongViecActivity.this);
 			pDialog.setMessage(getResources().getString(R.string.vui_long_doi));
-			pDialog.setCancelable(false);
+			pDialog.setCancelable(true);
 			pDialog.show();
 
 		}
@@ -194,7 +214,7 @@ public class ChiTietCongViecActivity extends Activity {
 			List<NameValuePair> valuePairs = new ArrayList<NameValuePair>();
 			valuePairs.add(new BasicNameValuePair("token", token));
 			valuePairs.add(new BasicNameValuePair("id_cong_viec", id));
-			valuePairs.add(new BasicNameValuePair("page", page));
+			valuePairs.add(new BasicNameValuePair("page", Integer.toString(page)));
 
 			String ret = handler.makeHTTPRequest(url_thaoluan,
 					HTTPHandler.POST, valuePairs);
@@ -223,7 +243,6 @@ public class ChiTietCongViecActivity extends Activity {
 						String anhdaidien = o.getString("anh_dai_dien");
 						mThaoLuan.add(new ThaoLuan(anhdaidien, nguoithaoluan,
 								thoigianthaoluan, noidungthaoluan));
-
 						mAdapter.notifyDataSetChanged();
 					}
 				} catch (JSONException e) {
@@ -235,9 +254,9 @@ public class ChiTietCongViecActivity extends Activity {
 		}
 
 	}
-	
-	//-------------------------Post Thao Luan-----------------------//
-	
+
+	// -------------------------Post Thao Luan-----------------------//
+
 	private class PostThaoLuan extends AsyncTask<String, Void, String> {
 		@Override
 		protected void onPreExecute() {
@@ -253,10 +272,12 @@ public class ChiTietCongViecActivity extends Activity {
 			HTTPHandler handler = new HTTPHandler();
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair("token", token));
-			nameValuePairs.add(new BasicNameValuePair("nguoi_thao_luan", username));
+			nameValuePairs.add(new BasicNameValuePair("nguoi_thao_luan",
+					username));
 			nameValuePairs.add(new BasicNameValuePair("id_cong_viec", id));
 			nameValuePairs.add(new BasicNameValuePair("thoi_gian", thoigian));
-			nameValuePairs.add(new BasicNameValuePair("noi_dung", noidungthaoluan));
+			nameValuePairs.add(new BasicNameValuePair("noi_dung",
+					noidungthaoluan));
 			String ret = handler.makeHTTPRequest(url_congviec,
 					HTTPHandler.POST, nameValuePairs);
 			Log.d("LuanDT", "PostThaoLuan : " + nameValuePairs);
@@ -271,8 +292,7 @@ public class ChiTietCongViecActivity extends Activity {
 			if (result != null) {
 				try {
 					JSONObject jsonObject = new JSONObject(result);
-					
-					
+
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
@@ -304,7 +324,7 @@ public class ChiTietCongViecActivity extends Activity {
 			nameValuePairs.add(new BasicNameValuePair("tien_do", updateTienDo));
 			String ret = handler.makeHTTPRequest(url_congviec,
 					HTTPHandler.POST, nameValuePairs);
-			Log.d("LuanDT", "POST-GetTienDoCV : " + nameValuePairs);
+			Log.d("LuanDT", "POST-UpdateTienDoCV : " + nameValuePairs);
 			return ret;
 		}
 
@@ -347,7 +367,7 @@ public class ChiTietCongViecActivity extends Activity {
 					this);
 			int postionArray = -1;
 			for (int i = 0; i < cap_nhat_tien_do.length; i++) {
-				if(cap_nhat_tien_do[i].equals(tienDo+"%")){
+				if (cap_nhat_tien_do[i].equals(tienDo + "%")) {
 					postionArray = i;
 				}
 			}
@@ -369,8 +389,8 @@ public class ChiTietCongViecActivity extends Activity {
 								@Override
 								public void onClick(DialogInterface dialog,
 										int which) {
-									new UpdateTienDoCV().execute(token, username,
-											id, updateTienDo);
+									new UpdateTienDoCV().execute(token,
+											username, id, updateTienDo);
 								}
 							})
 					.setNegativeButton(

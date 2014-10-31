@@ -3,18 +3,16 @@ package com.sicco.erp.adapter;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.sicco.erp.R;
-import com.sicco.erp.model.CongViecDaGiao;
-import com.sicco.erp.model.ThaoLuan;
-
 import android.content.Context;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.sicco.erp.R;
+import com.sicco.erp.model.ThaoLuan;
 
 public class ThaoLuanAdapter extends ArrayAdapter<ThaoLuan> {
 

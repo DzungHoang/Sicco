@@ -276,24 +276,6 @@ public class DBController {
 						String tonghopbaocao = c.getString("tong_hop_bao_cao");
 						String tepdinhkem = c.getString("tep_dinh_kem");
 						String url = c.getString("url");
-						ArrayList<ThaoLuan> datathaoluan = new ArrayList<ThaoLuan>();
-
-						thaoluan = c.getJSONArray("thao_luan");
-
-						for (int j = 0; j < thaoluan.length(); j++) {
-							JSONObject thao_luan = thaoluan.getJSONObject(j);
-							String nguoithaoluan = thao_luan
-									.getString("nguoi_thao_luan");
-							String thoigianthaoluan = thao_luan
-									.getString("thoi_gian_thao_luan");
-							String noidungthaoluan = thao_luan
-									.getString("noi_dung_thao_luan");
-							String anhdaidien = thao_luan
-									.getString("anh_dai_dien");
-							datathaoluan.add(new ThaoLuan(anhdaidien,
-									nguoithaoluan, thoigianthaoluan,
-									noidungthaoluan));
-						}
 						
 						//tatca cong viec
 //						if (!tiendo.equals(cvDaHoanThanh)) {
@@ -301,7 +283,7 @@ public class DBController {
 								ngaybatdau, tinhtrang, tiendo, nguoithuchien,
 								phongban, loaicongviec, hancuoi, duan,
 								mucuutien, nguoiduocxem, nguoigiao, mota,
-								tonghopbaocao, tepdinhkem, url, datathaoluan));
+								tonghopbaocao, tepdinhkem, url));
 //						}
 						
 						//cong viec da giao
@@ -310,7 +292,7 @@ public class DBController {
 									ngaybatdau, tinhtrang, tiendo, nguoithuchien,
 									phongban, loaicongviec, hancuoi, duan,
 									mucuutien, nguoiduocxem, nguoigiao, mota,
-									tonghopbaocao, tepdinhkem, url, datathaoluan));
+									tonghopbaocao, tepdinhkem, url));
 						}
 						//cong viec duoc giao
 						if (nguoithuchien.contains(username) && !tiendo.equals(cvDaHoanThanh)) {
@@ -318,7 +300,7 @@ public class DBController {
 									ngaybatdau, tinhtrang, tiendo, nguoithuchien,
 									phongban, loaicongviec, hancuoi, duan,
 									mucuutien, nguoiduocxem, nguoigiao, mota,
-									tonghopbaocao, tepdinhkem, url, datathaoluan));
+									tonghopbaocao, tepdinhkem, url));
 						}
 						//cong viec theo doi
 						if (nguoiduocxem.contains(username) && !tiendo.equals(cvDaHoanThanh)) {
@@ -326,7 +308,7 @@ public class DBController {
 									ngaybatdau, tinhtrang, tiendo, nguoithuchien,
 									phongban, loaicongviec, hancuoi, duan,
 									mucuutien, nguoiduocxem, nguoigiao, mota,
-									tonghopbaocao, tepdinhkem, url, datathaoluan));
+									tonghopbaocao, tepdinhkem, url));
 						}
 						//cong viec hoan thanh
 						if (tiendo.equals(cvDaHoanThanh)) {
@@ -334,7 +316,7 @@ public class DBController {
 									ngaybatdau, tinhtrang, tiendo, nguoithuchien,
 									phongban, loaicongviec, hancuoi, duan,
 									mucuutien, nguoiduocxem, nguoigiao, mota,
-									tonghopbaocao, tepdinhkem, url, datathaoluan));
+									tonghopbaocao, tepdinhkem, url));
 						}
 						
 						
@@ -490,8 +472,5 @@ public class DBController {
 			}
 		}
 	}
-//-------------------------------- Get CongViecTheoDoi -------------------------------------------//
-//-------------------------------------------------------------------------------------------------//
-	
 	
 }

@@ -224,8 +224,8 @@ public class ThemCongViecActivity extends Activity implements OnClickListener {
 								tvChonDuAn.setText(mDuAn.get(positionDuAn)
 										.getTenDuAn());
 								idDuAn = mDuAn.get(positionDuAn).getId();
-								Toast.makeText(getApplicationContext(),
-										"idDuAn: " + idDuAn, 0).show();
+//								Toast.makeText(getApplicationContext(),
+//										"idDuAn: " + idDuAn, 0).show();
 							}
 						}
 					});
@@ -354,9 +354,9 @@ public class ThemCongViecActivity extends Activity implements OnClickListener {
 									}
 								}
 							}
-							Toast.makeText(getApplicationContext(),
-									"id: " + idNguoiXuLy, Toast.LENGTH_SHORT)
-									.show();
+//							Toast.makeText(getApplicationContext(),
+//									"id: " + idNguoiXuLy, Toast.LENGTH_SHORT)
+//									.show();
 							tvChonNguoiXuLy.setText(nguoiXuLy);
 							Log.d("TuNT", "List active: " + listNXLChecked);
 						}
@@ -484,9 +484,9 @@ public class ThemCongViecActivity extends Activity implements OnClickListener {
 									}
 								}
 							}
-							Toast.makeText(getApplicationContext(),
-									"id: " + idNguoiXem, Toast.LENGTH_SHORT)
-									.show();
+//							Toast.makeText(getApplicationContext(),
+//									"id: " + idNguoiXem, Toast.LENGTH_SHORT)
+//									.show();
 							tvChonNguoiXem.setText(nguoiXem);
 							Log.d("TuNT", "List active: " + listNXChecked);
 						}
@@ -776,8 +776,8 @@ public class ThemCongViecActivity extends Activity implements OnClickListener {
 					getString(R.string.chon_tep_dinh_kem)), FILE_SELECT_CODE);
 		} catch (android.content.ActivityNotFoundException ex) {
 			// Potentially direct the user to the Market with a Dialog
-			Toast.makeText(this, "Please install a File Manager.",
-					Toast.LENGTH_SHORT).show();
+//			Toast.makeText(this, "Please install a File Manager.",
+//					Toast.LENGTH_SHORT).show();
 		}
 	}
 
@@ -792,8 +792,8 @@ public class ThemCongViecActivity extends Activity implements OnClickListener {
 				// Get the path
 				path = FileUtils.getPath(this, uri);
 				Log.d("LuanDT", "File Path: " + path);
-				Toast.makeText(this, "File Selected: " + path,
-						Toast.LENGTH_SHORT).show();
+//				Toast.makeText(this, "File Selected: " + path,
+//						Toast.LENGTH_SHORT).show();
 				// Get the file instance
 				// File file = new File(path);
 				// Initiate the upload

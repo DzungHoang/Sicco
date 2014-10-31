@@ -12,10 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.sicco.erp.R;
-import com.sicco.erp.model.CongViecDaGiao;
-import com.sicco.erp.model.CongViecHoanThanh;
 import com.sicco.erp.model.TatCaCongViec;
-import com.sicco.erp.model.ThaoLuan;
 
 public class CongViecHoanThanhAdapter extends ArrayAdapter<TatCaCongViec> {
 

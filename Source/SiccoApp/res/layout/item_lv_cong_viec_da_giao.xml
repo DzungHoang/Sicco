@@ -18,9 +18,10 @@
 
     <TextView
         android:id="@+id/item_lv_nguoi_xu_ly"
-        android:layout_width="wrap_content"
+        android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:layout_marginRight="10dp"
+        android:singleLine="true"
         android:gravity="center_vertical"
         android:textColor="#3d3232"
         android:minHeight="45dp"

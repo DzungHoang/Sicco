@@ -16,7 +16,7 @@ public class TatCaCongViec {
 	}
 	public TatCaCongViec(String id, String tencongviec, String ngaybatdau, String tinhtrang, String tiendo, String nguoithuchien,
 			String phongban, String loaicongviec, String hancuoi, String duan, String mucuutien, String nguoiduocxem,
-			String nguoigiao, String mota, String tonghopbaocao, String tepdinhkem, String url, ArrayList<ThaoLuan> thaoluan) {
+			String nguoigiao, String mota, String tonghopbaocao, String tepdinhkem, String url) {
 		this.id = id;
 		this.tencongviec = tencongviec;
 		this.ngaybatdau = ngaybatdau;
@@ -155,10 +155,4 @@ public class TatCaCongViec {
 		return url;
 	}
 	
-	public void setThaoLuan(ArrayList<ThaoLuan> thaoluan) {
-		this.thaoluan = thaoluan;
-	}
-	public ArrayList<ThaoLuan> getThaoLuan() {
-		return thaoluan;
-	}
 }

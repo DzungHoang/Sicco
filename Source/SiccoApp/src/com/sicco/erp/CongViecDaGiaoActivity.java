@@ -65,7 +65,6 @@ public class CongViecDaGiaoActivity extends Activity {
 				mCongViecDaGiao.clear();
 				mCongViecDaGiao.addAll(data);
 				mAdapter.notifyDataSetChanged();
-				Toast.makeText(getApplicationContext(), "CongviecDagiao onFinished", 0).show();
 				Log.d("NgaDV", "CongviecDagiao onFinished"+TatCaCongViecActivity.pnumberCviec);
 			}
 		});
@@ -74,7 +73,6 @@ public class CongViecDaGiaoActivity extends Activity {
 			pDialog.show();
 			mCongViecDaGiao = new ArrayList<TatCaCongViec>();
 			Log.d("NgaDV", "mCongViecDaGiao == null");
-			Toast.makeText(getApplicationContext(), "mCongViecDaGiao == " + mCongViecDaGiao.toString() , 0).show();
 		}
 		btn_LoadMore.setOnClickListener(new OnClickListener() {
 			
@@ -129,9 +127,6 @@ public class CongViecDaGiaoActivity extends Activity {
 				startActivity(intent);
 			}
 		});
-
-		float y = mListView.getY() + mListView.getHeight();
-		Toast.makeText(getApplicationContext(), "toa do x lisview: " + mListView.getWidth(), 0).show();
 
 	}
 

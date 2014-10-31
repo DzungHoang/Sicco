@@ -22,8 +22,6 @@ import android.widget.Toast;
 import com.sicco.erp.adapter.CongViecDuocGiaoAdapter;
 import com.sicco.erp.database.DBController;
 import com.sicco.erp.database.DBController.LoadCongViecDuocGiaoListener;
-import com.sicco.erp.database.DBController.LoadCongViecHoanThanhListener;
-import com.sicco.erp.model.CongViecDuocGiao;
 import com.sicco.erp.model.TatCaCongViec;
 
 public class CongViecDuocGiaoActivity extends Activity {

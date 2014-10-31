@@ -3,14 +3,15 @@ package com.sicco.erp.adapter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+
 import com.sicco.erp.R;
-import com.sicco.erp.model.CongViecDuocGiao;
 import com.sicco.erp.model.TatCaCongViec;
 
 public class CongViecDuocGiaoAdapter extends ArrayAdapter<TatCaCongViec> {

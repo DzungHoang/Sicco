@@ -238,11 +238,10 @@
                 <include layout="@layout/sep" />
             </LinearLayout>
 
-            <ListView
+            <com.costum.android.widget.LoadMoreListView
                 android:id="@+id/lv_thao_luan"
                 android:layout_width="fill_parent"
-                android:layout_height="300dp" >
-            </ListView>
+                android:layout_height="350dp" />
         </LinearLayout>
     </LinearLayout>
 

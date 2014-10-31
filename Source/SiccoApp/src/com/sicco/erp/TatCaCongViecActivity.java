@@ -87,9 +87,9 @@ public class TatCaCongViecActivity extends Activity {
 				idPhongBan = getArray.get("id");
 				String TenPhongBan = getArray.get("ten_phong_ban");
 
-				Toast.makeText(getApplicationContext(),
-						"Phong ban : " + TenPhongBan + "..." + idPhongBan,
-						Toast.LENGTH_LONG).show();
+//				Toast.makeText(getApplicationContext(),
+//						"Phong ban : " + TenPhongBan + "..." + idPhongBan,
+//						Toast.LENGTH_LONG).show();
 				if (idPhongBan != "0") {
 					congViecPhongBan();
 				} else {

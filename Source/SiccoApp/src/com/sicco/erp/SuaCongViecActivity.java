@@ -12,6 +12,8 @@ import org.json.JSONObject;
 
 
 import com.sicco.erp.ThemCongViecActivity.LoadingDuAnFinishListener;
+import com.sicco.erp.ThemCongViecActivity.LoadingFinishListener;
+import com.sicco.erp.ThemCongViecActivity.LoadingNguoiDungFinishListener;
 import com.sicco.erp.adapter.DuAnAdapter;
 import com.sicco.erp.adapter.ExpandableListUserAdapter;
 import com.sicco.erp.http.HTTPHandler;
@@ -33,6 +35,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.appcompat.R.string;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -64,7 +67,7 @@ public class SuaCongViecActivity extends Activity implements OnClickListener {
 	TextView tvTepDinhKem;
 	TextView tvNgayhoanThanh;
 	TextView tvChonNguoiXuLy;
-	TextView tvNguoiXem;
+	TextView tvChonNguoiXem;
 	EditText edtTenCongViec;
 	EditText edtNoiDungCongViec;
 
@@ -88,7 +91,8 @@ public class SuaCongViecActivity extends Activity implements OnClickListener {
 	ExpandableListView listView;
 	ExpandableListUserAdapter adapter;
 	LinearLayout loading;
-	ArrayList<NguoiDung> listActive = new ArrayList<NguoiDung>();
+	ArrayList<NguoiDung> listNXLChecked = new ArrayList<NguoiDung>();
+	ArrayList<NguoiDung> listNXChecked = new ArrayList<NguoiDung>();
 	
 	List<PhongBan> dataPB;
 	HashMap<String, List<NguoiDung>> dataND;
@@ -103,9 +107,11 @@ public class SuaCongViecActivity extends Activity implements OnClickListener {
 	int positionPBNXL;
 	int positionNXL;
 	String nguoiXuLy;
+	String nguoiXem;
 	// ////////////Post data//////////////
 	String idDuAn;
 	String idNguoiXuLy;
+	String idNguoiXem;
 	
 	String id, tenCongViec, tinhTrang, tienDo, nguoiThucHien, phongBan,
 	loaiCongViec, ngayKetThuc, duAn, mucUuTien, nguoiDuocXem,
@@ -143,11 +149,22 @@ public class SuaCongViecActivity extends Activity implements OnClickListener {
 		tongHopBaoCao = intent.getStringExtra("tong_hop_bao_cao");
 		Url = intent.getStringExtra("Url");
 		
+		final String[] listNguoiThucHien = nguoiThucHien.split(",");
+		for (int i = 0; i < listNguoiThucHien.length; i++) {
+			listNXLChecked.add(new NguoiDung("", listNguoiThucHien[i], ""));
+		}
+		final String[] listNguoiXem = nguoiDuocXem.split(",");
+		for (int i = 0; i < listNguoiXem.length; i++) {
+			listNXChecked.add(new NguoiDung("", listNguoiXem[i], ""));
+		}
+		Toast.makeText(getApplicationContext(), "nguoithuchien 1:"+listNguoiXem[0].toString()
+				+ "nguoithuchien 2:"+listNguoiXem[1].toString(), 0).show();
+		
 		tvChonDuAn = (TextView) findViewById(R.id.tv_du_an);
 		tvChonNguoiXuLy = (TextView) findViewById(R.id.tv_nguoi_xu_ly);
 		tvTepDinhKem = (TextView) findViewById(R.id.tv_tep_dinh_kem);
 		tvNgayhoanThanh = (TextView) findViewById(R.id.tv_ngay_hoan_thanh);
-		tvNguoiXem = (TextView) findViewById(R.id.tv_nguoi_xem);
+		tvChonNguoiXem = (TextView) findViewById(R.id.tv_nguoi_xem);
 		edtTenCongViec = (EditText) findViewById(R.id.edt_ten_cong_viec);
 		edtNoiDungCongViec = (EditText) findViewById(R.id.edt_noi_dung);
 		
@@ -157,7 +174,7 @@ public class SuaCongViecActivity extends Activity implements OnClickListener {
 		tvChonDuAn.setText(duAn);
 		tvNgayhoanThanh.setText(ngayKetThuc);
 		tvChonNguoiXuLy.setText(nguoiThucHien);
-		tvNguoiXem.setText(nguoiDuocXem);
+		tvChonNguoiXem.setText(nguoiDuocXem);
 		final Calendar c = Calendar.getInstance();
 		date = c.get(Calendar.DATE);
 		months = c.get(Calendar.MONTH);
@@ -266,7 +283,7 @@ public class SuaCongViecActivity extends Activity implements OnClickListener {
 			loading.setVisibility(View.VISIBLE);
 
 			adapter = new ExpandableListUserAdapter(getApplicationContext(),
-					dataPB, dataND, listActive);
+					dataPB, dataND, listNXLChecked);
 			setLoadingFinishListener(new LoadingNguoiDungFinishListener() {
 
 				@Override
@@ -359,28 +376,155 @@ public class SuaCongViecActivity extends Activity implements OnClickListener {
 						public void onClick(DialogInterface dialog, int which) {
 							idNguoiXuLy = "";
 							nguoiXuLy = "";
-							if(listActive.isEmpty()){
+							if(listNXLChecked.isEmpty()){
 								nguoiXuLy = getResources().getString(R.string.nguoi_xu_ly);
 							}else{
-								for (int i = 0; i < listActive.size(); i++) {
-									if(i == listActive.size() - 1){
-										nguoiXuLy += listActive.get(i).getUsername();
+								for (int i = 0; i < listNXLChecked.size(); i++) {
+									if(i == listNXLChecked.size() - 1){
+										nguoiXuLy += listNXLChecked.get(i).getUsername();
 									}else{
-										nguoiXuLy += listActive.get(i).getUsername()+", ";
+										nguoiXuLy += listNXLChecked.get(i).getUsername()+", ";
 									}
-									idNguoiXuLy += listActive.get(i).getId();
+									idNguoiXuLy += listNXLChecked.get(i).getId() + ",";
 								}
 							}
 							Toast.makeText(getApplicationContext(), "id: "+idNguoiXuLy, Toast.LENGTH_SHORT).show();
 							tvChonNguoiXuLy.setText(nguoiXuLy);
-							Log.d("TuNT", "List active: "+listActive);
+							Log.d("TuNT", "List active: "+listNXLChecked);
 						}
 					});
 			AlertDialog alertDialogNXL = builderNXL.create();
 			alertDialogNXL.show();
 			break;
 		case R.id.layout_nguoi_xem:
+			new GetNguoiDung().execute();
 
+			LayoutInflater inflaterNX = LayoutInflater
+					.from(getApplicationContext());
+			View dialogUserList2 = inflaterNX.inflate(
+					R.layout.nguoidung_dialog, null);
+
+			listView = (ExpandableListView) dialogUserList2
+					.findViewById(R.id.ListExpUser);
+
+			loading = (LinearLayout) dialogUserList2
+					.findViewById(R.id.loadingListUser);
+
+			listView.setVisibility(View.INVISIBLE);
+			loading.setVisibility(View.VISIBLE);
+
+			adapter = new ExpandableListUserAdapter(getApplicationContext(),
+					dataPB, dataND, listNXChecked);
+			setLoadingFinishListener(new LoadingNguoiDungFinishListener() {
+
+				@Override
+				public void onFinished() {
+					new GetPhongBan().execute();
+				}
+			});
+
+			setLoadingFinishListener(new LoadingFinishListener() {
+
+				@Override
+				public void onFinished() {
+					listView.setVisibility(View.VISIBLE);
+					loading.setVisibility(View.INVISIBLE);
+					listView.setAdapter(adapter);
+				}
+			});
+
+			listView.setOnGroupClickListener(new OnGroupClickListener() {
+
+				@Override
+				public boolean onGroupClick(ExpandableListView parent, View v,
+						int groupPosition, long id) {
+					return false;
+				}
+			});
+
+			// Listview Group expanded listener
+			listView.setOnGroupExpandListener(new OnGroupExpandListener() {
+
+				@Override
+				public void onGroupExpand(int groupPosition) {
+//					Toast.makeText(
+//							getApplicationContext(),
+//							dataPB.get(groupPosition).getTenPhongBan()
+//									+ " Expanded", Toast.LENGTH_SHORT).show();
+				}
+			});
+			// Listview Group collasped listener
+			listView.setOnGroupCollapseListener(new OnGroupCollapseListener() {
+
+				@Override
+				public void onGroupCollapse(int groupPosition) {
+//					Toast.makeText(
+//							getApplicationContext(),
+//							dataPB.get(groupPosition).getTenPhongBan()
+//									+ " Collapsed", Toast.LENGTH_SHORT).show();
+				}
+			});
+
+			// Listview on child click listener
+			listView.setOnChildClickListener(new OnChildClickListener() {
+
+				@Override
+				public boolean onChildClick(ExpandableListView parent, View v,
+						int groupPosition, int childPosition, long id) {
+					return false;
+				}
+			});
+
+			AlertDialog.Builder builderNX = new AlertDialog.Builder(this);
+			builderNX.setTitle(getResources()
+					.getString(R.string.chon_nguoi_xem));
+			builderNX.setView(dialogUserList2);
+			builderNX.setNegativeButton("Cancel",
+					new DialogInterface.OnClickListener() {
+
+						@Override
+						public void onClick(DialogInterface dialogInterface,
+								int arg1) {
+							dialogInterface.dismiss();
+
+						}
+					});
+			builderNX.setPositiveButton("Ok",
+					new DialogInterface.OnClickListener() {
+
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							idNguoiXem = "";
+							nguoiXem = "";
+							if (listNXChecked.isEmpty()) {
+								nguoiXem = getResources().getString(
+										R.string.chon_nguoi_xem);
+							} else {
+								for (int i = 0; i < listNXChecked.size(); i++) {
+									if (i == listNXChecked.size() - 1) {
+										nguoiXem += listNXChecked.get(i)
+												.getUsername();
+
+										idNguoiXem += listNXChecked.get(i)
+												.getId();
+									} else {
+										nguoiXem += listNXChecked.get(i)
+												.getUsername() + ", ";
+
+										idNguoiXem += listNXChecked.get(i)
+												.getId() + ", ";
+									}
+								}
+							}
+//							Toast.makeText(getApplicationContext(),
+//									"id: " + idNguoiXem, Toast.LENGTH_SHORT)
+//									.show();
+							tvChonNguoiXem.setText(nguoiXem);
+							Log.d("TuNT", "List active: " + listNXChecked);
+						}
+					});
+			AlertDialog alertDialogNX = builderNX.create();
+			alertDialogNX.show();
 			break;
 		case R.id.layout_tep_dinh_kem:
 			showFileChooser();
@@ -517,8 +661,8 @@ public class SuaCongViecActivity extends Activity implements OnClickListener {
 						ArrayList<NguoiDung> data = new ArrayList<NguoiDung>();
 						for (int j = 0; j < dsNguoiDung.size(); j++) {
 							if (dsNguoiDung.get(j).getPhongban().equals(id)) {
-								data.add(new NguoiDung(id, dsNguoiDung.get(i)
-										.getUsername(), dsNguoiDung.get(i)
+								data.add(new NguoiDung(id, dsNguoiDung.get(j)
+										.getUsername(), dsNguoiDung.get(j)
 										.getPhongban()));
 							}
 						}

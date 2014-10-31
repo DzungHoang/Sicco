@@ -41,7 +41,7 @@ public class NguoiDung {
 	
 	public boolean equal(NguoiDung item){
 		boolean ret = false;
-		if(this.id.equals(item.id) && this.username.equals(item.username)) ret = true;
+		if(this.username.equals(item.username)) ret = true;
 		return ret;
 	}
 	

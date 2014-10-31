@@ -6,6 +6,8 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,6 +48,7 @@ import android.widget.Toast;
 import com.sicco.erp.adapter.DuAnAdapter;
 import com.sicco.erp.adapter.ExpandableListUserAdapter;
 import com.sicco.erp.http.HTTPHandler;
+import com.sicco.erp.manager.SessionManager;
 import com.sicco.erp.model.DuAn;
 import com.sicco.erp.model.NguoiDung;
 import com.sicco.erp.model.PhongBan;
@@ -63,6 +66,7 @@ public class ThemCongViecActivity extends Activity implements OnClickListener {
 	String path;
 
 	ProgressDialog pDialog;
+	SessionManager sessionManager;
 	String url_duan = "http://apis.mobile.vareco.vn/sicco/duan.php";
 	String url_phongban = "http://apis.mobile.vareco.vn/sicco/phongban.php";
 	String url_nguoidung = "http://apis.mobile.vareco.vn/sicco/nguoidung.php";
@@ -97,6 +101,7 @@ public class ThemCongViecActivity extends Activity implements OnClickListener {
 	String nguoiXuLy;
 	String nguoiXem;
 	// ////////////Post data//////////////
+	String token;
 	String idDuAn;
 	String idNguoiXuLy;
 	String idNguoiXem;
@@ -110,6 +115,9 @@ public class ThemCongViecActivity extends Activity implements OnClickListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_them_cong_viec);
 
+		sessionManager = SessionManager.getInstance(getApplicationContext());
+		token = sessionManager.getUserDetails().get(SessionManager.KEY_TOKEN);
+		
 		mLayoutNgayHoanThanh = (LinearLayout) findViewById(R.id.layout_ngay_hoan_thanh);
 		mLayoutDuAn = (LinearLayout) findViewById(R.id.layout_du_an);
 		mLayoutNguoiXuLy = (LinearLayout) findViewById(R.id.layout_nguoi_xu_ly);
@@ -679,6 +687,71 @@ public class ThemCongViecActivity extends Activity implements OnClickListener {
 						dsNguoiDung.clone();
 					}
 					Log.d("TuNT", "Nguoi dung: " + dsNguoiDung);
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				if (mInterfaceND != null) {
+					mInterfaceND.onFinished();
+				}
+			} else {
+				Log.e("TuNT", "Khong the lay data tu url nay");
+			}
+			super.onPostExecute(result);
+		}
+
+	}
+	
+	/////////////Gui len cong viec////////////////////////
+	private class AddCongViec extends AsyncTask<String, Void, String> {
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+		}
+
+		@Override
+		protected String doInBackground(String... arg0) {
+			String token = arg0[0];
+			String tenCongViec = arg0[1];
+			String noiDung = arg0[2];
+			String ngayHoanThanh = arg0[3];
+			String duAn = arg0[4];
+			String nguoiXem = arg0[5];
+			String tepDinhKem = arg0[6];
+			String phongBan = arg0[7];
+			String tuNgay = arg0[8];
+			String tienDo = arg0[9];
+			String mucDo = arg0[10];
+
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			nameValuePairs.add(new BasicNameValuePair("token", token));
+			nameValuePairs.add(new BasicNameValuePair("ten_cong_viec", tenCongViec));
+			nameValuePairs.add(new BasicNameValuePair("noi_dung", noiDung));
+			nameValuePairs.add(new BasicNameValuePair("ngay_hoan_thanh", ngayHoanThanh));
+			nameValuePairs.add(new BasicNameValuePair("du_an", duAn));
+			nameValuePairs.add(new BasicNameValuePair("nguoi_xem", nguoiXem));
+			nameValuePairs.add(new BasicNameValuePair("tep_dinh_kem", tepDinhKem));
+			nameValuePairs.add(new BasicNameValuePair("phong_ban", phongBan));
+			nameValuePairs.add(new BasicNameValuePair("tu_ngay", tuNgay));
+			nameValuePairs.add(new BasicNameValuePair("tien_do", tienDo));
+			nameValuePairs.add(new BasicNameValuePair("muc_do", mucDo));
+			
+			HTTPHandler handler = new HTTPHandler();
+			String ret = handler
+					.makeHTTPRequest(url_nguoidung, HTTPHandler.POST, nameValuePairs);
+			return ret;
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+			int success = -1;
+			if (result != null) {
+				try {
+					JSONObject jsonObj = new JSONObject(result);
+					String stSuccess = jsonObj.getString("success");
+					if(stSuccess.toString().equals(1)){
+						success = 1;
+					}
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}

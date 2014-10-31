@@ -163,6 +163,7 @@ public class GetNotificationService extends Service {
 					if (cursor != null && cursor.getCount() > 0) {
 					} 
 					else {
+						origanizeNoti();
 						//TuNT//
 						AppWidgetManager manager = AppWidgetManager.getInstance(context);
 						int[] appWidgetIds = manager.getAppWidgetIds(new ComponentName(context, WidgetCBProvider.class));
@@ -173,7 +174,6 @@ public class GetNotificationService extends Service {
 						Log.d("TuNT", "update widget");
 						context.sendBroadcast(updateIntent);
 						//End-TuNT//
-						origanizeNoti();
 					}
 				}
 			} catch (Exception e) {

@@ -24,6 +24,7 @@ public class WidgetCBProvider extends AppWidgetProvider{
 	@Override
 	public void onUpdate(Context context, AppWidgetManager appWidgetManager,
 			int[] appWidgetIds) {
+		Log.d("TuNT", "OnUpdate1");
 		bgColor = SharedPrefUtils.getPref(context,
 				SharedPrefUtils.KEY_BG_WIDGET_CB_COLOR, 0x80E5E5E5);
 		textColor = SharedPrefUtils.getPref(context,
@@ -36,7 +37,8 @@ public class WidgetCBProvider extends AppWidgetProvider{
 		views.setInt(R.id.textView2, "setTextColor", textColor);
 		views.setInt(R.id.textView3, "setTextColor", textColor);
 		
-		numberCongViec = GetNotificationService.getCongViecCount();
+		GetNotificationService notificationService = new GetNotificationService();
+		numberCongViec = notificationService.getCongViecCount();
 		if(numberCongViec == 0){
 			views.setViewVisibility(R.id.numberCongViec, View.INVISIBLE);
 		}else{
@@ -44,7 +46,7 @@ public class WidgetCBProvider extends AppWidgetProvider{
 			views.setTextViewText(R.id.numberCongViec, Integer.toString(numberCongViec));
 		}
 		
-		numberCongVan = GetNotificationService.getCongVanCount();
+		numberCongVan = notificationService.getCongVanCount();
 		if(numberCongVan == 0){
 			views.setViewVisibility(R.id.numberCongVan, View.INVISIBLE);
 		}else{
@@ -52,7 +54,7 @@ public class WidgetCBProvider extends AppWidgetProvider{
 			views.setTextViewText(R.id.numberCongVan, Integer.toString(numberCongVan));
 		}
 		
-		numberLichBieu = GetNotificationService.getLichBieuCount();
+		numberLichBieu = notificationService.getLichBieuCount();
 		if(numberLichBieu == 0){
 			views.setViewVisibility(R.id.numberLichBieu, View.INVISIBLE);
 		}else{

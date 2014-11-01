@@ -20,6 +20,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -46,7 +47,6 @@ public class ChiTietCongViecActivity extends Activity {
 	String url_postthaoluan = "http://apis.mobile.vareco.vn/sicco/phongban.php";
 	String url_thaoluan = "http://apis.mobile.vareco.vn/sicco/thaoluan.php";
 	JSONArray thaoluan = null, success = null;
-	ArrayList<HashMap<String, String>> thaoLuanList;
 	ArrayList<ThaoLuan> mThaoLuan;
 	ListView mListView;
 	ThaoLuanAdapter mAdapter;
@@ -70,6 +70,8 @@ public class ChiTietCongViecActivity extends Activity {
 	StringBuilder timeThaoLuan;
 	int page = 1;
 	int mThaoLuanRunningPage = -1;
+	
+	ProgressBar pLoadmore;
 
 	private int minute;
 	private int hour;
@@ -162,11 +164,15 @@ public class ChiTietCongViecActivity extends Activity {
 		});
 		// //////////
 
-		thaoLuanList = new ArrayList<HashMap<String, String>>();
 		id_cong_viec = id;
 		new GetThaoLuan().execute(token, id_cong_viec, Integer.toString(page));
 		mThaoLuan = new ArrayList<ThaoLuan>();
 		mListView = (ListView) findViewById(R.id.lv_thao_luan);
+		
+		View footerView = ((LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE)).inflate(R.layout.load_thao_luan, null,false);
+		mListView.addFooterView(footerView);
+		pLoadmore = (ProgressBar)findViewById(R.id.progressBarThaoLuan);
+		
 		mAdapter = new ThaoLuanAdapter(getBaseContext(),
 				R.layout.item_lv_thao_luan, mThaoLuan);
 		mListView.setAdapter(mAdapter);
@@ -180,8 +186,6 @@ public class ChiTietCongViecActivity extends Activity {
 						page = page + 1;
 						new GetThaoLuan().execute(token, id_cong_viec,
 								Integer.toString(page));
-						 mThaoLuan.clear();
-						 mThaoLuan.addAll(mThaoLuan);
 						 mAdapter.notifyDataSetChanged();
 						((LoadMoreListView) mListView).onLoadMoreComplete();
 
@@ -249,8 +253,8 @@ public class ChiTietCongViecActivity extends Activity {
 						String anhdaidien = o.getString("anh_dai_dien");
 						mThaoLuan.add(new ThaoLuan(anhdaidien, nguoithaoluan,
 								thoigianthaoluan, noidungthaoluan));
-						mAdapter.notifyDataSetChanged();
 					}
+					mAdapter.notifyDataSetChanged();
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
